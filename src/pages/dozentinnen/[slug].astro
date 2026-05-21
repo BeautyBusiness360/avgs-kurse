@@ -2,6 +2,8 @@
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const { data: dozentinnen, error } = await supabase
     .from('dozentinnen')

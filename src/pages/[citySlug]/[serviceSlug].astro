@@ -2,6 +2,8 @@
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   // Query directly from dozentinnen with active=true enforced at DB level.
   // Avoids 3-level deep nesting (cities→dozentinnen→dozentin_services→services)
