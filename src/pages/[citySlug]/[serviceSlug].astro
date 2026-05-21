@@ -3,65 +3,68 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const { data: cities, error } = await supabase
-    .from('cities')
+  // Query directly from dozentinnen with active=true enforced at DB level.
+  // Avoids 3-level deep nesting (cities→dozentinnen→dozentin_services→services)
+  // which can silently drop rows due to PostgREST embedded-resource limits.
+  const { data: dozentinnen, error } = await supabase
+    .from('dozentinnen')
     .select(`
       slug,
-      name,
-      dozentinnen(
-        slug,
-        first_name,
-        last_name,
-        rating,
-        review_count,
-        avgs_certified,
-        active,
-        dozentin_services(
-          services(slug, name, category, avgs_eligible, description_template)
-        )
+      first_name,
+      last_name,
+      rating,
+      review_count,
+      avgs_certified,
+      cities(slug, name),
+      dozentin_services(
+        services(slug, name, category, avgs_eligible, description_template)
       )
-    `);
+    `)
+    .eq('active', true);
 
-  if (error || !cities) {
+  if (error || !dozentinnen) {
     console.error('getStaticPaths Fehler:', error);
     return [];
   }
 
   const pageMap = new Map();
 
-  for (const city of cities) {
-    const activeDozentinnen = Array.isArray(city.dozentinnen)
-      ? city.dozentinnen.filter(d => d?.active === true)
+  for (const dozentin of dozentinnen) {
+    // cities is many-to-one: Supabase returns object, guard for array just in case
+    const city = Array.isArray(dozentin.cities)
+      ? dozentin.cities[0]
+      : dozentin.cities;
+    if (!city?.slug) continue;
+
+    const dsRows = Array.isArray(dozentin.dozentin_services)
+      ? dozentin.dozentin_services
       : [];
 
-    for (const dozentin of activeDozentinnen) {
-      const dsRows = Array.isArray(dozentin.dozentin_services)
-        ? dozentin.dozentin_services
-        : [];
+    for (const ds of dsRows) {
+      // services is many-to-one: Supabase returns object, guard for array just in case
+      const service = Array.isArray(ds?.services)
+        ? ds.services[0]
+        : ds?.services;
+      if (!service?.slug) continue;
 
-      for (const ds of dsRows) {
-        const service = ds?.services;
-        if (!service?.slug) continue;
+      const key = `${city.slug}__${service.slug}`;
 
-        const key = `${city.slug}__${service.slug}`;
-
-        if (!pageMap.has(key)) {
-          pageMap.set(key, {
-            city: { slug: city.slug, name: city.name },
-            service,
-            dozentinnen: []
-          });
-        }
-
-        pageMap.get(key).dozentinnen.push({
-          slug: dozentin.slug,
-          first_name: dozentin.first_name,
-          last_name: dozentin.last_name,
-          rating: dozentin.rating,
-          review_count: dozentin.review_count,
-          avgs_certified: dozentin.avgs_certified
+      if (!pageMap.has(key)) {
+        pageMap.set(key, {
+          city: { slug: city.slug, name: city.name },
+          service,
+          dozentinnen: []
         });
       }
+
+      pageMap.get(key).dozentinnen.push({
+        slug: dozentin.slug,
+        first_name: dozentin.first_name,
+        last_name: dozentin.last_name,
+        rating: dozentin.rating,
+        review_count: dozentin.review_count,
+        avgs_certified: dozentin.avgs_certified
+      });
     }
   }
 
