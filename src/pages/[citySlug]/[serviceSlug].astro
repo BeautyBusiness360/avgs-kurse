@@ -28,10 +28,15 @@ export async function getStaticPaths() {
   const pageMap = new Map();
 
   for (const combo of combinations) {
-    const dozentin = combo.dozentinnen;
-    const service  = combo.services;
+  const dozentin = combo?.dozentinnen;
+  const service  = combo?.services;
 
-    if (!dozentin?.active || !dozentin?.cities || !service) continue;
+  if (!dozentin) continue;
+  if (!dozentin.active) continue;
+  if (!dozentin.cities) continue;
+  if (!dozentin.cities.slug) continue;
+  if (!service) continue;
+  if (!service.slug) continue;
 
     const city = dozentin.cities;
     const key  = `${city.slug}__${service.slug}`;

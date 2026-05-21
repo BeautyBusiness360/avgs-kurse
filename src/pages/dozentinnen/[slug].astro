@@ -29,9 +29,14 @@ export async function getStaticPaths() {
 
   return dozentinnen.map(d => {
     // NULL-Filter: [{ services: null }] → []
-    const services = (d.dozentin_services ?? [])
-      .map(ds => ds.services)
-      .filter(Boolean);
+    const rawRelations = Array.isArray(d.dozentin_services)
+  ? d.dozentin_services 
+  : [];
+
+const services = rawRelations
+  .map(ds => ds?.services ?? null)
+  .filter(Boolean);
+
 
     return {
       params: { slug: d.slug },
