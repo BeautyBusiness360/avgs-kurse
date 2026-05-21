@@ -3,10 +3,12 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const { data, error } = await supabase
-    .from('dozentin_services')
+  const { data: cities, error } = await supabase
+    .from('cities')
     .select(`
-      dozentinnen!inner(
+      slug,
+      name,
+      dozentinnen(
         slug,
         first_name,
         last_name,
@@ -14,46 +16,53 @@ export async function getStaticPaths() {
         review_count,
         avgs_certified,
         active,
-        cities!inner(slug, name)
-      ),
-      services!inner(
-        slug,
-        name,
-        category,
-        avgs_eligible,
-        description_template
+        dozentin_services(
+          services(slug, name, category, avgs_eligible, description_template)
+        )
       )
-    `)
-    .eq('dozentinnen.active', true);
+    `);
 
-  if (error || !data) {
+  if (error || !cities) {
     console.error('getStaticPaths Fehler:', error);
     return [];
   }
 
   const pageMap = new Map();
 
-  for (const row of data) {
-    const dozentin = row.dozentinnen;
-    const service  = row.services;
-    const city     = dozentin?.cities;
+  for (const city of cities) {
+    const activeDozentinnen = Array.isArray(city.dozentinnen)
+      ? city.dozentinnen.filter(d => d?.active === true)
+      : [];
 
-    if (!city?.slug || !service?.slug) continue;
+    for (const dozentin of activeDozentinnen) {
+      const dsRows = Array.isArray(dozentin.dozentin_services)
+        ? dozentin.dozentin_services
+        : [];
 
-    const key = `${city.slug}__${service.slug}`;
+      for (const ds of dsRows) {
+        const service = ds?.services;
+        if (!service?.slug) continue;
 
-    if (!pageMap.has(key)) {
-      pageMap.set(key, { city, service, dozentinnen: [] });
+        const key = `${city.slug}__${service.slug}`;
+
+        if (!pageMap.has(key)) {
+          pageMap.set(key, {
+            city: { slug: city.slug, name: city.name },
+            service,
+            dozentinnen: []
+          });
+        }
+
+        pageMap.get(key).dozentinnen.push({
+          slug: dozentin.slug,
+          first_name: dozentin.first_name,
+          last_name: dozentin.last_name,
+          rating: dozentin.rating,
+          review_count: dozentin.review_count,
+          avgs_certified: dozentin.avgs_certified
+        });
+      }
     }
-
-    pageMap.get(key).dozentinnen.push({
-      slug: dozentin.slug,
-      first_name: dozentin.first_name,
-      last_name: dozentin.last_name,
-      rating: dozentin.rating,
-      review_count: dozentin.review_count,
-      avgs_certified: dozentin.avgs_certified
-    });
   }
 
   return Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
