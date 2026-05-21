@@ -3,46 +3,57 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const { data: dozentinnen, error } = await supabase
-    .from('dozentinnen')
+  const { data, error } = await supabase
+    .from('dozentin_services')
     .select(`
-      slug,
-      first_name,
-      last_name,
-      rating,
-      review_count,
-      avgs_certified,
-      active,
-      cities(slug, name),
-      dozentin_services(
-        services(slug, name, category, avgs_eligible, description_template)
+      dozentinnen!inner(
+        slug,
+        first_name,
+        last_name,
+        rating,
+        review_count,
+        avgs_certified,
+        active,
+        cities!inner(slug, name)
+      ),
+      services!inner(
+        slug,
+        name,
+        category,
+        avgs_eligible,
+        description_template
       )
     `)
-    .eq('active', true);
+    .eq('dozentinnen.active', true);
 
-  if (error || !dozentinnen) return [];
+  if (error || !data) {
+    console.error('getStaticPaths Fehler:', error);
+    return [];
+  }
 
   const pageMap = new Map();
 
-  for (const dozentin of dozentinnen) {
-    const city = dozentin.cities;
-    if (!city?.slug) continue;
+  for (const row of data) {
+    const dozentin = row.dozentinnen;
+    const service  = row.services;
+    const city     = dozentin?.cities;
 
-    const services = (dozentin.dozentin_services ?? [])
-      .map(ds => ds?.services)
-      .filter(Boolean);
+    if (!city?.slug || !service?.slug) continue;
 
-    for (const service of services) {
-      if (!service?.slug) continue;
+    const key = `${city.slug}__${service.slug}`;
 
-      const key = `${city.slug}__${service.slug}`;
-
-      if (!pageMap.has(key)) {
-        pageMap.set(key, { city, service, dozentinnen: [] });
-      }
-
-      pageMap.get(key).dozentinnen.push(dozentin);
+    if (!pageMap.has(key)) {
+      pageMap.set(key, { city, service, dozentinnen: [] });
     }
+
+    pageMap.get(key).dozentinnen.push({
+      slug: dozentin.slug,
+      first_name: dozentin.first_name,
+      last_name: dozentin.last_name,
+      rating: dozentin.rating,
+      review_count: dozentin.review_count,
+      avgs_certified: dozentin.avgs_certified
+    });
   }
 
   return Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
@@ -61,7 +72,7 @@ const description = (service.description_template ?? '')
 
 const seo = {
   title: `${service.name} ${city.name} | 1:1 Einzelcoaching – AVGS gefördert`,
-  description: description || `${service.name} Einzelcoaching in ${city.name}. Für fortgeschrittene Teilnehmer. AVGS gefördert.`,
+  description: description || `${service.name} Einzelcoaching in ${city.name}. AVGS gefördert.`,
   canonical: `https://dein-beauty-kurs.de/${city.slug}/${service.slug}`
 };
 
@@ -86,11 +97,9 @@ const schema = {
   canonical={seo.canonical}
   schema={schema}
 >
-
   <section>
     <h1>{service.name} in {city.name}</h1>
     <p>1:1 Einzelcoaching – für fortgeschrittene Teilnehmer</p>
-
     {service.avgs_eligible && (
       <p>✅ Förderbar über Arbeitsagentur (AVGS) – 100% kostenlos</p>
     )}
@@ -106,8 +115,7 @@ const schema = {
     <h2>
       {dozentinnen.length === 1
         ? `Deine Dozentin für ${service.name} in ${city.name}`
-        : `${dozentinnen.length} Dozentinnen für ${service.name} in ${city.name}`
-      }
+        : `${dozentinnen.length} Dozentinnen für ${service.name} in ${city.name}`}
     </h2>
 
     {dozentinnen.map(d => (
@@ -132,8 +140,6 @@ const schema = {
   </section>
 
   <section>
-    <h2>Weitere Kurse in {city.name}</h2>
     <a href={`/${city.slug}`}>← Alle Kurse in {city.name}</a>
   </section>
-
 </SEOLayout>
