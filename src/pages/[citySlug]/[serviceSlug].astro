@@ -3,53 +3,51 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  // Alle Kombinationen: Stadt × Service wo mind. 1 aktive Dozentin existiert
-  const { data: combinations, error } = await supabase
-    .from('dozentin_services')
+  const { data: dozentinnen, error } = await supabase
+    .from('dozentinnen')
     .select(`
-      services(slug, name, category, avgs_eligible, description_template),
-      dozentinnen(
-  slug,
-  first_name,
-  last_name,
-  rating,
-  review_count,
-  avgs_certified,
-  active,
-  city_id,
-  cities:city_id(slug, name)
-)
+      slug,
+      first_name,
+      last_name,
+      rating,
+      review_count,
+      avgs_certified,
+      active,
+      cities(slug, name),
+      dozentin_services(
+        services(slug, name, category, avgs_eligible, description_template)
+      )
+    `)
+    .eq('active', true);
 
-    `);
+  if (error || !dozentinnen) return [];
 
-  if (error || !combinations) return [];
-
-  // Gruppieren: city_slug + service_slug → Dozentinnen
   const pageMap = new Map();
 
-  for (const combo of combinations) {
-  const dozentin = combo?.dozentinnen;
-  const service  = combo?.services;
-
-  if (!dozentin) continue;
-  if (!dozentin.active) continue;
-  if (!dozentin.cities) continue;
-  if (!dozentin.cities.slug) continue;
-  if (!service) continue;
-  if (!service.slug) continue;
-
+  for (const dozentin of dozentinnen) {
     const city = dozentin.cities;
-    const key  = `${city.slug}__${service.slug}`;
+    if (!city?.slug) continue;
 
-    if (!pageMap.has(key)) {
-      pageMap.set(key, { city, service, dozentinnen: [] });
+    const services = (dozentin.dozentin_services ?? [])
+      .map(ds => ds?.services)
+      .filter(Boolean);
+
+    for (const service of services) {
+      if (!service?.slug) continue;
+
+      const key = `${city.slug}__${service.slug}`;
+
+      if (!pageMap.has(key)) {
+        pageMap.set(key, { city, service, dozentinnen: [] });
+      }
+
+      pageMap.get(key).dozentinnen.push(dozentin);
     }
-    pageMap.get(key).dozentinnen.push(dozentin);
   }
 
   return Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
     params: {
-      citySlug:    city.slug,
+      citySlug: city.slug,
       serviceSlug: service.slug
     },
     props: { city, service, dozentinnen }
@@ -58,7 +56,6 @@ export async function getStaticPaths() {
 
 const { city, service, dozentinnen } = Astro.props;
 
-// description_template: "... in {city} ..."
 const description = (service.description_template ?? '')
   .replace('{city}', city.name);
 
@@ -90,23 +87,21 @@ const schema = {
   schema={schema}
 >
 
-  <!-- Hero -->
   <section>
     <h1>{service.name} in {city.name}</h1>
     <p>1:1 Einzelcoaching – für fortgeschrittene Teilnehmer</p>
+
     {service.avgs_eligible && (
       <p>✅ Förderbar über Arbeitsagentur (AVGS) – 100% kostenlos</p>
     )}
   </section>
 
-  <!-- Unique Intro aus Template -->
   {description && (
     <section>
       <p>{description}</p>
     </section>
   )}
 
-  <!-- Dozentinnen für diesen Service in dieser Stadt -->
   <section>
     <h2>
       {dozentinnen.length === 1
@@ -122,16 +117,20 @@ const schema = {
             {d.first_name} {d.last_name}
           </a>
         </h3>
+
         {d.review_count > 0 && (
           <p>⭐ {d.rating}/5 ({d.review_count} Bewertungen)</p>
         )}
+
         {d.avgs_certified && <p>✅ AVGS zertifiziert</p>}
-        <a href={`/dozentinnen/${d.slug}`}>Profil & Unterlagen →</a>
+
+        <a href={`/dozentinnen/${d.slug}`}>
+          Profil & Unterlagen →
+        </a>
       </article>
     ))}
   </section>
 
-  <!-- Interne Verlinkung: andere Module in dieser Stadt -->
   <section>
     <h2>Weitere Kurse in {city.name}</h2>
     <a href={`/${city.slug}`}>← Alle Kurse in {city.name}</a>
