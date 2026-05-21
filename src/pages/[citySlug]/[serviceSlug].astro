@@ -1,0 +1,135 @@
+---
+import SEOLayout from '../../layouts/SEOLayout.astro';
+import { supabase } from '../../lib/supabase';
+
+export async function getStaticPaths() {
+  // Alle Kombinationen: Stadt × Service wo mind. 1 aktive Dozentin existiert
+  const { data: combinations, error } = await supabase
+    .from('dozentin_services')
+    .select(`
+      services(slug, name, category, avgs_eligible, description_template),
+      dozentinnen(
+  slug,
+  first_name,
+  last_name,
+  rating,
+  review_count,
+  avgs_certified,
+  active,
+  city_id,
+  cities:city_id(slug, name)
+)
+
+    `);
+
+  if (error || !combinations) return [];
+
+  // Gruppieren: city_slug + service_slug → Dozentinnen
+  const pageMap = new Map();
+
+  for (const combo of combinations) {
+    const dozentin = combo.dozentinnen;
+    const service  = combo.services;
+
+    if (!dozentin?.active || !dozentin?.cities || !service) continue;
+
+    const city = dozentin.cities;
+    const key  = `${city.slug}__${service.slug}`;
+
+    if (!pageMap.has(key)) {
+      pageMap.set(key, { city, service, dozentinnen: [] });
+    }
+    pageMap.get(key).dozentinnen.push(dozentin);
+  }
+
+  return Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
+    params: {
+      citySlug:    city.slug,
+      serviceSlug: service.slug
+    },
+    props: { city, service, dozentinnen }
+  }));
+}
+
+const { city, service, dozentinnen } = Astro.props;
+
+// description_template: "... in {city} ..."
+const description = (service.description_template ?? '')
+  .replace('{city}', city.name);
+
+const seo = {
+  title: `${service.name} ${city.name} | 1:1 Einzelcoaching – AVGS gefördert`,
+  description: description || `${service.name} Einzelcoaching in ${city.name}. Für fortgeschrittene Teilnehmer. AVGS gefördert.`,
+  canonical: `https://dein-beauty-kurs.de/${city.slug}/${service.slug}`
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": `${service.name} in ${city.name}`,
+  "url": seo.canonical,
+  "numberOfItems": dozentinnen.length,
+  "itemListElement": dozentinnen.map((d, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "url": `https://dein-beauty-kurs.de/dozentinnen/${d.slug}`,
+    "name": `${d.first_name} ${d.last_name}`
+  }))
+};
+---
+
+<SEOLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section>
+    <h1>{service.name} in {city.name}</h1>
+    <p>1:1 Einzelcoaching – für fortgeschrittene Teilnehmer</p>
+    {service.avgs_eligible && (
+      <p>✅ Förderbar über Arbeitsagentur (AVGS) – 100% kostenlos</p>
+    )}
+  </section>
+
+  <!-- Unique Intro aus Template -->
+  {description && (
+    <section>
+      <p>{description}</p>
+    </section>
+  )}
+
+  <!-- Dozentinnen für diesen Service in dieser Stadt -->
+  <section>
+    <h2>
+      {dozentinnen.length === 1
+        ? `Deine Dozentin für ${service.name} in ${city.name}`
+        : `${dozentinnen.length} Dozentinnen für ${service.name} in ${city.name}`
+      }
+    </h2>
+
+    {dozentinnen.map(d => (
+      <article>
+        <h3>
+          <a href={`/dozentinnen/${d.slug}`}>
+            {d.first_name} {d.last_name}
+          </a>
+        </h3>
+        {d.review_count > 0 && (
+          <p>⭐ {d.rating}/5 ({d.review_count} Bewertungen)</p>
+        )}
+        {d.avgs_certified && <p>✅ AVGS zertifiziert</p>}
+        <a href={`/dozentinnen/${d.slug}`}>Profil & Unterlagen →</a>
+      </article>
+    ))}
+  </section>
+
+  <!-- Interne Verlinkung: andere Module in dieser Stadt -->
+  <section>
+    <h2>Weitere Kurse in {city.name}</h2>
+    <a href={`/${city.slug}`}>← Alle Kurse in {city.name}</a>
+  </section>
+
+</SEOLayout>

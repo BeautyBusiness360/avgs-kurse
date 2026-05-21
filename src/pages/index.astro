@@ -1,0 +1,19 @@
+---
+import { supabase } from '../lib/supabase';
+
+const { data: cities, error } = await supabase
+  .from('cities')
+  .select('slug, name');
+---
+
+<html>
+  <body>
+    <h1>Verbindungstest</h1>
+
+    {error && <p style="color:red">FEHLER: {error.message}</p>}
+
+    {cities?.map(city => (
+      <p>✅ {city.name} ({city.slug})</p>
+    ))}
+  </body>
+</html>

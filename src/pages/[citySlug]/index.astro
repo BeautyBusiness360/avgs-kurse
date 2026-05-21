@@ -1,0 +1,127 @@
+---
+import SEOLayout from '../../layouts/SEOLayout.astro';
+import { supabase } from '../../lib/supabase';
+
+export async function getStaticPaths() {
+  const { data: cities, error } = await supabase
+    .from('cities')
+    .select(`
+      slug,
+      name,
+      state,
+      meta_title,
+      meta_description,
+      dozentinnen(
+        slug,
+        first_name,
+        last_name,
+        bio_short,
+        rating,
+        review_count,
+        avgs_certified,
+        image_url,
+        active,
+        dozentin_services(
+          services(slug, name)
+        )
+      )
+    `);
+
+  if (error || !cities) return [];
+
+  return cities.map(city => {
+    const activeDozentinnen = (city.dozentinnen ?? [])
+      .filter(d => d.active)
+      .map(d => ({
+        ...d,
+        services: (d.dozentin_services ?? [])
+          .map(ds => ds.services)
+          .filter(Boolean)
+      }));
+
+    const allServices = [
+      ...new Map(
+        activeDozentinnen
+          .flatMap(d => d.services)
+          .map(s => [s.slug, s])
+      ).values()
+    ];
+
+    return {
+      params: { citySlug: city.slug },
+      props: { city, dozentinnen: activeDozentinnen, services: allServices }
+    };
+  });
+}
+
+const { city, dozentinnen, services } = Astro.props;
+
+const seo = {
+  title: city.meta_title ?? `Beauty Kurse ${city.name}`,
+  description: city.meta_description ?? `${dozentinnen.length} Dozentinnen in ${city.name}`,
+  canonical: `https://dein-beauty-kurs.de/${city.slug}`
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": `Beauty Kurse in ${city.name}`,
+  "url": seo.canonical,
+  "numberOfItems": dozentinnen.length,
+  "itemListElement": dozentinnen.map((d, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "url": `https://dein-beauty-kurs.de/dozentinnen/${d.slug}`,
+    "name": `${d.first_name} ${d.last_name}`
+  }))
+};
+---
+
+<SEOLayout title={seo.title} description={seo.description} canonical={seo.canonical} schema={schema}>
+
+  <section>
+    <h1>Beauty Kurse in {city.name}</h1>
+    <p>{dozentinnen.length} Dozentinnen verfügbar</p>
+  </section>
+
+  {services.length > 0 && (
+    <section>
+      <h2>Kurse</h2>
+      <ul>
+        {services.map(s => (
+          <li>
+            <a href={`/${city.slug}/${s.slug}`}>
+              {s.name} in {city.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section>
+    <h2>Dozentinnen</h2>
+
+    {dozentinnen.map(d => (
+      <article>
+        <h3>
+          <a href={`/dozentinnen/${d.slug}`}>
+            {d.first_name} {d.last_name}
+          </a>
+        </h3>
+
+        {d.review_count > 0 && (
+          <p>⭐ {d.rating}/5</p>
+        )}
+
+        {d.bio_short && <p>{d.bio_short}</p>}
+
+        <a href={`/dozentinnen/${d.slug}`}>
+          Profil ansehen →
+        </a>
+      </article>
+    ))}
+
+  </section>
+
+</SEOLayout>
