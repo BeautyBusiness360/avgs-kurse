@@ -30,26 +30,20 @@ export async function getStaticPaths() {
   if (error || !cities) return [];
 
   return cities.map(city => {
-    const activeDozentinnen = Array.isArray(city.dozentinnen)
-  ? city.dozentinnen
-      .filter(d => d?.active === true)
-      .map(d => ({
-        ...d,
-        services: Array.isArray(d.dozentin_services)
-          ? d.dozentin_services
-              .map(ds => ds?.services ?? null)
-              .filter(Boolean)
-          : []
-      }))
-  : [];
 
-      .filter(d => d.active)
-      .map(d => ({
-        ...d,
-        services: (d.dozentin_services ?? [])
-          .map(ds => ds.services)
-          .filter(Boolean)
-      }));
+    // ✅ FIXED: NULL-safe + KEIN Syntax-Fehler mehr
+    const activeDozentinnen = Array.isArray(city.dozentinnen)
+      ? city.dozentinnen
+          .filter(d => d?.active === true)
+          .map(d => ({
+            ...d,
+            services: Array.isArray(d.dozentin_services)
+              ? d.dozentin_services
+                  .map(ds => ds?.services ?? null)
+                  .filter(Boolean)
+              : []
+          }))
+      : [];
 
     const allServices = [
       ...new Map(
@@ -89,7 +83,12 @@ const schema = {
 };
 ---
 
-<SEOLayout title={seo.title} description={seo.description} canonical={seo.canonical} schema={schema}>
+<SEOLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  schema={schema}
+>
 
   <section>
     <h1>Beauty Kurse in {city.name}</h1>
