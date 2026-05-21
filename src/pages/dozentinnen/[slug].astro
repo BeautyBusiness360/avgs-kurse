@@ -1,5 +1,4 @@
 ---
-import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export const prerender = true;
@@ -30,15 +29,13 @@ export async function getStaticPaths() {
   }
 
   return dozentinnen.map(d => {
-    // NULL-Filter: [{ services: null }] → []
     const rawRelations = Array.isArray(d.dozentin_services)
-  ? d.dozentin_services 
-  : [];
+      ? d.dozentin_services
+      : [];
 
-const services = rawRelations
-  .map(ds => ds?.services ?? null)
-  .filter(Boolean);
-
+    const services = rawRelations
+      .map(ds => ds?.services ?? null)
+      .filter(Boolean);
 
     return {
       params: { slug: d.slug },
@@ -53,17 +50,19 @@ const services = rawRelations
 }
 
 const { dozentin } = Astro.props;
-const city = dozentin.cities;
-const services = dozentin.services;
+const city = Array.isArray(dozentin.cities) ? dozentin.cities[0] : dozentin.cities;
+const services = dozentin.services ?? [];
 
-const hasRating = dozentin.review_count > 0;
+const hasRating   = (dozentin.review_count ?? 0) > 0;
 const hasServices = services.length > 0;
-const primaryService = services[0]?.name ?? 'Beauty Kurs';
+const serviceTitle = hasServices
+  ? services.map((s: any) => s.name).join(' & ')
+  : 'Beauty Kurs';
 
 const seo = {
-  title: `${primaryService} ${city.name} | ${dozentin.first_name} ${dozentin.last_name} – AVGS gefördert`,
-  description: `${dozentin.bio_short ?? `Zertifizierte ${primaryService} Kurse in ${city.name}.`} Staatlich gefördert über AVGS.`,
-  canonical: `https://dein-beauty-kurs.de/dozentinnen/${dozentin.slug}`
+  title:       `${serviceTitle} ${city.name} | ${dozentin.first_name} ${dozentin.last_name} – AVGS gefördert`,
+  description: `${dozentin.bio_short ?? `Zertifizierte ${serviceTitle} Kurse in ${city.name}.`} Staatlich gefördert über AVGS.`,
+  canonical:   `https://avgs-kurse.vercel.app/dozentinnen/${dozentin.slug}`
 };
 
 const schema = {
@@ -87,7 +86,7 @@ const schema = {
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "Beauty Schulungen",
-      "itemListElement": services.map(s => ({
+      "itemListElement": services.map((s: any) => ({
         "@type": "Course",
         "name": s.name,
         "provider": {
@@ -98,78 +97,923 @@ const schema = {
     }
   })
 };
+
+// cycle through 3 gradient styles for course card images
+const bgClasses = ['pmu', 'lippen', 'micro'];
 ---
 
-<SEOLayout
-  title={seo.title}
-  description={seo.description}
-  canonical={seo.canonical}
-  schema={schema}
->
-  <!-- Hero -->
-  <section>
-    <h1>
-      {hasServices
-        ? services.map(s => s.name).join(' & ')
-        : 'Beauty Kurse'} in {city.name}
-    </h1>
-    <h2>{dozentin.first_name} {dozentin.last_name}</h2>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description} />
+  <link rel="canonical" href={seo.canonical} />
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    {hasRating && (
-      <p>⭐ {dozentin.rating}/5 ({dozentin.review_count} Bewertungen)</p>
-    )}
-  </section>
+    :root {
+      --gold:        #C9A96E;
+      --gold-light:  #E8D5B0;
+      --gold-dark:   #9A7A45;
+      --navy:        #0D1B2A;
+      --navy-mid:    #1A2E42;
+      --navy-light:  #243B55;
+      --cream:       #FAF7F2;
+      --cream-dark:  #F0EBE1;
+      --text:        #1A1A1A;
+      --text-mid:    #4A4A4A;
+      --text-muted:  #7A7A7A;
+      --white:       #FFFFFF;
+      --success:     #2D6A4F;
+      --success-bg:  #D8F3DC;
+      --radius-sm:   6px;
+      --radius-md:   12px;
+      --radius-lg:   20px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --max:          1100px;
+    }
 
-  <!-- AVGS -->
-  {dozentin.avgs_certified && (
-    <section>
-      <p>✅ Förderbar über Arbeitsagentur (AVGS)</p>
-    </section>
-  )}
+    html { scroll-behavior: smooth; }
 
-  <!-- Bio -->
-  {dozentin.bio_short && (
-    <section>
-      <p>{dozentin.bio_short}</p>
-    </section>
-  )}
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-  <!-- Leistungen -->
-  {hasServices && (
-    <section>
-      <h2>Angebotene Kurse</h2>
-      <ul>
-        {services.map(s => (
-          <li>
-            <a href={`/${city.slug}/${s.slug}`}>
-              {s.name} in {city.name}
-            </a>
-            {s.avgs_eligible && <span> – AVGS förderbar</span>}
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
+    /* ─── HEADER ─── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 27, 42, 0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201, 169, 110, 0.2);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-  <!-- CTA -->
-  <section>
-    <h2>Jetzt kostenlos starten</h2>
-  {dozentin.jotform_id
-  ? (
-      <div data-jotform-id={dozentin.jotform_id}>
-        Formular lädt...
+    .header-logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .header-logo span {
+      display: block;
+      font-size: 10px;
+      font-family: var(--font-body);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(201, 169, 110, 0.6);
+      margin-top: -2px;
+    }
+
+    .btn-recruiting {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-recruiting:hover { background: var(--gold); color: var(--navy); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(201,169,110,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 60px 24px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 48px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201, 169, 110, 0.12);
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border-radius: 40px;
+      margin-bottom: 24px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4.5vw, 46px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em { font-style: normal; color: var(--gold); }
+
+    .hero-sub {
+      color: rgba(255,255,255,0.65);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 460px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 36px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold);
+      color: var(--navy);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 16px 32px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-primary svg { flex-shrink: 0; }
+
+    .hero-trust {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+    }
+
+    .trust-item svg { color: var(--gold); flex-shrink: 0; }
+
+    /* ─── HERO VISUAL ─── */
+    .hero-visual { position: relative; }
+
+    .hero-img-wrap {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: var(--navy-mid);
+      max-height: 420px;
+    }
+
+    .hero-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: rgba(255,255,255,0.25);
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(160deg, #1A2E42 0%, #0D1B2A 100%);
+    }
+
+    .hero-img-placeholder svg { color: rgba(201,169,110,0.3); }
+
+    .cert-badge {
+      position: absolute;
+      bottom: -16px;
+      right: -16px;
+      width: 120px;
+      height: 120px;
+      background: var(--navy);
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px;
+      gap: 2px;
+    }
+
+    .cert-badge .cert-top   { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+    .cert-badge .cert-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.1; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cert-badge .cert-nr    { font-size: 8px; color: rgba(201,169,110,0.7); letter-spacing: 0.06em; margin-top: 2px; }
+    .cert-badge .cert-star  { color: var(--gold); font-size: 16px; line-height: 1; margin-top: 2px; }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    /* ─── COURSES ─── */
+    .courses { background: var(--cream); padding: 72px 24px; }
+
+    .courses-inner { max-width: var(--max); margin: 0 auto; }
+
+    .courses-header { margin-bottom: 40px; }
+
+    .courses-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      max-width: 600px;
+      line-height: 1.2;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .course-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.07);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(13,27,42,0.12); }
+
+    .course-img {
+      aspect-ratio: 16/9;
+      background: var(--navy-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.2);
+      font-size: 12px;
+      text-align: center;
+      padding: 12px;
+      gap: 8px;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-img-bg { position: absolute; inset: 0; opacity: 0.15; }
+    .course-img-bg.pmu    { background: linear-gradient(135deg, #8B5E3C, #C9A96E); }
+    .course-img-bg.lippen { background: linear-gradient(135deg, #8B3A52, #C96E8E); }
+    .course-img-bg.micro  { background: linear-gradient(135deg, #3A5E8B, #6E9EC9); }
+
+    .course-img svg  { position: relative; z-index: 1; color: rgba(255,255,255,0.4); }
+    .course-img span { position: relative; z-index: 1; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; color: rgba(255,255,255,0.35); }
+
+    .course-body { padding: 24px; }
+
+    .course-body h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .course-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+
+    .course-meta-item { display: flex; gap: 8px; font-size: 13px; color: var(--text-mid); }
+
+    .course-meta-item strong { color: var(--text); font-weight: 500; min-width: 100px; flex-shrink: 0; }
+
+    .avgs-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--success-bg);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 40px;
+      margin-bottom: 16px;
+    }
+
+    .btn-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: var(--navy);
+      color: var(--white);
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-card:hover { background: var(--navy-light); }
+
+    .btn-card-sub { font-size: 11px; opacity: 0.55; font-weight: 400; display: block; text-align: left; margin-top: 1px; }
+
+    .btn-card svg { flex-shrink: 0; opacity: 0.6; }
+
+    /* ─── ABOUT ─── */
+    .about { padding: 72px 24px; background: var(--white); }
+
+    .about-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .about h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .about p { font-size: 15px; line-height: 1.75; color: var(--text-mid); margin-bottom: 16px; }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--cream-dark);
+    }
+
+    .stars { display: flex; gap: 3px; }
+    .stars svg { color: var(--gold); }
+
+    .rating-text { font-size: 14px; color: var(--text-muted); }
+    .rating-text strong { color: var(--text); font-weight: 600; }
+
+    .about-img-col { position: relative; }
+
+    .about-img-placeholder {
+      aspect-ratio: 4/5;
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+      border: 1px solid var(--cream-dark);
+    }
+
+    .about-img-placeholder svg { color: var(--gold-light); }
+
+    .spec-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+
+    .chip {
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      color: var(--text-mid);
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 400;
+    }
+
+    /* ─── GALLERY ─── */
+    .gallery { background: var(--navy); padding: 72px 24px; }
+
+    .gallery-inner { max-width: var(--max); margin: 0 auto; }
+
+    .gallery-header { margin-bottom: 32px; }
+
+    .gallery-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .gallery-header p { color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 6px; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      background: var(--navy-mid);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(201,169,110,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.15);
+      font-size: 11px;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .gallery-item:hover { border-color: rgba(201,169,110,0.3); }
+    .gallery-item svg   { color: rgba(201,169,110,0.2); }
+    .gallery-item span  { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; color: rgba(255,255,255,0.2); }
+
+    /* ─── FAQ ─── */
+    .faq { background: var(--cream); padding: 72px 24px; }
+
+    .faq-inner { max-width: 720px; margin: 0 auto; }
+
+    .faq-header { margin-bottom: 40px; text-align: center; }
+
+    .faq-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 3vw, 36px);
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--cream-dark);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--white);
+    }
+
+    .faq-item { border-bottom: 1px solid var(--cream-dark); }
+    .faq-item:last-child { border-bottom: none; }
+
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 20px 24px;
+      text-align: left;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--navy);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: background 0.15s;
+    }
+
+    .faq-q:hover { background: var(--cream); }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1px solid var(--cream-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      transition: transform 0.25s, background 0.2s;
+      background: var(--cream);
+    }
+
+    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--gold); color: var(--white); border-color: var(--gold); }
+
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+
+    .faq-item.open .faq-a { max-height: 300px; }
+
+    .faq-a-inner { padding: 0 24px 20px; font-size: 14px; line-height: 1.75; color: var(--text-mid); }
+
+    /* ─── FOOTER CTA ─── */
+    .footer-cta {
+      background: var(--navy);
+      padding: 72px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(201,169,110,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .footer-cta-inner { max-width: 560px; margin: 0 auto; position: relative; }
+
+    .footer-cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .footer-cta p { color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 32px; line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: #07111C;
+      padding: 24px;
+      text-align: center;
+      border-top: 1px solid rgba(201,169,110,0.1);
+    }
+
+    .footer-links { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 12px; flex-wrap: wrap; }
+
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        padding: 40px 20px 48px;
+        gap: 32px;
+      }
+
+      .hero-visual { order: -1; }
+
+      .hero-img-wrap { max-height: 280px; aspect-ratio: 4/3; }
+
+      .cert-badge { width: 90px; height: 90px; bottom: -12px; right: -8px; }
+      .cert-badge .cert-title { font-size: 10px; }
+
+      .hero-cta-group { align-items: stretch; }
+      .btn-primary { justify-content: center; }
+
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .about-img-col { order: -1; }
+      .about-img-placeholder { aspect-ratio: 3/2; }
+
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+      .courses  { padding: 48px 20px; }
+      .about    { padding: 48px 20px; }
+      .gallery  { padding: 48px 20px; }
+      .faq      { padding: 48px 20px; }
+      .footer-cta { padding: 56px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="header">
+  <a href="/" class="header-logo">
+    BeautyBusiness360
+    <span>Fachdozentinnen Netzwerk</span>
+  </a>
+  <a href="https://dein-beauty-kurs.de/fachdozentin-werden" target="_blank" rel="noopener noreferrer" class="btn-recruiting">
+    Fachdozentin werden
+  </a>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">AVGS-gefördert · 100 % kostenlos</div>
+
+      <h1>Kostenlose <em>1:1&nbsp;{serviceTitle}</em> in {city.name}</h1>
+
+      <p class="hero-sub">
+        {dozentin.bio_short
+          ? dozentin.bio_short
+          : `Bei ${dozentin.first_name} ${dozentin.last_name} erhältst du ein individuelles 1:1-Perfektionstraining in ${city.name}, das zu 100 % über den AVGS-Gutschein gefördert wird.`
+        }
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#kurse" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Kostenfreie Unterlagen erhalten
+        </a>
       </div>
-    )
-  : (
-      <p>Nimm Kontakt auf über die Stadtseite.</p>
-    )
-}
 
-  </section>
+      <div class="hero-trust">
+        <div class="trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          100 % kostenfrei bei Bewilligung
+        </div>
+        <div class="trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          AZAV-zertifizierte Schulungen
+        </div>
+        <div class="trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Anerkannte Fachdozentin
+        </div>
+      </div>
+    </div>
 
-  <!-- Interne Verlinkung -->
-  <section>
-    <a href={`/${city.slug}`}>← Alle Kurse in {city.name}</a>
-  </section>
+    <div class="hero-visual">
+      <div class="hero-img-wrap">
+        <div class="hero-img-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Foto {dozentin.first_name} {dozentin.last_name}
+        </div>
+      </div>
 
-</SEOLayout>
+      <div class="cert-badge">
+        <span class="cert-top">BeautyBusiness360</span>
+        <span class="cert-title">Anerkannte Fachdozentin</span>
+        <span class="cert-nr">BB360-FD</span>
+        <span class="cert-star">★</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── KURSE ─── -->
+<section class="courses" id="kurse">
+  <div class="courses-inner">
+    <div class="courses-header">
+      <p class="section-label">Perfektionstrainings</p>
+      <h2>Kostenlose 1:1-Trainings in {city.name} mit {dozentin.first_name} {dozentin.last_name}</h2>
+    </div>
+
+    <div class="courses-grid">
+      {services.map((service: any, i: number) => (
+        <div class="course-card">
+          <div class="course-img">
+            <div class={`course-img-bg ${bgClasses[i % bgClasses.length]}`}></div>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Kursbild {service.name}</span>
+          </div>
+          <div class="course-body">
+            <span class="avgs-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Kostenfrei mit AVGS-Gutschein
+            </span>
+            <h3>{service.name} – Perfektionstraining</h3>
+            <div class="course-meta">
+              <div class="course-meta-item"><strong>Dauer</strong> 40 Unterrichtsstunden</div>
+              <div class="course-meta-item"><strong>Unterrichtszeiten</strong> Nach Vereinbarung</div>
+              <div class="course-meta-item"><strong>Unterrichtsform</strong> Hybridunterricht</div>
+              <div class="course-meta-item"><strong>Kursbeginn</strong> Ab sofort möglich</div>
+            </div>
+            <a href="#kurse" class="btn-card">
+              <span>
+                Kostenfreie Unterlagen erhalten
+                <span class="btn-card-sub">Start in deine Weiterbildung</span>
+              </span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ─── ÜBER DIE DOZENTIN ─── -->
+<section class="about">
+  <div class="about-inner">
+    <div>
+      <p class="section-label">Über die Dozentin</p>
+      <h2>{dozentin.first_name} {dozentin.last_name} – Anerkannte Fachdozentin</h2>
+
+      {dozentin.bio_short
+        ? <p>{dozentin.bio_short}</p>
+        : (
+          <>
+            <p>
+              Als anerkannte Fachdozentin bei BeautyBusiness360 verbindet {dozentin.first_name} {dozentin.last_name} fundiertes Fachwissen mit jahrelanger Praxiserfahrung. Ihre Trainings sind gezielt auf fortgeschrittene Artists ausgerichtet, die ihre Technik auf ein neues Niveau bringen möchten.
+            </p>
+            <p>
+              Im individuellen 1:1-Format arbeitet sie direkt an deinen persönlichen Entwicklungszielen – präzise, praxisnah und vollständig über den AVGS-Gutschein gefördert.
+            </p>
+          </>
+        )
+      }
+
+      <div class="spec-chips">
+        {services.map((s: any) => (
+          <span class="chip">{s.name}</span>
+        ))}
+        <span class="chip">1:1 Einzelcoaching</span>
+        {dozentin.avgs_certified && <span class="chip">AZAV-zertifiziert</span>}
+      </div>
+
+      {hasRating && (
+        <div class="rating-row">
+          <div class="stars">
+            {Array.from({ length: 5 }).map(() => (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ))}
+          </div>
+          <p class="rating-text">
+            <strong>{dozentin.rating} / 5</strong> · {dozentin.review_count} Bewertungen
+          </p>
+        </div>
+      )}
+    </div>
+
+    <div class="about-img-col">
+      <div class="about-img-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Galerie / Arbeitsergebnisse<br />{dozentin.first_name} {dozentin.last_name}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GALERIE ─── -->
+<section class="gallery">
+  <div class="gallery-inner">
+    <div class="gallery-header">
+      <p class="section-label" style="color: rgba(201,169,110,0.6);">Ergebnisse & Einblicke</p>
+      <h2>Permanent Make-up Galerie von {dozentin.first_name} {dozentin.last_name}</h2>
+      <p>Ausgewählte Behandlungsergebnisse aus den AVGS-geförderten 1:1-Perfektionstrainings</p>
+    </div>
+
+    <div class="gallery-grid">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div class="gallery-item">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Galerie Bild {i + 1}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="faq">
+  <div class="faq-inner">
+    <div class="faq-header">
+      <p class="section-label">Häufige Fragen</p>
+      <h2>Alles Wichtige auf einen Blick</h2>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Was ist der AVGS-Gutschein und wer bekommt ihn?
+          <span class="faq-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <p class="faq-a-inner">Der Aktivierungs- und Vermittlungsgutschein (AVGS) ist ein Förderinstrument der Bundesagentur für Arbeit. Er ermöglicht es arbeitslosen oder von Arbeitslosigkeit bedrohten Personen, Weiterbildungsmaßnahmen vollständig kostenfrei zu nutzen. Die Ausstellung erfolgt durch deinen persönlichen Berater beim Jobcenter oder der Arbeitsagentur.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Für wen sind die Trainings geeignet?
+          <span class="faq-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <p class="faq-a-inner">Die Perfektionstrainings richten sich ausschließlich an Kosmetikerinnen und PMU-Artists mit Vorkenntnissen, die ihre bestehenden Techniken gezielt auf das nächste Level bringen möchten. Es handelt sich nicht um Anfängerkurse, sondern um intensive 1:1-Einzelcoachings für fortgeschrittene Teilnehmer.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Wie läuft die Anmeldung ab?
+          <span class="faq-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <p class="faq-a-inner">Lade zunächst die kostenlosen Kursunterlagen über das Formular herunter. Diese Dokumente nimmst du zu deinem nächsten Termin bei der Arbeitsagentur oder dem Jobcenter mit. Sobald du den AVGS-Gutschein erhalten hast, kontaktierst du uns direkt – wir vereinbaren dann gemeinsam deinen individuellen Kursbeginn.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER CTA ─── -->
+<section class="footer-cta">
+  <div class="footer-cta-inner">
+    <h2>Starte jetzt in deine Weiterbildung</h2>
+    <p>Sichere dir die kostenlosen Kursunterlagen und bring deine Technik auf das nächste Level – vollständig gefördert durch den AVGS-Gutschein.</p>
+    <a href="#kurse" class="btn-primary" style="margin: 0 auto;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Kostenfreie Unterlagen erhalten
+    </a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="#">Impressum</a>
+    <a href="#">Datenschutzerklärung</a>
+    <a href="https://dein-beauty-kurs.de/fachdozentin-werden" target="_blank" rel="noopener noreferrer">Fachdozentin werden</a>
+  </div>
+  <p class="footer-copy">© 2026 BeautyBusiness360 · Alle Rechte vorbehalten</p>
+</footer>
+
+<script is:inline>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
+
+</body>
+</html>
