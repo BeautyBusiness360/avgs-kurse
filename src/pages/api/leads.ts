@@ -16,19 +16,28 @@ function sleep(ms: number) {
 }
 
 function getServiceClient() {
-  const url  = import.meta.env.PUBLIC_SUPABASE_URL;
-  const key  = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;  // TASK 3 — service key
+  const url = import.meta.env.PUBLIC_SUPABASE_URL;
+  const key = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error('Missing Supabase env vars');
   return createClient(url, key);
 }
 
-// ─── main handler ────────────────────────────────────────────────────────────
+// ─── GET — health check / endpoint test ──────────────────────────────────────
+
+export const GET: APIRoute = async () => {
+  return new Response(JSON.stringify({ status: 'leads endpoint active' }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+// ─── POST — Jotform webhook receiver ─────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
   // TASK 1 — validate webhook secret via query parameter
   const url            = new URL(request.url);
   const incomingSecret = url.searchParams.get('secret');
-  const expectedSecret = import.meta.env.WEBHOOK_SECRET;   // TASK 5 — from Vercel ENV
+  const expectedSecret = import.meta.env.WEBHOOK_SECRET;
 
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -37,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // FIX 2 — parse body supporting form-encoded (Jotform) and JSON
+  // FIX — parse body supporting form-encoded (Jotform) and JSON
   const contentType = request.headers.get('content-type') ?? '';
 
   let body: Record<string, string> = {};
@@ -54,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // FIX 3 — temporary debug logging
+  // debug logging
   console.log('LEAD WEBHOOK RECEIVED', {
     contentType,
     keys: Object.keys(body),
@@ -112,7 +121,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { error } = await supabase.from('leads').insert(lead);
 
     if (!error) {
-      return new Response(JSON.stringify({ ok: true }), {
+      return new Response(JSON.stringify({ success: true }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -137,7 +146,7 @@ export const POST: APIRoute = async ({ request }) => {
     }),
   ]);
 
-  // return 500 so Jotform marks webhook failed and retries
+  // return 500 so Jotform marks the webhook as failed and retries
   return new Response(JSON.stringify({ ok: false, error: lastError }), {
     status: 500,
     headers: { 'Content-Type': 'application/json' },
