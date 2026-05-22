@@ -34,19 +34,7 @@ export const GET: APIRoute = async () => {
 // ─── POST — Jotform webhook receiver ─────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
-  // TASK 1 — validate webhook secret via query parameter
-  const url            = new URL(request.url);
-  const incomingSecret = url.searchParams.get('secret');
-  const expectedSecret = import.meta.env.WEBHOOK_SECRET;
-
-  if (!expectedSecret || incomingSecret !== expectedSecret) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  // FIX — parse body supporting form-encoded (Jotform) and JSON
+  // parse body supporting form-encoded (Jotform) and JSON
   const contentType = request.headers.get('content-type') ?? '';
 
   let body: Record<string, string> = {};
