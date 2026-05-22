@@ -25,8 +25,9 @@ function getServiceClient() {
 // ─── main handler ────────────────────────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
-  // TASK 1 — validate webhook secret
-  const incomingSecret = request.headers.get('x-webhook-secret');
+  // TASK 1 — validate webhook secret via query parameter
+  const url            = new URL(request.url);
+  const incomingSecret = url.searchParams.get('secret');
   const expectedSecret = import.meta.env.WEBHOOK_SECRET;   // TASK 5 — from Vercel ENV
 
   if (!expectedSecret || incomingSecret !== expectedSecret) {
