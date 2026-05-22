@@ -37,26 +37,43 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // parse body
-  let body: Record<string, unknown>;
-  try {
+  // FIX 2 — parse body supporting form-encoded (Jotform) and JSON
+  const contentType = request.headers.get('content-type') ?? '';
+
+  let body: Record<string, string> = {};
+
+  if (contentType.includes('application/json')) {
     body = await request.json();
-  } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
+  } else if (
+    contentType.includes('application/x-www-form-urlencoded') ||
+    contentType.includes('multipart/form-data')
+  ) {
+    const formData = await request.formData();
+    formData.forEach((value, key) => {
+      body[key] = value.toString();
     });
   }
 
+  // FIX 3 — temporary debug logging
+  console.log('LEAD WEBHOOK RECEIVED', {
+    contentType,
+    keys: Object.keys(body),
+    sample: {
+      name:     body.q3_name,
+      email:    body.q4_email,
+      dozentin: body.q6_dozentinSlug,
+    },
+  });
+
   // TASK 2 — map Jotform fields → DB fields
   const lead = {
-    name:          (body.q3_name         as string) || null,
-    email:         (body.q4_email        as string) || '',
-    phone:         (body.q5_phone        as string) || null,
-    dozentin_slug: (body.q6_dozentinSlug as string) || '',
-    city_slug:     (body.q7_citySlug     as string) || null,
-    service_slug:  (body.q8_serviceSlug  as string) || null,
-    consent:       body.consent === true || body.consent === 'true',
+    name:          body.q3_name         || null,
+    email:         body.q4_email        || '',
+    phone:         body.q5_phone        || null,
+    dozentin_slug: body.q6_dozentinSlug || '',
+    city_slug:     body.q7_citySlug     || null,
+    service_slug:  body.q8_serviceSlug  || null,
+    consent:       body.consent === 'true',
     source:        'jotform' as const,
     status:        'new'     as const,
   };
