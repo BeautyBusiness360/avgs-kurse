@@ -9,10 +9,20 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate:city": "tsx --tsconfig scripts/tsconfig.json scripts/generate-city.ts",
+    "generate:all": "tsx --tsconfig scripts/tsconfig.json scripts/generate-all.ts",
+    "generate:longtail": "tsx --tsconfig scripts/tsconfig.json scripts/generate-longtail.ts",
+    "validate:sitemap": "tsx --tsconfig scripts/tsconfig.json scripts/sitemap-validator.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
+    "@astrojs/vercel": "^10.0.7",
     "@supabase/supabase-js": "^2.106.1",
     "astro": "^6.3.6"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "tsx": "^4.22.3"
   }
 }
