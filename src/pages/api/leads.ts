@@ -16,9 +16,9 @@ function sleep(ms: number) {
 }
 
 function getServiceClient() {
-  const url = import.meta.env.PUBLIC_SUPABASE_URL;
-  const key = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error('Missing Supabase env vars');
+  const url = process.env.PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  if (!url || !key) throw new Error('Missing Supabase env vars (PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_KEY)');
   return createClient(url, key);
 }
 
