@@ -16,6 +16,7 @@ export async function getStaticPaths() {
       avgs_certified,
       jotform_id,
       image_url,
+      logo_url,
       cities(slug, name),
       dozentin_services(
         services(slug, name, avgs_eligible)
@@ -98,7 +99,6 @@ const schema = {
   })
 };
 
-// cycle through 3 gradient styles for course card images
 const bgClasses = ['pmu', 'lippen', 'micro'];
 ---
 
@@ -112,7 +112,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
   <link rel="canonical" href={seo.canonical} />
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -134,8 +134,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
       --radius-sm:   6px;
       --radius-md:   12px;
       --radius-lg:   20px;
-      --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-body:   'Inter', system-ui, sans-serif;
       --max:          1100px;
     }
 
@@ -165,12 +164,14 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     }
 
     .header-logo {
-      font-family: var(--font-display);
-      font-size: 22px;
+      font-family: var(--font-body);
+      font-size: 18px;
       font-weight: 600;
       color: var(--gold);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
       text-decoration: none;
+      display: flex;
+      flex-direction: column;
     }
 
     .header-logo span {
@@ -256,13 +257,13 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     }
 
     .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4.5vw, 46px);
-      font-weight: 600;
+      font-family: var(--font-body);
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 700;
       color: var(--white);
       line-height: 1.15;
       margin-bottom: 16px;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
     }
 
     .hero h1 em { font-style: normal; color: var(--gold); }
@@ -350,29 +351,6 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
 
     .hero-img-placeholder svg { color: rgba(201,169,110,0.3); }
 
-    .cert-badge {
-      position: absolute;
-      bottom: -16px;
-      right: -16px;
-      width: 120px;
-      height: 120px;
-      background: var(--navy);
-      border: 2px solid var(--gold);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 14px;
-      gap: 2px;
-    }
-
-    .cert-badge .cert-top   { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
-    .cert-badge .cert-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.1; text-transform: uppercase; letter-spacing: 0.05em; }
-    .cert-badge .cert-nr    { font-size: 8px; color: rgba(201,169,110,0.7); letter-spacing: 0.06em; margin-top: 2px; }
-    .cert-badge .cert-star  { color: var(--gold); font-size: 16px; line-height: 1; margin-top: 2px; }
-
     /* ─── SECTION LABEL ─── */
     .section-label {
       font-size: 11px;
@@ -391,13 +369,12 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     .courses-header { margin-bottom: 40px; }
 
     .courses-header h2 {
-      font-family: var(--font-display);
-      font-size: clamp(26px, 3.5vw, 38px);
+      font-family: var(--font-body);
+      font-size: clamp(22px, 3vw, 34px);
       font-weight: 600;
       color: var(--navy);
-      letter-spacing: -0.01em;
       max-width: 600px;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .courses-grid {
@@ -443,12 +420,12 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     .course-body { padding: 24px; }
 
     .course-body h3 {
-      font-family: var(--font-display);
-      font-size: 20px;
+      font-family: var(--font-body);
+      font-size: 18px;
       font-weight: 600;
       color: var(--navy);
       margin-bottom: 14px;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .course-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
@@ -495,7 +472,10 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     .btn-card svg { flex-shrink: 0; opacity: 0.6; }
 
     /* ─── ABOUT ─── */
-    .about { padding: 72px 24px; background: var(--white); }
+    .about {
+      padding: 48px 24px;
+      background: var(--navy);
+    }
 
     .about-inner {
       max-width: var(--max);
@@ -506,17 +486,23 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
       align-items: start;
     }
 
-    .about h2 {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 3vw, 40px);
-      font-weight: 600;
-      color: var(--navy);
-      line-height: 1.15;
-      margin-bottom: 20px;
-      letter-spacing: -0.01em;
+    .about-text-col {
+      border-left: 3px solid var(--gold);
+      padding-left: 28px;
     }
 
-    .about p { font-size: 15px; line-height: 1.75; color: var(--text-mid); margin-bottom: 16px; }
+    .about .section-label { color: rgba(201,169,110,0.7); }
+
+    .about h2 {
+      font-family: var(--font-body);
+      font-size: clamp(24px, 2.8vw, 36px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .about p { font-size: 15px; line-height: 1.75; color: rgba(255,255,255,0.65); margin-bottom: 16px; }
 
     .rating-row {
       display: flex;
@@ -524,41 +510,41 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
       gap: 12px;
       margin-top: 24px;
       padding-top: 24px;
-      border-top: 1px solid var(--cream-dark);
+      border-top: 1px solid rgba(201,169,110,0.2);
     }
 
     .stars { display: flex; gap: 3px; }
     .stars svg { color: var(--gold); }
 
-    .rating-text { font-size: 14px; color: var(--text-muted); }
-    .rating-text strong { color: var(--text); font-weight: 600; }
+    .rating-text { font-size: 14px; color: rgba(255,255,255,0.5); }
+    .rating-text strong { color: var(--white); font-weight: 600; }
 
     .about-img-col { position: relative; }
 
     .about-img-placeholder {
       aspect-ratio: 4/5;
-      background: var(--cream);
+      background: var(--navy-mid);
       border-radius: var(--radius-md);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      color: var(--text-muted);
+      color: rgba(255,255,255,0.2);
       font-size: 13px;
       text-align: center;
       padding: 24px;
-      border: 1px solid var(--cream-dark);
+      border: 1px solid rgba(201,169,110,0.1);
     }
 
-    .about-img-placeholder svg { color: var(--gold-light); }
+    .about-img-placeholder svg { color: rgba(201,169,110,0.25); }
 
     .spec-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 
     .chip {
-      background: var(--cream);
-      border: 1px solid var(--cream-dark);
-      color: var(--text-mid);
+      background: transparent;
+      border: 1px solid rgba(201,169,110,0.45);
+      color: var(--gold-light);
       font-size: 13px;
       padding: 6px 14px;
       border-radius: 40px;
@@ -566,23 +552,27 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     }
 
     /* ─── GALLERY ─── */
-    .gallery { background: var(--navy); padding: 72px 24px; }
+    .gallery { background: var(--navy); padding-top: 32px; padding-bottom: 72px; padding-left: 24px; padding-right: 24px; }
 
     .gallery-inner { max-width: var(--max); margin: 0 auto; }
 
     .gallery-header { margin-bottom: 32px; }
 
     .gallery-header h2 {
-      font-family: var(--font-display);
-      font-size: clamp(24px, 3vw, 36px);
+      font-family: var(--font-body);
+      font-size: clamp(22px, 2.8vw, 32px);
       font-weight: 600;
       color: var(--white);
-      letter-spacing: -0.01em;
     }
 
     .gallery-header p { color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 6px; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    /* Desktop: 3 columns */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
 
     .gallery-item {
       aspect-ratio: 1;
@@ -614,11 +604,10 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     .faq-header { margin-bottom: 40px; text-align: center; }
 
     .faq-header h2 {
-      font-family: var(--font-display);
-      font-size: clamp(26px, 3vw, 36px);
+      font-family: var(--font-body);
+      font-size: clamp(24px, 2.8vw, 34px);
       font-weight: 600;
       color: var(--navy);
-      letter-spacing: -0.01em;
     }
 
     .faq-list {
@@ -695,11 +684,10 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     .footer-cta-inner { max-width: 560px; margin: 0 auto; position: relative; }
 
     .footer-cta h2 {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 600;
+      font-family: var(--font-body);
+      font-size: clamp(26px, 3.5vw, 42px);
+      font-weight: 700;
       color: var(--white);
-      letter-spacing: -0.01em;
       margin-bottom: 12px;
       line-height: 1.15;
     }
@@ -733,9 +721,6 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
 
       .hero-img-wrap { max-height: 280px; aspect-ratio: 4/3; }
 
-      .cert-badge { width: 90px; height: 90px; bottom: -12px; right: -8px; }
-      .cert-badge .cert-title { font-size: 10px; }
-
       .hero-cta-group { align-items: stretch; }
       .btn-primary { justify-content: center; }
 
@@ -743,11 +728,28 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
       .about-img-col { order: -1; }
       .about-img-placeholder { aspect-ratio: 3/2; }
 
-      .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      /* Mobile gallery: horizontal carousel */
+      .gallery-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .gallery-grid::-webkit-scrollbar { display: none; }
+
+      .gallery-item {
+        scroll-snap-align: start;
+        flex: 0 0 85vw;
+        max-width: 320px;
+        aspect-ratio: 1;
+      }
 
       .courses  { padding: 48px 20px; }
-      .about    { padding: 48px 20px; }
-      .gallery  { padding: 48px 20px; }
+      .about    { padding: 40px 20px; }
+      .gallery  { padding-top: 32px; padding-bottom: 48px; padding-left: 20px; padding-right: 20px; }
       .faq      { padding: 48px 20px; }
       .footer-cta { padding: 56px 20px; }
     }
@@ -757,10 +759,19 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
 
 <!-- ─── HEADER ─── -->
 <header class="header">
-  <a href="/" class="header-logo">
-    BeautyBusiness360
-    <span>Fachdozentinnen Netzwerk</span>
-  </a>
+  {dozentin.logo_url
+    ? (
+      <a href="/" style="display:flex;align-items:center;">
+        <img src={dozentin.logo_url} alt="Logo" style="height:40px; object-fit:contain;" />
+      </a>
+    )
+    : (
+      <a href="/" class="header-logo">
+        BeautyBusiness360
+        <span>Fachdozentinnen Netzwerk</span>
+      </a>
+    )
+  }
   <a href="https://dein-beauty-kurs.de/fachdozentin-werden" target="_blank" rel="noopener noreferrer" class="btn-recruiting">
     Fachdozentin werden
   </a>
@@ -772,12 +783,12 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     <div class="hero-content">
       <div class="hero-badge">AVGS-gefördert · 100 % kostenlos</div>
 
-      <h1>Kostenlose <em>1:1&nbsp;{serviceTitle}</em> in {city.name}</h1>
+      <h1>Kostenlose <em>Perfektionstrainings im Einzelunterricht</em> mit {dozentin.first_name} {dozentin.last_name} in {city.name}</h1>
 
       <p class="hero-sub">
         {dozentin.bio_short
           ? dozentin.bio_short
-          : `Bei ${dozentin.first_name} ${dozentin.last_name} erhältst du ein individuelles 1:1-Perfektionstraining in ${city.name}, das zu 100 % über den AVGS-Gutschein gefördert wird.`
+          : `Bei ${dozentin.first_name} ${dozentin.last_name} erhältst du ein individuelles Perfektionstraining im Einzelunterricht in ${city.name}, das zu 100 % über den AVGS-Gutschein gefördert wird.`
         }
       </p>
 
@@ -811,13 +822,6 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
           Foto {dozentin.first_name} {dozentin.last_name}
         </div>
       </div>
-
-      <div class="cert-badge">
-        <span class="cert-top">BeautyBusiness360</span>
-        <span class="cert-title">Anerkannte Fachdozentin</span>
-        <span class="cert-nr">BB360-FD</span>
-        <span class="cert-star">★</span>
-      </div>
     </div>
   </div>
 </section>
@@ -827,7 +831,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
   <div class="courses-inner">
     <div class="courses-header">
       <p class="section-label">Perfektionstrainings</p>
-      <h2>Kostenlose 1:1-Trainings in {city.name} mit {dozentin.first_name} {dozentin.last_name}</h2>
+      <h2>Kostenlose Trainings im Einzelunterricht in {city.name} mit {dozentin.first_name} {dozentin.last_name}</h2>
     </div>
 
     <div class="courses-grid">
@@ -867,7 +871,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
 <!-- ─── ÜBER DIE DOZENTIN ─── -->
 <section class="about">
   <div class="about-inner">
-    <div>
+    <div class="about-text-col">
       <p class="section-label">Über die Dozentin</p>
       <h2>{dozentin.first_name} {dozentin.last_name} – Anerkannte Fachdozentin</h2>
 
@@ -879,7 +883,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
               Als anerkannte Fachdozentin bei BeautyBusiness360 verbindet {dozentin.first_name} {dozentin.last_name} fundiertes Fachwissen mit jahrelanger Praxiserfahrung. Ihre Trainings sind gezielt auf fortgeschrittene Artists ausgerichtet, die ihre Technik auf ein neues Niveau bringen möchten.
             </p>
             <p>
-              Im individuellen 1:1-Format arbeitet sie direkt an deinen persönlichen Entwicklungszielen – präzise, praxisnah und vollständig über den AVGS-Gutschein gefördert.
+              Im individuellen Einzelunterricht arbeitet sie direkt an deinen persönlichen Entwicklungszielen – präzise, praxisnah und vollständig über den AVGS-Gutschein gefördert.
             </p>
           </>
         )
@@ -889,7 +893,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
         {services.map((s: any) => (
           <span class="chip">{s.name}</span>
         ))}
-        <span class="chip">1:1 Einzelcoaching</span>
+        <span class="chip">Einzelunterricht</span>
         {dozentin.avgs_certified && <span class="chip">AZAV-zertifiziert</span>}
       </div>
 
@@ -922,7 +926,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     <div class="gallery-header">
       <p class="section-label" style="color: rgba(201,169,110,0.6);">Ergebnisse & Einblicke</p>
       <h2>Permanent Make-up Galerie von {dozentin.first_name} {dozentin.last_name}</h2>
-      <p>Ausgewählte Behandlungsergebnisse aus den AVGS-geförderten 1:1-Perfektionstrainings</p>
+      <p>Ausgewählte Behandlungsergebnisse aus den AVGS-geförderten Perfektionstrainings</p>
     </div>
 
     <div class="gallery-grid">
@@ -965,7 +969,7 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
           </span>
         </button>
         <div class="faq-a">
-          <p class="faq-a-inner">Die Perfektionstrainings richten sich ausschließlich an Kosmetikerinnen und PMU-Artists mit Vorkenntnissen, die ihre bestehenden Techniken gezielt auf das nächste Level bringen möchten. Es handelt sich nicht um Anfängerkurse, sondern um intensive 1:1-Einzelcoachings für fortgeschrittene Teilnehmer.</p>
+          <p class="faq-a-inner">Die Perfektionstrainings richten sich ausschließlich an Kosmetikerinnen und PMU-Artists mit Vorkenntnissen, die ihre bestehenden Techniken gezielt auf das nächste Level bringen möchten. Es handelt sich nicht um Anfängerkurse, sondern um intensive Einzelunterricht-Formate für fortgeschrittene Teilnehmer.</p>
         </div>
       </div>
 
