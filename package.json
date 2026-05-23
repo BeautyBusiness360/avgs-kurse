@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
-    "@astrojs/vercel": "^10.0.7",
     "@supabase/supabase-js": "^2.106.1",
     "astro": "^6.3.6",
     "resend": "^6.12.3"
