@@ -1,5 +1,14 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "astro"
+  "framework": "astro",
+  "crons": [
+    {
+      "path": "/api/cron/monitor",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/report",
+      "schedule": "0 8 * * 1"
+    }
+  ]
 }
