@@ -112,7 +112,8 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
   <link rel="canonical" href={seo.canonical} />
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -141,12 +142,14 @@ const bgClasses = ['pmu', 'lippen', 'micro'];
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: var(--font-body);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: var(--text);
       background: var(--white);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
+
+    h1, h2, h3 { font-family: 'Inter', system-ui, sans-serif; }
 
     /* ─── HEADER ─── */
     .header {
