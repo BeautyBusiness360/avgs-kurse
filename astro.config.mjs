@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  output: 'server',
+  output: 'static',
   adapter: vercel(),
-  site: 'https://avgs-kurse.vercel.app'
+  site: 'https://dein-beauty-kurs.de'
 });

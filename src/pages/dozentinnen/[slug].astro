@@ -17,28 +17,49 @@ export async function getStaticPaths() {
       jotform_id,
       image_url,
       logo_url,
+      gallery_images,
+      languages,
       cities(slug, name),
       dozentin_services(
-        services(slug, name, avgs_eligible)
+        services(slug, name, avgs_eligible, description_template)
       )
     `)
-    .eq('active', true);
+    .eq('active', true)
+    .order('last_name', { ascending: true });
 
-  if (error || !dozentinnen) {
-    console.error('Supabase Fehler:', error);
+  if (error) {
+    console.error('[getStaticPaths] Supabase error:', error.message);
     return [];
   }
 
-  return dozentinnen.map(d => {
-    const rawRelations = Array.isArray(d.dozentin_services)
-      ? d.dozentin_services
+  if (!dozentinnen || dozentinnen.length === 0) {
+    console.error('[getStaticPaths] Keine Dozentinnen gefunden');
+    return [];
+  }
+
+  console.log(`[getStaticPaths] ${dozentinnen.length} Dozentinnen geladen`);
+
+  const paths = [];
+
+  for (const d of dozentinnen) {
+    if (!d.slug || typeof d.slug !== 'string') {
+      console.warn('[getStaticPaths] Ungültiger slug:', d);
+      continue;
+    }
+
+    const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+    if (!city || !city.slug) {
+      console.warn('[getStaticPaths] Fehlende City für:', d.slug);
+      continue;
+    }
+
+    const services = Array.isArray(d.dozentin_services)
+      ? d.dozentin_services.map(ds => ds?.services ?? null).filter(Boolean)
       : [];
 
-    const services = rawRelations
-      .map(ds => ds?.services ?? null)
-      .filter(Boolean);
+    console.log(`[getStaticPaths] ✓ ${d.slug} (${services.length} Services)`);
 
-    return {
+    paths.push({
       params: { slug: d.slug },
       props: {
         dozentin: {
@@ -46,8 +67,11 @@ export async function getStaticPaths() {
           services
         }
       }
-    };
-  });
+    });
+  }
+
+  console.log(`[getStaticPaths] ${paths.length} Seiten werden gebaut`);
+  return paths;
 }
 
 const { dozentin } = Astro.props;

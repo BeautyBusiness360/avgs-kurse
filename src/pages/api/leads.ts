@@ -1,10 +1,10 @@
+export const prerender = false;
+
 // TASK 1  — POST /api/leads  (Jotform Webhook receiver)
 // TASK 2  — Jotform field mapping
 // TASK 3  — Supabase insert via Service Role Key
 // TASK 4  — Duplicate check (same email + dozentin_slug within 24h)
 // TASK 36 — Retry logic (3 attempts) + dead-letter to failed_leads
-
-export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';

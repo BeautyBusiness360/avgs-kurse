@@ -5,6 +5,8 @@ import { supabase } from '../../lib/supabase';
 export const prerender = true;
 
 export async function getStaticPaths() {
+  console.log('[city-service getStaticPaths] Start');
+
   // Query directly from dozentinnen with active=true enforced at DB level.
   // Avoids 3-level deep nesting (cities→dozentinnen→dozentin_services→services)
   // which can silently drop rows due to PostgREST embedded-resource limits.
@@ -25,9 +27,11 @@ export async function getStaticPaths() {
     .eq('active', true);
 
   if (error || !dozentinnen) {
-    console.error('getStaticPaths Fehler:', error);
+    console.error('[city-service getStaticPaths] Fehler:', error);
     return [];
   }
+
+  console.log(`[city-service] ${dozentinnen?.length ?? 0} Dozentinnen geladen`);
 
   const pageMap = new Map();
 
@@ -70,13 +74,16 @@ export async function getStaticPaths() {
     }
   }
 
-  return Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
+  const paths = Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
     params: {
       citySlug: city.slug,
       serviceSlug: service.slug
     },
     props: { city, service, dozentinnen }
   }));
+
+  console.log(`[city-service] ${paths.length} Seiten werden gebaut`);
+  return paths;
 }
 
 const { city, service, dozentinnen } = Astro.props;
