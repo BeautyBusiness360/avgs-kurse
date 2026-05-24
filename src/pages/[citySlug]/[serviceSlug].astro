@@ -74,19 +74,27 @@ export async function getStaticPaths() {
     }
   }
 
-  const paths = Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
-    params: {
-      citySlug: city.slug,
-      serviceSlug: service.slug
-    },
-    props: { city, service, dozentinnen }
-  }));
+  const paths = Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => {
+    // Alle anderen Services dieser Stadt sammeln (nicht der aktuelle)
+    const cityServices = Array.from(
+      new Map(
+        Array.from(pageMap.values())
+          .filter(p => p.city.slug === city.slug && p.service.slug !== service.slug)
+          .map(p => [p.service.slug, p.service])
+      ).values()
+    );
+
+    return {
+      params: { citySlug: city.slug, serviceSlug: service.slug },
+      props:  { city, service, dozentinnen, cityServices }
+    };
+  });
 
   console.log(`[city-service] ${paths.length} Seiten werden gebaut`);
   return paths;
 }
 
-const { city, service, dozentinnen } = Astro.props;
+const { city, service, dozentinnen, cityServices } = Astro.props;
 
 const description = (service.description_template ?? '')
   .replace('{city}', city.name);
@@ -160,7 +168,41 @@ const schema = {
     ))}
   </section>
 
+  {cityServices.length > 0 && (
+    <section>
+      <h2>Weitere Kurse in {city.name}</h2>
+      <ul>
+        {cityServices.map(s => (
+          <li>
+            <a href={`/${city.slug}/${s.slug}/`}>
+              {s.name} in {city.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   <section>
-    <a href={`/${city.slug}`}>← Alle Kurse in {city.name}</a>
+    <p>
+      <a href={`/${city.slug}/`}>
+        ← Alle Kurse und Dozentinnen in {city.name}
+      </a>
+    </p>
   </section>
+
+  {dozentinnen.length > 0 && (
+    <section>
+      <h2>{service.name} in {city.name} – Deine Dozentinnen</h2>
+      <ul>
+        {dozentinnen.map(d => (
+          <li>
+            <a href={`/dozentinnen/${d.slug}/`}>
+              {d.first_name} {d.last_name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </SEOLayout>
