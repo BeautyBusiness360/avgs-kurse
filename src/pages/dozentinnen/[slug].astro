@@ -142,184 +142,579 @@ const schema = {
 >
 
 <style>
-  :root {
-    --color-dark:    #0D1B2A;
-    --color-primary: #C9A96E;
-    --color-success: #2D6A4F;
-    --color-text:    #1A1A1A;
-    --color-muted:   #7A7A7A;
-    --color-surface: #FFFFFF;
-    --color-border:  rgba(0, 0, 0, 0.1);
-    --radius:        12px;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
-  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+/* ── RESET & BASE ── */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── HERO ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 580px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 32px 0 64px;
+  box-shadow: 0 8px 48px rgba(0,0,0,.12);
+}
+@media (max-width: 780px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+}
+.hero-img-col {
+  position: relative;
+  min-height: 480px;
+}
+.hero-img-col img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-img-placeholder {
+  width: 100%; height: 100%; min-height: 480px;
+  background: linear-gradient(160deg, #1a1a2e 0%, #2d1b4e 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 120px; color: rgba(255,255,255,.08);
+}
+.hero-content-col {
+  background: linear-gradient(160deg, #1a1a2e 0%, #111827 100%);
+  padding: 52px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+@media (max-width: 780px) {
+  .hero-content-col { padding: 36px 28px; }
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(52,211,153,.12);
+  border: 1px solid rgba(52,211,153,.3);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+.hero-h1 {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 900;
+  line-height: 1.12;
+  margin: 0 0 14px;
+  color: #fff;
+}
+.hero-subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,.6);
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+.hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.hero-stars { color: #f5a623; font-size: 20px; letter-spacing: 2px; }
+.hero-rating-num { font-size: 17px; font-weight: 800; color: #fff; }
+.hero-rating-count { font-size: 14px; color: rgba(255,255,255,.45); }
+
+.btn-primary {
+  display: inline-block;
+  background: linear-gradient(135deg, #C8A97E, #e8c99e);
+  color: #000;
+  padding: 17px 34px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 16px;
+  text-decoration: none;
+  transition: opacity .2s, transform .15s;
+  width: fit-content;
+}
+.btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+
+.btn-outline {
+  display: inline-block;
+  border: 1.5px solid rgba(255,255,255,.22);
+  color: rgba(255,255,255,.8);
+  padding: 16px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  margin-left: 12px;
+  transition: border-color .2s;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,.5); }
+@media (max-width: 520px) {
+  .btn-outline { margin-left: 0; margin-top: 12px; display: block; }
+}
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #C8A97E;
+  display: block;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+.section-sub {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 36px;
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+/* ── BIO BLOCK ── */
+.bio-block {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 56px;
+  align-items: start;
+  margin-bottom: 72px;
+}
+@media (max-width: 860px) {
+  .bio-block { grid-template-columns: 1fr; }
+}
+.bio-text {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #333;
+}
+.bio-meta {
+  background: #f9f7f4;
+  border: 1px solid #e8e0d6;
+  border-radius: 16px;
+  padding: 28px;
+}
+.bio-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8e0d6;
+}
+.bio-meta-item:last-child { border-bottom: none; }
+.bio-meta-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.bio-meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #999;
+  display: block;
+  margin-bottom: 3px;
+}
+.bio-meta-value { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+
+/* ── COURSE CARDS ── */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 72px;
+}
+.course-card {
+  background: #fff;
+  border: 1.5px solid #e8e0d6;
+  border-radius: 16px;
+  padding: 28px 26px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s, box-shadow .2s, transform .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.course-card:hover {
+  border-color: #C8A97E;
+  box-shadow: 0 6px 24px rgba(200,169,126,.18);
+  transform: translateY(-3px);
+}
+.course-card-icon { font-size: 32px; margin-bottom: 4px; }
+.course-card-name { font-size: 18px; font-weight: 800; color: #1a1a1a; display: block; }
+.course-card-desc { font-size: 14px; color: #666; line-height: 1.6; display: block; flex: 1; }
+.course-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #e8e0d6;
+}
+.course-card-badge {
+  background: #f0faf5;
+  color: #1a7a4a;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.course-card-cta { font-size: 13px; font-weight: 700; color: #C8A97E; }
+
+/* ── GALLERY ── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 72px;
+}
+@media (max-width: 640px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.gallery-cell img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  transition: opacity .2s;
+}
+.gallery-cell img:hover { opacity: .88; }
+.gallery-placeholder {
+  background: linear-gradient(135deg, #f9f7f4, #ede8e0);
+  border-radius: 12px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  font-size: 32px;
+}
+
+/* ── CTA BLOCK ── */
+.cta-block {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0d1117 100%);
+  border-radius: 24px;
+  padding: 56px 52px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 48px;
+  text-align: center;
+}
+.cta-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(200,169,126,.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(52,211,153,.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  .cta-block { padding: 36px 24px; }
+}
+.cta-block h2 {
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 12px;
+  position: relative;
+}
+.cta-block p {
+  color: rgba(255,255,255,.55);
+  font-size: 16px;
+  margin: 0 auto 36px;
+  max-width: 520px;
+  line-height: 1.7;
+  position: relative;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e8e0d6, transparent);
+  margin: 64px 0;
+}
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap" rel="stylesheet" />
 
-<main class="container" style="padding-top:48px;padding-bottom:80px;">
+<div class="page-wrap">
 
-  <!-- BLOCK 1 — BREADCRUMB -->
-  <nav style="font-size:13px;color:var(--color-muted);
-              margin-bottom:32px;">
-    <a href={`/${city.slug}/`}>{city.name}</a>
-    {hasServices &&
-      <span> › <a href={`/${city.slug}/${services[0].slug}/`}>
-        {services[0].name}
-      </a></span>
-    }
-    <span> › {fullName}</span>
+  <!-- BREADCRUMB -->
+  <nav style="padding-top:20px;font-size:13px;color:#999;
+              display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+    <a href={`/${city.slug}/`}
+       style="color:#999;text-decoration:none;">{city.name}</a>
+    {hasServices && (
+      <>
+        <span>›</span>
+        <a href={`/${city.slug}/${services[0].slug}/`}
+           style="color:#999;text-decoration:none;">
+          {services[0].name}
+        </a>
+      </>
+    )}
+    <span>›</span>
+    <span style="color:#555;">{fullName}</span>
   </nav>
 
-  <!-- BLOCK 2 — HERO -->
-  <section style="display:grid;
-                  grid-template-columns:auto 1fr;
-                  gap:32px;align-items:start;
-                  margin-bottom:40px;flex-wrap:wrap;">
+  <!-- ════ HERO ════ -->
+  <div class="hero">
 
-    {hasImage && (
-      <img
-        src={dozentin.image_url}
-        alt={`${fullName} – ${primaryService} in ${city.name}`}
-        width="160"
-        height="160"
-        loading="eager"
-        style="width:160px;height:160px;border-radius:50%;
-               object-fit:cover;flex-shrink:0;
-               border:3px solid var(--color-border);"
-      />
-    )}
+    <div class="hero-img-col">
+      {hasImage
+        ? <img
+            src={dozentin.image_url}
+            alt={`${fullName} – ${primaryService} in ${city.name}`}
+            width="550" height="580"
+            loading="eager"
+          />
+        : <div class="hero-img-placeholder">✦</div>
+      }
+    </div>
 
-    <div>
-      <div style="display:inline-block;background:#f0f9f4;
-                  color:var(--color-success);font-size:13px;
-                  font-weight:600;padding:5px 12px;
-                  border-radius:20px;margin-bottom:12px;">
-        ✓ AVGS förderbar – 100 % kostenlos
+    <div class="hero-content-col">
+      <div class="hero-eyebrow">
+        <span>✓</span> AVGS förderbar · 100 % kostenlos
       </div>
 
-      <h1 style="font-size:clamp(22px,4vw,34px);font-weight:700;
-                 line-height:1.2;margin-bottom:6px;">
+      <h1 class="hero-h1">
         {hasServices
           ? `${primaryService} in ${city.name}`
           : `Beauty Kurs in ${city.name}`
         }
       </h1>
 
-      <p style="font-size:17px;color:var(--color-muted);
-                margin-bottom:12px;">
-        1:1 Einzelcoaching mit {fullName}
+      <p class="hero-subtitle">
+        Zertifiziertes 1:1 Einzelcoaching mit {fullName} –
+        staatlich anerkannt, gefördert über die Arbeitsagentur.
       </p>
 
       {hasRating && (
-        <p style="font-size:14px;">
-          ★ {dozentin.rating}/5
-          <span style="color:var(--color-muted);">
+        <div class="hero-rating">
+          <span class="hero-stars">★★★★★</span>
+          <span class="hero-rating-num">{dozentin.rating}/5</span>
+          <span class="hero-rating-count">
             ({dozentin.review_count} Bewertungen)
           </span>
-        </p>
+        </div>
       )}
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+        <a href="#kurs-starten" class="btn-primary">
+          Jetzt kostenlos starten
+        </a>
+        <a href={`/${city.slug}/`} class="btn-outline">
+          Alle Kurse in {city.name}
+        </a>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- BLOCK 3 — BIO + SERVICES -->
-  <section style="margin-bottom:40px;">
-
-    {hasBio && (
-      <p style="font-size:16px;line-height:1.8;
-                max-width:640px;margin-bottom:28px;
-                color:var(--color-text);">
-        {dozentin.bio_short}
+  <!-- ════ BIO ════ -->
+  <div class="bio-block">
+    <div>
+      <span class="section-label">Über die Dozentin</span>
+      <h2 class="section-title">{fullName}</h2>
+      <p class="section-sub">
+        {hasBio
+          ? dozentin.bio_short
+          : `${fullName} bietet zertifizierte 1:1 Einzelcoachings in
+             ${city.name} an – staatlich anerkannt und vollständig
+             förderbar über den Aktivierungs- und
+             Vermittlungsgutschein (AVGS) der Arbeitsagentur.
+             Das Training findet als intensives Einzelcoaching statt:
+             maximale Betreuung, direktes Feedback, eigenes Tempo.
+             Kein Eigenanteil, keine versteckten Kosten –
+             nur professionelle Weiterbildung auf höchstem Niveau.`
+        }
       </p>
-    )}
-
-    {!hasBio && (
-      <p style="font-size:16px;line-height:1.8;
-                max-width:640px;margin-bottom:28px;
-                color:var(--color-text);">
-        {fullName} bietet zertifizierte 1:1 Einzelcoachings
-        in {city.name} an – staatlich anerkannt und vollständig
-        förderbar über den Aktivierungs- und
-        Vermittlungsgutschein (AVGS) der Arbeitsagentur.
-        Das bedeutet: kein Eigenanteil, maximale
-        Einzelbetreuung, direktes Feedback.
+      <p class="bio-text">
+        Die Ausbildung richtet sich an Kosmetikerinnen und PMU Artists,
+        die ihr Können gezielt vertiefen möchten. Im 1:1 Setting
+        bekommst du individuelle Korrekturen, arbeitsmarktrelevante
+        Techniken und ein Zertifikat, das von der Arbeitsagentur
+        anerkannt wird.
       </p>
-    )}
+    </div>
 
-    {hasServices && (
-      <div>
-        <h2 style="font-size:18px;font-weight:600;
-                   margin-bottom:16px;color:var(--color-dark);">
-          Angebotene Kurse
-        </h2>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          {services.map((s: any) => (
-            <a
-              href={`/${city.slug}/${s.slug}/`}
-              style="background:var(--color-surface);
-                     border:1px solid var(--color-border);
-                     padding:8px 18px;border-radius:20px;
-                     font-size:14px;font-weight:500;
-                     color:var(--color-text);text-decoration:none;"
-            >
-              {s.name}
-              {s.avgs_eligible &&
-                <span style="color:var(--color-success);
-                             margin-left:6px;font-size:12px;">
-                  ✓ AVGS
-                </span>
-              }
-            </a>
-          ))}
+    <div class="bio-meta">
+      <div class="bio-meta-item">
+        <span class="bio-meta-icon">📍</span>
+        <div>
+          <span class="bio-meta-label">Standort</span>
+          <span class="bio-meta-value">{city.name}</span>
         </div>
       </div>
-    )}
+      <div class="bio-meta-item">
+        <span class="bio-meta-icon">🎓</span>
+        <div>
+          <span class="bio-meta-label">Format</span>
+          <span class="bio-meta-value">1:1 Einzelcoaching</span>
+        </div>
+      </div>
+      <div class="bio-meta-item">
+        <span class="bio-meta-icon">✅</span>
+        <div>
+          <span class="bio-meta-label">Förderung</span>
+          <span class="bio-meta-value">AVGS · 100 % kostenlos</span>
+        </div>
+      </div>
+      {hasRating && (
+        <div class="bio-meta-item">
+          <span class="bio-meta-icon">⭐</span>
+          <div>
+            <span class="bio-meta-label">Bewertung</span>
+            <span class="bio-meta-value">
+              {dozentin.rating}/5 · {dozentin.review_count} Stimmen
+            </span>
+          </div>
+        </div>
+      )}
+      <div class="bio-meta-item">
+        <span class="bio-meta-icon">🏆</span>
+        <div>
+          <span class="bio-meta-label">Zertifizierung</span>
+          <span class="bio-meta-value">Staatlich anerkannt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" />
+
+  <!-- ════ COURSE CARDS ════ -->
+  {hasServices && (
+    <section style="margin-bottom:72px;">
+      <span class="section-label">Kurse & Module</span>
+      <h2 class="section-title">
+        Angebotene Ausbildungen in {city.name}
+      </h2>
+      <p class="section-sub">
+        Wähle dein Modul – alle Kurse sind AVGS-förderbar
+        und finden als 1:1 Einzelcoaching statt.
+      </p>
+
+      <div class="course-grid">
+        {services.map((s: any, i: number) => {
+          const icons = ['💄','✏️','👁️','🌿','✨','🎨'];
+          const icon  = icons[i % icons.length];
+          const desc  = (s.description_template ?? '').replace('{city}', city.name);
+          return (
+            <a href={`/${city.slug}/${s.slug}/`} class="course-card">
+              <span class="course-card-icon">{icon}</span>
+              <span class="course-card-name">{s.name}</span>
+              <span class="course-card-desc">
+                {desc
+                  ? desc
+                  : `Professionelles 1:1 ${s.name} Training in ${city.name} –
+                     intensiv, zertifiziert und staatlich anerkannt.`
+                }
+              </span>
+              <div class="course-card-meta">
+                {s.avgs_eligible &&
+                  <span class="course-card-badge">✓ AVGS förderbar</span>
+                }
+                <span class="course-card-cta">Mehr erfahren →</span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <div class="divider" />
+
+  <!-- ════ GALLERY ════ -->
+  <section style="margin-bottom:72px;">
+    <span class="section-label">Arbeiten & Ergebnisse</span>
+    <h2 class="section-title">Einblick in die Ausbildung</h2>
+    <p class="section-sub">
+      Professionelle Ergebnisse aus echten Trainings –
+      so sieht das 1:1 Einzelcoaching mit {dozentin.first_name} aus.
+    </p>
+
+    {(() => {
+      const gallery = Array.isArray(dozentin.gallery_images)
+        ? (dozentin.gallery_images as string[]).filter(Boolean).slice(0, 6)
+        : [];
+
+      if (gallery.length > 0) {
+        return (
+          <div class="gallery-grid">
+            {gallery.map((img: string, i: number) => (
+              <div class="gallery-cell">
+                <img
+                  src={img}
+                  alt={`${fullName} – Arbeitsprobe ${i + 1}`}
+                  width="320" height="320"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return (
+          <div class="gallery-grid">
+            {[1,2,3,4,5,6].map(n => (
+              <div class="gallery-placeholder">✦</div>
+            ))}
+          </div>
+        );
+      }
+    })()}
   </section>
 
-  <!-- BLOCK 4 — CTA / FORMULAR -->
-  <section style="background:var(--color-dark);color:white;
-                  border-radius:var(--radius);
-                  padding:36px;margin-bottom:40px;">
+  <div class="divider" />
 
-    <h2 style="font-size:22px;font-weight:700;margin-bottom:8px;">
-      Jetzt kostenlos starten
-    </h2>
-    <p style="color:#aaaaaa;font-size:15px;margin-bottom:24px;">
-      Unterlagen für die Arbeitsagentur – kostenlos herunterladen
+  <!-- ════ CTA BLOCK ════ -->
+  <section class="cta-block" id="kurs-starten">
+    <h2>Jetzt kostenlos starten</h2>
+    <p>
+      Lade deine Unterlagen für die Arbeitsagentur herunter
+      und starte deinen AVGS-geförderten Kurs bei {fullName}
+      in {city.name} – ohne Eigenanteil.
     </p>
 
     {hasForm
-      ? <div id="jotform-container">
+      ? <div style="position:relative;z-index:1;">
           <script
             src={`https://form.jotform.com/jsform/${dozentin.jotform_id}`}
           />
         </div>
-      : <a
-          href={`/${city.slug}/`}
-          style="display:inline-block;
-                 background:var(--color-primary);
-                 color:white;padding:14px 28px;
-                 border-radius:var(--radius);
-                 font-weight:600;font-size:16px;
-                 text-decoration:none;"
-        >
-          Alle Kurse in {city.name} ansehen →
-        </a>
+      : <div style="position:relative;z-index:1;
+                    display:flex;gap:12px;justify-content:center;
+                    flex-wrap:wrap;">
+          <a href={`/${city.slug}/`} class="btn-primary">
+            Alle Kurse in {city.name} →
+          </a>
+        </div>
     }
   </section>
 
-  <!-- BLOCK 5 — RÜCKLINK -->
-  <a
-    href={`/${city.slug}/`}
-    style="font-size:14px;color:var(--color-muted);
-           text-decoration:none;"
-  >
-    ← Alle Dozentinnen und Kurse in {city.name}
-  </a>
+  <!-- RÜCKLINK -->
+  <div style="text-align:center;">
+    <a href={`/${city.slug}/`}
+       style="font-size:14px;color:#999;text-decoration:none;">
+      ← Alle Dozentinnen und Kurse in {city.name}
+    </a>
+  </div>
 
-</main>
+</div>
 </SEOLayout>
