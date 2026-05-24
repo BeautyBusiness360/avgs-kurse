@@ -24,7 +24,7 @@ export async function getStaticPaths() {
         image_url,
         active,
         dozentin_services(
-          services(slug, name)
+          services(slug, name, description_template)
         )
       )
     `);
@@ -33,7 +33,6 @@ export async function getStaticPaths() {
 
   return cities.map(city => {
 
-    // ✅ FIXED: NULL-safe + KEIN Syntax-Fehler mehr
     const activeDozentinnen = Array.isArray(city.dozentinnen)
       ? city.dozentinnen
           .filter(d => d?.active === true)
@@ -57,31 +56,86 @@ export async function getStaticPaths() {
 
     return {
       params: { citySlug: city.slug },
-      props: { city, dozentinnen: activeDozentinnen, services: allServices }
+      props:  { city, dozentinnen: activeDozentinnen, services: allServices }
     };
   });
 }
 
 const { city, dozentinnen, services } = Astro.props;
 
+const hasDozentinnen = dozentinnen.length > 0;
+const hasServices    = services.length > 0;
+
 const seo = {
-  title: city.meta_title ?? `Beauty Kurse ${city.name}`,
-  description: city.meta_description ?? `${dozentinnen.length} Dozentinnen in ${city.name}`,
-  canonical: `https://dein-beauty-kurs.de/${city.slug}`
+  title: city.meta_title ??
+    `Beauty Kurse ${city.name} | AVGS gefördert – dein-beauty-kurs.de`,
+  description: city.meta_description ??
+    `${dozentinnen.length} zertifizierte Dozentinnen in ${city.name}. ` +
+    `PMU, Microblading, Wimpern – staatlich gefördert über AVGS. ` +
+    `Jetzt kostenlos starten.`,
+  canonical: `https://dein-beauty-kurs.de/${city.slug}/`
 };
 
-const schema = {
+const itemListSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   "name": `Beauty Kurse in ${city.name}`,
-  "url": seo.canonical,
-  "numberOfItems": dozentinnen.length,
-  "itemListElement": dozentinnen.map((d, i) => ({
+  "url": `https://dein-beauty-kurs.de/${city.slug}/`,
+  "numberOfItems": services.length,
+  "itemListElement": services.map((s, i) => ({
     "@type": "ListItem",
     "position": i + 1,
-    "url": `https://dein-beauty-kurs.de/dozentinnen/${d.slug}`,
-    "name": `${d.first_name} ${d.last_name}`
+    "name": s.name,
+    "url": `https://dein-beauty-kurs.de/${city.slug}/${s.slug}/`
   }))
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": `Welche Beauty Kurse gibt es in ${city.name}?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `In ${city.name} bieten wir 1:1 Einzelcoachings in ` +
+          `${services.map(s => s.name).join(', ')} an – ` +
+          `alle über AVGS förderbar.`
+      }
+    },
+    {
+      "@type": "Question",
+      "name": `Kann ich Beauty Kurse in ${city.name} über AVGS finanzieren?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `Ja. Alle Kurse in ${city.name} sind über den ` +
+          `Aktivierungs- und Vermittlungsgutschein (AVGS) der ` +
+          `Arbeitsagentur förderbar. Das bedeutet: 100 % kostenlos ` +
+          `für dich als Teilnehmerin.`
+      }
+    },
+    {
+      "@type": "Question",
+      "name": `Wie lange dauern die Kurse in ${city.name}?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `Die Einzelcoachings in ${city.name} sind als 1:1 ` +
+          `Intensivtrainings konzipiert und dauern je nach Modul ` +
+          `zwischen einem und mehreren Tagen.`
+      }
+    },
+    {
+      "@type": "Question",
+      "name": `Brauche ich Vorkenntnisse für die Kurse in ${city.name}?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `Die Kurse in ${city.name} richten sich an ` +
+          `fortgeschrittene Kosmetikerinnen und PMU Artists, die ihr ` +
+          `Können in einem 1:1 Setting vertiefen möchten.`
+      }
+    }
+  ]
 };
 ---
 
@@ -89,52 +143,187 @@ const schema = {
   title={seo.title}
   description={seo.description}
   canonical={seo.canonical}
-  schema={schema}
+  schema={[itemListSchema, faqSchema]}
 >
 
-  <section>
-    <h1>Beauty Kurse in {city.name}</h1>
-    <p>{dozentinnen.length} Dozentinnen verfügbar</p>
+<main class="container" style="padding-top:48px;padding-bottom:80px;">
+
+  <nav style="font-size:13px;color:var(--color-muted);margin-bottom:28px;">
+    <a href="/">Startseite</a> › {city.name}
+  </nav>
+
+  <!-- BLOCK 1 — HERO / INTRO -->
+  <section style="margin-bottom:48px;">
+    <div style="display:inline-block;background:#f0f9f4;color:var(--color-success);
+                font-size:13px;font-weight:600;padding:6px 14px;
+                border-radius:20px;margin-bottom:16px;">
+      ✓ Alle Kurse AVGS förderbar – 100 % kostenlos
+    </div>
+
+    <h1 style="font-size:clamp(26px,5vw,40px);font-weight:700;
+               line-height:1.2;margin-bottom:16px;">
+      Beauty Kurse in {city.name}
+    </h1>
+
+    <p style="font-size:16px;line-height:1.8;
+              max-width:640px;color:var(--color-text);">
+      In {city.name} bieten {dozentinnen.length} zertifizierte Dozentinnen
+      professionelle 1:1 Einzelcoachings in den Bereichen Permanent Make-up,
+      Microblading und Wimpernverlängerung an. Alle Kurse sind staatlich
+      anerkannt und können über den Aktivierungs- und Vermittlungsgutschein
+      (AVGS) der Arbeitsagentur vollständig gefördert werden –
+      das bedeutet für dich: kein Eigenanteil, keine versteckten Kosten.
+      Die Ausbildungen finden als intensive Einzelbetreuung statt,
+      damit du das maximale Lerntempo und direktes Feedback erhältst.
+      Wähle deine Dozentin und starte deinen Kurs in {city.name}.
+    </p>
   </section>
 
-  {services.length > 0 && (
-    <section>
-      <h2>Kurse</h2>
-      <ul>
-        {services.map(s => (
-          <li>
-            <a href={`/${city.slug}/${s.slug}`}>
-              {s.name} in {city.name}
+  <!-- BLOCK 2 — DOZENTINNEN -->
+  {hasDozentinnen && (
+    <section style="margin-bottom:56px;">
+      <h2 style="font-size:22px;font-weight:700;
+                 margin-bottom:24px;color:var(--color-dark);">
+        Deine Dozentinnen in {city.name}
+      </h2>
+
+      <div style="display:grid;gap:16px;">
+        {dozentinnen.map(d => (
+          <article style="background:var(--color-surface);
+                          border:1px solid var(--color-border);
+                          border-radius:var(--radius);padding:20px 24px;
+                          display:flex;align-items:flex-start;
+                          justify-content:space-between;gap:16px;
+                          flex-wrap:wrap;">
+            <div>
+              <h3 style="font-size:17px;font-weight:600;
+                         margin-bottom:4px;">
+                <a href={`/dozentinnen/${d.slug}/`}
+                   style="color:var(--color-dark);">
+                  {d.first_name} {d.last_name}
+                </a>
+              </h3>
+
+              {d.review_count > 0 && (
+                <p style="font-size:14px;color:var(--color-muted);
+                           margin-bottom:8px;">
+                  ★ {d.rating}/5 ({d.review_count} Bewertungen)
+                </p>
+              )}
+
+              {d.services?.length > 0 && (
+                <p style="font-size:13px;color:var(--color-muted);">
+                  {d.services.map((s: { name: string }) => s.name).join(' · ')}
+                </p>
+              )}
+            </div>
+
+            <a href={`/dozentinnen/${d.slug}/`}
+               style="white-space:nowrap;font-size:14px;font-weight:600;
+                      color:var(--color-primary);">
+              Profil ansehen →
             </a>
-          </li>
+          </article>
         ))}
-      </ul>
+      </div>
     </section>
   )}
 
-  <section>
-    <h2>Dozentinnen</h2>
+  <!-- BLOCK 3 — SERVICES -->
+  {hasServices && (
+    <section style="margin-bottom:56px;">
+      <h2 style="font-size:22px;font-weight:700;
+                 margin-bottom:8px;color:var(--color-dark);">
+        Kurse in {city.name}
+      </h2>
+      <p style="font-size:15px;color:var(--color-muted);
+                margin-bottom:24px;">
+        Wähle deinen Schwerpunkt:
+      </p>
 
-    {dozentinnen.map(d => (
-      <article>
-        <h3>
-          <a href={`/dozentinnen/${d.slug}`}>
-            {d.first_name} {d.last_name}
-          </a>
-        </h3>
+      <div style="display:grid;gap:12px;">
+        {services.map((s: { slug: string; name: string; description_template?: string }) => {
+          const desc = (s.description_template ?? '').replace('{city}', city.name);
+          return (
+            <a href={`/${city.slug}/${s.slug}/`}
+               style="display:block;background:var(--color-surface);
+                      border:1px solid var(--color-border);
+                      border-radius:var(--radius);padding:18px 22px;
+                      color:var(--color-text);transition:border-color .2s;"
+               onmouseover="this.style.borderColor='var(--color-primary)'"
+               onmouseout="this.style.borderColor='var(--color-border)'">
+              <strong style="font-size:16px;
+                             color:var(--color-dark);">{s.name}</strong>
+              {desc && (
+                <p style="font-size:14px;color:var(--color-muted);
+                           margin-top:4px;margin-bottom:0;">
+                  {desc}
+                </p>
+              )}
+              {!desc && (
+                <p style="font-size:14px;color:var(--color-muted);
+                           margin-top:4px;margin-bottom:0;">
+                  {s.name} Einzelcoaching in {city.name} –
+                  AVGS förderbar, staatlich anerkannt.
+                </p>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
 
-        {d.review_count > 0 && (
-          <p>⭐ {d.rating}/5</p>
-        )}
+  <!-- BLOCK 4 — FAQ -->
+  <section style="margin-bottom:56px;">
+    <h2 style="font-size:22px;font-weight:700;
+               margin-bottom:24px;color:var(--color-dark);">
+      Häufige Fragen zu Beauty Kursen in {city.name}
+    </h2>
 
-        {d.bio_short && <p>{d.bio_short}</p>}
-
-        <a href={`/dozentinnen/${d.slug}`}>
-          Profil ansehen →
-        </a>
-      </article>
-    ))}
-
+    <div style="display:grid;gap:16px;">
+      {[
+        {
+          q: `Welche Beauty Kurse gibt es in ${city.name}?`,
+          a: `In ${city.name} bieten wir 1:1 Einzelcoachings in
+              ${services.map((s: { name: string }) => s.name).join(', ')} an –
+              alle über AVGS förderbar.`
+        },
+        {
+          q: `Kann ich Beauty Kurse in ${city.name} über AVGS finanzieren?`,
+          a: `Ja. Alle Kurse in ${city.name} sind über den
+              Aktivierungs- und Vermittlungsgutschein (AVGS)
+              der Arbeitsagentur förderbar –
+              100 % kostenlos für Teilnehmerinnen.`
+        },
+        {
+          q: `Wie lange dauern die Kurse in ${city.name}?`,
+          a: `Die 1:1 Intensivtrainings in ${city.name} dauern
+              je nach Modul einen bis mehrere Tage.
+              Du lernst im eigenen Tempo, direkt mit deiner Dozentin.`
+        },
+        {
+          q: `Brauche ich Vorkenntnisse für die Kurse in ${city.name}?`,
+          a: `Die Kurse richten sich an fortgeschrittene
+              Kosmetikerinnen und PMU Artists. Grundkenntnisse
+              in der Kosmetik werden vorausgesetzt.`
+        }
+      ].map(item => (
+        <details style="background:var(--color-surface);
+                        border:1px solid var(--color-border);
+                        border-radius:var(--radius);padding:18px 22px;">
+          <summary style="font-weight:600;font-size:15px;
+                           cursor:pointer;color:var(--color-dark);">
+            {item.q}
+          </summary>
+          <p style="margin-top:12px;font-size:14px;
+                    line-height:1.7;color:var(--color-text);">
+            {item.a}
+          </p>
+        </details>
+      ))}
+    </div>
   </section>
 
+</main>
 </SEOLayout>

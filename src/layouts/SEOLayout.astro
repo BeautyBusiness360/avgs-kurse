@@ -3,7 +3,7 @@ interface Props {
   title: string;
   description: string;
   canonical: string;
-  schema?: object;
+  schema?: object | object[];
 }
 const { title, description, canonical, schema } = Astro.props;
 ---
@@ -16,9 +16,9 @@ const { title, description, canonical, schema } = Astro.props;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    {schema && (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-    )}
+    {schema && (Array.isArray(schema) ? schema : [schema]).map(s => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
   </head>
 
   <body>
