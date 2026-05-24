@@ -1,6 +1,8 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export const prerender = true;
 
@@ -79,7 +81,14 @@ const { dozentin } = Astro.props;
 const city     = Array.isArray(dozentin.cities) ? dozentin.cities[0] : dozentin.cities;
 const services = dozentin.services ?? [];
 
-const hasImage    = !!dozentin.image_url;
+// Local WebP image lookup (slug minus trailing -city)
+const localImageSlug = dozentin.slug.replace(new RegExp(`-${city.slug}$`), '');
+const localImageRel  = `/images/dozentinnen/${localImageSlug}.webp`;
+const localImageAbs  = path.join(process.cwd(), 'public', localImageRel);
+const hasLocalImage  = fs.existsSync(localImageAbs);
+
+const hasImage    = hasLocalImage || !!dozentin.image_url;
+const heroImageSrc = hasLocalImage ? localImageRel : dozentin.image_url;
 const hasRating   = (dozentin.review_count ?? 0) > 0;
 const hasServices = services.length > 0;
 const hasBio      = !!dozentin.bio_short;
@@ -188,11 +197,14 @@ body {
   height:68px;
 }
 .brand {
-  font-family:var(--sans);
-  font-size:15px; font-weight:600;
-  color:var(--black); text-decoration:none;
-  letter-spacing:.06em; text-transform:uppercase;
+  display:inline-flex; align-items:center;
+  text-decoration:none;
+  line-height:0;
 }
+.brand-logo {
+  height:32px; width:auto; display:block;
+}
+@media(max-width:640px){ .brand-logo { height:24px; } }
 
 /* ─── BUTTONS ────────────────────────────── */
 .cta-gold {
@@ -310,23 +322,20 @@ body {
   content:'✓'; color:var(--gold);
   font-size:11px; font-weight:700;
 }
-.hero-right { position:relative; display:flex; align-items:flex-end; }
+.hero-right { position:relative; display:flex; align-items:stretch; }
 .hero-img-frame {
   width:100%; position:relative;
+  align-self:stretch;
 }
 .hero-img-frame img {
-  width:100%; height:700px;
-  object-fit:cover; object-position:top center; display:block;
-}
-.hero-img-placeholder {
-  width:100%; height:700px;
-  background:linear-gradient(160deg,var(--cream-d),#DDD4C8);
-  display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:56px;
-  color:rgba(184,150,90,.2);
+  width:100%; height:100%;
+  min-height:700px;
+  object-fit:cover; object-position:center top;
+  display:block;
+  border-radius:0;
 }
 @media(max-width:860px){
-  .hero-img-frame img, .hero-img-placeholder { height:440px; }
+  .hero-img-frame img { min-height:440px; height:440px; }
 }
 .hero-cert-badge {
   position:absolute; bottom:28px; right:-16px;
@@ -636,7 +645,16 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <header class="site-header">
   <div class="w">
     <div class="header-inner">
-      <a href="/" class="brand">BeautyBusiness360</a>
+      <a href="/" class="brand" aria-label="BeautyBusiness360 Startseite">
+        <img
+          src="/images/logo/logo.webp"
+          alt="Beauty Academy Logo"
+          class="brand-logo"
+          width="156" height="32"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
       <a href="/fachdozentin-werden/" class="cta-gold">Fachdozentin werden</a>
     </div>
   </div>
@@ -681,22 +699,17 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     </div>
 
     <div class="hero-right">
-      <div class="hero-img-frame">
-        {hasImage
-          ? <img
-              src={dozentin.image_url}
-              alt={`${fullName} – ${primaryService} Dozentin in ${city.name}`}
-              width="570" height="700"
-              loading="eager"
-            />
-          : <div class="hero-img-placeholder">✦</div>
-        }
-        <div class="hero-cert-badge">
-          <span class="cert-label">BeautyBusiness360</span>
-          <span class="cert-name">Anerkannte<br />Fachdozentin</span>
-          <span class="cert-num">AZAV · AVGS</span>
+      {hasImage && (
+        <div class="hero-img-frame">
+          <img
+            src={heroImageSrc}
+            alt={`Permanent Make-up Dozentin ${fullName} in ${city.name}`}
+            width="1024" height="1024"
+            loading="eager"
+            decoding="async"
+          />
         </div>
-      </div>
+      )}
     </div>
 
   </div>
