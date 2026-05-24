@@ -326,41 +326,36 @@ body {
   content:'✓'; color:var(--gold);
   font-size:11px; font-weight:700;
 }
-.hero-right { position:relative; display:flex; align-items:stretch; }
+.hero-right {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 .hero-img-frame {
-  width:100%; position:relative;
-  align-self:stretch;
+  width:100%;
+  max-width:560px;
+  aspect-ratio:1 / 1;       /* matcht das quadratische Quell-Asset */
+  position:relative;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--cream-d);
 }
 .hero-img-frame img {
-  width:100%; height:100%;
-  min-height:700px;
-  object-fit:cover; object-position:65% center;
+  width:100%;
+  height:100%;
+  object-fit:contain;        /* zeigt das GANZE Bild, kein Crop */
   display:block;
-  border-radius:0;
 }
-@media(max-width:860px){
-  .hero-img-frame img { min-height:440px; height:440px; }
-}
-.hero-cert-badge {
-  position:absolute; bottom:28px; right:-16px;
-  background:var(--black); color:var(--white);
-  padding:22px 28px; border-radius:var(--radius);
-  text-align:center; min-width:170px;
-  box-shadow:0 20px 56px rgba(0,0,0,.25);
-}
-@media(max-width:860px){ .hero-cert-badge { right:16px; } }
-.cert-label {
-  font-size:9px; font-weight:600;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:var(--gold); display:block; margin-bottom:8px;
-}
-.cert-name {
+.hero-img-placeholder {
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-family:var(--serif);
-  font-size:19px; font-weight:600;
-  color:var(--white); display:block;
-  line-height:1.25; margin-bottom:8px;
+  font-size:56px;
+  color:rgba(184,150,90,.2);
 }
-.cert-num { font-size:10px; color:rgba(255,255,255,.35); letter-spacing:.1em; }
 .hero-cta-wrap {
   padding:64px 0 88px;
   display:flex; justify-content:center;
@@ -708,7 +703,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           <img
             src={heroImageSrc}
             alt={`Permanent Make-up Dozentin ${fullName} in ${city.name}`}
-            width="1024" height="1024"
+            width="560" height="560"
             loading="eager"
             decoding="async"
           />
