@@ -1,0 +1,24 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  'https://oigyvamkcmtimhbtqbif.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZ3l2YW1rY210aW1oYnRxYmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMTMzNTcsImV4cCI6MjA5NDg4OTM1N30.nn_6HjKNyJDtn2gll2ZLd4z6R2RAMVUfeyYCq3eJEKw'
+);
+
+const { data, error } = await supabase
+  .from('dozentin_services')
+  .select(`
+    dozentinnen!inner(
+      slug,
+      active,
+      cities!inner(slug, name)
+    ),
+    services!inner(slug, name)
+  `)
+  .eq('dozentinnen.active', true);
+
+console.log('ERROR:', error);
+console.log('ROW COUNT:', data?.length);
+console.log('RAW DATA:', JSON.stringify(data, null, 2));
+node debug-paths.mjs
+
