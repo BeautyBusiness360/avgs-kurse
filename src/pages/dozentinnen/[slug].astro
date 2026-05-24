@@ -148,22 +148,22 @@ const schema = {
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <style>
 :root {
   --cream:    #FAF8F5;
   --cream-d:  #F3EEE8;
-  --black:    #1C1C1C;
+  --black:    #111111;
   --gold:     #B8965A;
   --gold-lt:  #D4AF7A;
   --gold-bg:  #FBF6EE;
   --rose:     #E8C4B8;
-  --muted:    #7A7168;
+  --muted:    #555250;
   --border:   #E8E2D9;
   --white:    #FFFFFF;
   --serif:    'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --sans:     'Jost', 'Inter', system-ui, sans-serif;
+  --sans:     'Inter', system-ui, sans-serif;
   --radius:   3px;
   --shadow:   0 8px 40px rgba(184,150,90,.10);
 }
@@ -176,7 +176,9 @@ body {
   background:var(--cream);
   color:var(--black);
   font-family:var(--sans);
-  font-weight:300;
+  font-size:16px;
+  font-weight:400;
+  line-height:1.75;
   -webkit-font-smoothing:antialiased;
 }
 
@@ -287,7 +289,7 @@ body {
 }
 .hero-h1 em { font-style:italic; color:var(--gold); }
 .hero-sub {
-  font-size:16px; font-weight:300;
+  font-size:17px; font-weight:400;
   line-height:1.85; color:var(--muted);
   margin-bottom:0; max-width:440px;
 }
@@ -374,7 +376,7 @@ body {
 }
 .section-title em { font-style:italic; color:var(--gold); }
 .section-desc {
-  font-size:15px; font-weight:300;
+  font-size:16px; font-weight:400;
   line-height:1.85; color:var(--muted);
   max-width:500px; margin:0 auto;
 }
@@ -432,7 +434,7 @@ body {
 .ms-val   { font-weight:600; color:var(--black); text-align:right; }
 .module-points { list-style:none; display:flex; flex-direction:column; gap:9px; }
 .module-points li {
-  font-size:13px; font-weight:300; color:var(--black);
+  font-size:14px; font-weight:400; color:var(--black);
   padding-left:22px; position:relative; line-height:1.6;
 }
 .module-points li::before {
@@ -494,7 +496,7 @@ body {
   color:var(--black);
 }
 .trust-bio-text {
-  font-size:15px; font-weight:300; line-height:1.9; color:var(--muted);
+  font-size:16px; font-weight:400; line-height:1.9; color:var(--muted);
   margin-bottom:32px;
 }
 .trust-facts {
@@ -534,7 +536,7 @@ body {
 }
 .faq-sticky-title em { font-style:italic; color:var(--gold); }
 .faq-sticky-desc {
-  font-size:14px; font-weight:300; line-height:1.8; color:var(--muted);
+  font-size:15px; font-weight:400; line-height:1.8; color:var(--muted);
 }
 .faq-list { display:flex; flex-direction:column; gap:0; }
 .faq-item {
@@ -560,7 +562,7 @@ body {
 details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 .faq-answer {
   padding:0 40px 28px 0;
-  font-size:14px; font-weight:300; line-height:1.9; color:var(--muted);
+  font-size:15px; font-weight:400; line-height:1.9; color:var(--muted);
 }
 .faq-answer p + p { margin-top:12px; }
 .faq-answer strong { color:var(--black); font-weight:500; }
