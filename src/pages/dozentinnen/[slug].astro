@@ -637,6 +637,13 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
   .hero-left { padding-bottom: 40px; }
   .section--module { padding-top: 48px; }
 }
+/* Desktop: About-CTA linksbündig statt mittig */
+@media (min-width: 861px) {
+  .section-cta--about {
+    text-align: left;
+    padding-top: 36px;
+  }
+}
 </style>
 
 
@@ -903,9 +910,9 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
     </div>
 
-    <div class="section-cta">
+    <div class="section-cta section-cta--about">
       <a href="#anmeldung" class="cta-gold">
-        Beratungsgespräch vereinbaren
+        Unterlagen erhalten
       </a>
     </div>
   </div>
