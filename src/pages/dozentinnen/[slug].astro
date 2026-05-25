@@ -923,9 +923,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     </div>
 
     <div class="section-cta section-cta--about">
-      <a href="#anmeldung" class="cta-gold">
-        Unterlagen erhalten
-      </a>
+      {hasForm
+        ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
+        : <a href="#anmeldung" class="cta-gold">Unterlagen erhalten</a>
+      }
     </div>
   </div>
 </section>
@@ -1123,9 +1124,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     </div>
 
     <div class="section-cta">
-      <a href="#anmeldung" class="cta-gold">
-        Jetzt Unterlagen kostenlos herunterladen
-      </a>
+      {hasForm
+        ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Jetzt Unterlagen kostenlos herunterladen</a>
+        : <a href="#anmeldung" class="cta-gold">Jetzt Unterlagen kostenlos herunterladen</a>
+      }
     </div>
   </div>
 </section>
@@ -1149,12 +1151,8 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
     <div class="final-cta-form">
       {hasForm
-        ? <script
-            src={`https://form.jotform.com/jsform/${dozentin.jotform_id}`}
-          />
-        : <a href={`/${city.slug}/`} class="cta-white">
-            Alle Kurse in {city.name} ansehen →
-          </a>
+        ? <a class={`cta-white lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
+        : <a href={`/${city.slug}/`} class="cta-white">Alle Kurse in {city.name} ansehen →</a>
       }
     </div>
 
@@ -1215,5 +1213,26 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
   }
 </script>
+
+{hasForm && (
+  <Fragment>
+    <script src="https://cdn.jotfor.ms/s/static/latest/static/feedback2.js" type="text/javascript" is:inline></script>
+    <script type="text/javascript" is:inline define:vars={{ jfid: dozentin.jotform_id }}>
+      window.addEventListener('DOMContentLoaded', function () {
+        new JotformFeedback({
+          formId: jfid,
+          base: 'https://form.jotform.com/',
+          windowTitle: 'Kostenlose Unterlagen anfordern',
+          backgroundColor: '#ffffff',
+          fontColor: '#ffffff',
+          type: '0',
+          height: 600,
+          width: 700,
+          openOnLoad: false
+        });
+      });
+    </script>
+  </Fragment>
+)}
 
 </SEOLayout>
