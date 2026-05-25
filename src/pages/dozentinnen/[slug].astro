@@ -485,9 +485,21 @@ body {
 .carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
 .carousel-prev { left:-20px; }
 .carousel-next { right:-20px; }
+.carousel-dots {
+  display:none; justify-content:center; gap:8px; margin-top:16px;
+}
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--muted); background:transparent;
+  transition:background .2s, border-color .2s; cursor:pointer; padding:0;
+}
+.carousel-dot.active {
+  background:var(--gold); border-color:var(--gold);
+}
 @media(max-width:640px){
   .carousel-slide { flex:0 0 100%; }
   .carousel-btn { display:none; }
+  .carousel-dots { display:flex; }
 }
 
 /* ─── TRUST / BIO ────────────────────────── */
@@ -859,6 +871,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             }
           </div>
           <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
+          <div class="carousel-dots" id="gallery-dots" aria-hidden="true"></div>
         </div>
       );
     })()}
@@ -1214,13 +1227,29 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 <script>
   const track = document.getElementById('gallery-track') as HTMLElement | null;
+  const dotsWrap = document.getElementById('gallery-dots') as HTMLElement | null;
   if (track) {
     const prev = track.closest('.carousel-wrap')?.querySelector('.carousel-prev');
     const next = track.closest('.carousel-wrap')?.querySelector('.carousel-next');
-    const step = () => {
-      const slide = track.querySelector('.carousel-slide') as HTMLElement | null;
-      return slide ? slide.offsetWidth + 16 : 0;
+    const slides = Array.from(track.querySelectorAll('.carousel-slide')) as HTMLElement[];
+    const step = () => (slides[0]?.offsetWidth ?? 0) + 16;
+
+    // build dots
+    const dots: HTMLButtonElement[] = slides.map((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', `Bild ${i + 1}`);
+      d.addEventListener('click', () => track.scrollTo({ left: step() * i, behavior: 'smooth' }));
+      dotsWrap?.appendChild(d);
+      return d;
+    });
+
+    const updateDots = () => {
+      const idx = Math.round(track.scrollLeft / (step() || 1));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     };
+
+    track.addEventListener('scroll', updateDots, { passive: true });
     prev?.addEventListener('click', () => track.scrollBy({ left: -step() * 3, behavior: 'smooth' }));
     next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
   }
