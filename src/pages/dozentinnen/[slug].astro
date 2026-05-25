@@ -186,31 +186,6 @@ body {
 .w { max-width:1120px; margin:0 auto; padding:0 40px; }
 @media(max-width:640px){ .w { padding:0 22px; } }
 
-/* ─── HEADER ─────────────────────────────── */
-.site-header {
-  position:sticky; top:0; z-index:100;
-  background:rgba(250,248,245,.97);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-}
-.header-inner {
-  display:flex; align-items:center;
-  justify-content:space-between;
-  height:68px;
-}
-.brand {
-  display:inline-flex; align-items:center;
-  text-decoration:none;
-  line-height:0;
-}
-.brand-logo {
-  height:48px; width:auto; display:block;
-}
-@media(max-width:640px){ .brand-logo { height:32px; } }
-.site-header .cta-gold {
-  padding:10px 22px;
-  font-size:11px;
-}
 
 /* ─── BUTTONS ────────────────────────────── */
 .cta-gold {
@@ -549,7 +524,7 @@ body {
   gap:80px; align-items:start;
 }
 @media(max-width:900px){ .faq-grid { grid-template-columns:1fr; gap:48px; } }
-.faq-sticky { position:sticky; top:96px; }
+.faq-sticky { position:sticky; top:24px; }
 .faq-sticky-eye {
   font-size:11px; font-weight:500; letter-spacing:.22em;
   text-transform:uppercase; color:var(--gold); display:block; margin-bottom:18px;
@@ -653,15 +628,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 .footer-links a:hover { color:rgba(255,255,255,.75); }
 </style>
 
-<!-- ══════════════════════════════════
-     HEADER
-══════════════════════════════════ -->
-<header class="site-header">
-  <div class="w">
-    <div class="header-inner">
-    </div>
-  </div>
-</header>
 
 <main>
 
