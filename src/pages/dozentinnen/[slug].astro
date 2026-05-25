@@ -656,6 +656,22 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     box-sizing: border-box;
   }
 }
+.footer-seo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  justify-content: center;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer-seo-links a {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-seo-links a:hover { color: rgba(255,255,255,0.7); }
 </style>
 
 
@@ -740,8 +756,8 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             'microblading':    '/images/Modul-Bilder/microblading.webp',
           };
           const img = moduleImages[s.slug];
-          return (
-            <a href={`/${city.slug}/${s.slug}/`} class="module-card">
+          const cardContent = (
+            <>
               {img
                 ? <img src={img} alt={s.name} class="module-card-img" />
                 : <div class="module-card-accent" />
@@ -783,8 +799,11 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               <div class="module-card-foot">
                 <span class="mc-avgs">Unterlagen erhalten</span>
               </div>
-            </a>
+            </>
           );
+          return hasForm
+            ? <div class={`module-card lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">{cardContent}</div>
+            : <a href={`/${city.slug}/${s.slug}/`} class="module-card">{cardContent}</a>;
         })}
       </div>
 
@@ -1156,16 +1175,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       }
     </div>
 
-    <div class="bottom-nav">
-      <a href={`/${city.slug}/`} class="bottom-nav-link">
-        Alle Kurse in {city.name}
-      </a>
-      {hasServices && services.slice(0,3).map((s: any) => (
-        <a href={`/${city.slug}/${s.slug}/`} class="bottom-nav-link">
-          {s.name}
-        </a>
-      ))}
-    </div>
   </div>
 </section>
 
@@ -1174,6 +1183,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="w">
+    <nav class="footer-seo-links" aria-label={`Kurse in ${city.name}`}>
+      <a href={`/${city.slug}/`}>Alle Kurse in {city.name}</a>
+      {services.map((s: any) => (
+        <a href={`/${city.slug}/${s.slug}/`}>{s.name} {city.name}</a>
+      ))}
+    </nav>
     <div class="footer-inner">
       <span class="footer-copy">© 2026 BeautyBusiness360</span>
       <div class="footer-links">
