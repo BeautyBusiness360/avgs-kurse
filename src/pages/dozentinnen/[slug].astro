@@ -255,6 +255,21 @@ body {
 @media(max-width:860px){
   .hero-left { padding-right:0; padding-bottom:48px; }
 }
+/* desktop: restore visual order — divider first, badges second */
+@media(min-width:861px){
+  .hero-divider   { order:1; }
+  .hero-trust-row { order:2; }
+}
+/* mobile: hide divider, compact badges inline */
+@media(max-width:860px){
+  .hero-divider { display:none; }
+  .hero-trust-row { margin-top:14px; gap:6px; }
+  .trust-chip {
+    font-size:11px;
+    padding:5px 11px;
+    margin-right:0; margin-bottom:6px;
+  }
+}
 .hero-h1 {
   font-family:var(--serif);
   font-size:clamp(40px, 5.5vw, 68px);
@@ -652,8 +667,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         kostenfrei absolvieren.
       </p>
 
-      <div class="hero-divider"></div>
-
       <div class="hero-trust-row">
         <span class="trust-chip">100&thinsp;% kostenfrei bei Bewilligung</span>
         <span class="trust-chip">AZAV-zertifizierte Schulungen</span>
@@ -663,6 +676,8 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           </span>
         }
       </div>
+
+      <div class="hero-divider"></div>
     </div>
 
     <div class="hero-right">
