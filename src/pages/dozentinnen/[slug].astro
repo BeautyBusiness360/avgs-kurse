@@ -411,6 +411,9 @@ body {
   height:3px;
   background:linear-gradient(90deg, var(--gold), var(--rose));
 }
+.module-card-img {
+  display:block;width:100%;height:200px;object-fit:cover;
+}
 .module-card-body { padding:32px 28px 24px; flex:1; display:flex; flex-direction:column; gap:22px; }
 .module-name {
   font-family:var(--serif);
@@ -729,9 +732,18 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           const foerd  = isAvgs ? 'AVGS-Gutschein' : 'Bildungsgutschein';
           const begin  = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
           const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : 'Basisschulung · Anfängerinnen';
+          const moduleImages: Record<string, string> = {
+            'pmu-augenbrauen': '/images/Modul-Bilder/augenbrauen.webp',
+            'pmu-lippen':      '/images/Modul-Bilder/lippen.webp',
+            'microblading':    '/images/Modul-Bilder/microblading.webp',
+          };
+          const img = moduleImages[s.slug];
           return (
             <a href={`/${city.slug}/${s.slug}/`} class="module-card">
-              <div class="module-card-accent" />
+              {img
+                ? <img src={img} alt={s.name} class="module-card-img" />
+                : <div class="module-card-accent" />
+              }
               <div class="module-card-body">
                 <div>
                   <span class="module-name">{s.name}</span>
