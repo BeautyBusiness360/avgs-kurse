@@ -632,6 +632,11 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 @media(min-width:861px){ .trust-top { padding-top:36px; } }
 .section--gallery { padding-top:64px; }
 .section--about   { padding-top:64px; }
+/* Desktop: Abstand Hero -> Module verkleinern */
+@media (min-width: 861px) {
+  .hero-left { padding-bottom: 40px; }
+  .section--module { padding-top: 48px; }
+}
 </style>
 
 
@@ -687,7 +692,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
      MODUL-SEKTION
 ══════════════════════════════════ -->
 {hasServices && (
-  <section class="section" style="border-bottom:none;padding-bottom:0;">
+  <section class="section section--module" style="border-bottom:none;padding-bottom:0;">
     <div class="w">
       <div class="section-header" style="text-align:left;">
         <span class="section-eye">Kurse &amp; Module</span>
