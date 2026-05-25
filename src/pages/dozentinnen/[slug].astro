@@ -83,9 +83,22 @@ const services = dozentin.services ?? [];
 
 // Local WebP image lookup (slug minus trailing -city)
 const localImageSlug = dozentin.slug.replace(new RegExp(`-${city.slug}$`), '');
-const localImageRel  = `/images/dozentinnen/${localImageSlug}.webp`;
+const dozentinDir    = `/images/dozentinnen/${localImageSlug}`;
+const localImageRel  = `${dozentinDir}/${localImageSlug}.webp`;
 const localImageAbs  = path.join(process.cwd(), 'public', localImageRel);
 const hasLocalImage  = fs.existsSync(localImageAbs);
+
+// Galerie-Bilder lokal aus dem Ordner einlesen (Build-Zeit)
+let localGallery: string[] = [];
+try {
+  const galleryDirAbs = path.join(process.cwd(), 'public', dozentinDir);
+  if (fs.existsSync(galleryDirAbs)) {
+    localGallery = fs.readdirSync(galleryDirAbs)
+      .filter(f => /\.webp$/i.test(f) && f !== `${localImageSlug}.webp`)
+      .sort()
+      .map(f => `${dozentinDir}/${f}`);
+  }
+} catch (e) { localGallery = []; }
 
 const hasImage    = hasLocalImage || !!dozentin.image_url;
 const heroImageSrc = hasLocalImage ? localImageRel : dozentin.image_url;
@@ -830,9 +843,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     </div>
 
     {(() => {
-      const gallery = Array.isArray(dozentin.gallery_images)
-        ? dozentin.gallery_images.filter(Boolean).slice(0, 6)
-        : [];
+      const gallery = localGallery.length > 0
+        ? localGallery.slice(0, 6)
+        : (Array.isArray(dozentin.gallery_images)
+            ? dozentin.gallery_images.filter(Boolean).slice(0, 6) : []);
       return (
         <div class="carousel-wrap">
           <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
@@ -842,7 +856,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
                   <div class="carousel-slide">
                     <img
                       src={img}
-                      alt={`${fullName} – Arbeitsprobe ${i + 1}`}
+                      alt={`${fullName} – Permanent Make-up & Microblading Ergebnis in ${city.name}`}
                       width="360" height="360"
                       loading="lazy"
                     />
