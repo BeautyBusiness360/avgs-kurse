@@ -450,22 +450,44 @@ body {
   color:#2D6A4F; background:#EAFAF2; border:1px solid #B7DDD0;
   padding:14px 20px; border-radius:4px;
 }
-/* ─── GALLERY ────────────────────────────── */
-.gallery-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+/* ─── CAROUSEL ───────────────────────────── */
+.carousel-wrap { position:relative; }
+.carousel-track {
+  display:flex; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none;
 }
-@media(max-width:640px){ .gallery-grid { grid-template-columns:repeat(2,1fr); gap:10px; } }
-.gallery-cell { overflow:hidden; border-radius:var(--radius); }
-.gallery-cell img {
+.carousel-track::-webkit-scrollbar { display:none; }
+.carousel-slide {
+  flex:0 0 calc((100% - 32px) / 3);
+  scroll-snap-align:start; border-radius:var(--radius); overflow:hidden;
+}
+.carousel-slide img {
   width:100%; aspect-ratio:1; object-fit:cover; display:block;
   transition:transform .6s ease;
 }
-.gallery-cell:hover img { transform:scale(1.05); }
-.gallery-ph {
+.carousel-slide:hover img { transform:scale(1.05); }
+.carousel-ph {
   aspect-ratio:1;
   background:linear-gradient(135deg,var(--cream-d),#DDD4C8);
   display:flex; align-items:center; justify-content:center;
-  font-size:24px; color:rgba(184,150,90,.25); border-radius:var(--radius);
+  font-size:24px; color:rgba(184,150,90,.25);
+}
+.carousel-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px; height:40px; border-radius:50%;
+  background:var(--white); border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  cursor:pointer; font-size:18px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2; transition:box-shadow .2s;
+}
+.carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
+.carousel-prev { left:-20px; }
+.carousel-next { right:-20px; }
+@media(max-width:640px){
+  .carousel-slide { flex:0 0 100%; }
+  .carousel-btn { display:none; }
 }
 
 /* ─── TRUST / BIO ────────────────────────── */
@@ -815,22 +837,28 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         ? dozentin.gallery_images.filter(Boolean).slice(0, 6)
         : [];
       return (
-        <div class="gallery-grid">
-          {gallery.length > 0
-            ? gallery.map((img: string, i: number) => (
-                <div class="gallery-cell">
-                  <img
-                    src={img}
-                    alt={`${fullName} – Arbeitsprobe ${i + 1}`}
-                    width="360" height="360"
-                    loading="lazy"
-                  />
-                </div>
-              ))
-            : [1,2,3,4,5,6].map((n: number) => (
-                <div class="gallery-ph">✦</div>
-              ))
-          }
+        <div class="carousel-wrap">
+          <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
+          <div class="carousel-track" id="gallery-track">
+            {gallery.length > 0
+              ? gallery.map((img: string, i: number) => (
+                  <div class="carousel-slide">
+                    <img
+                      src={img}
+                      alt={`${fullName} – Arbeitsprobe ${i + 1}`}
+                      width="360" height="360"
+                      loading="lazy"
+                    />
+                  </div>
+                ))
+              : [1,2,3,4,5,6].map((_: number) => (
+                  <div class="carousel-slide">
+                    <div class="carousel-ph">✦</div>
+                  </div>
+                ))
+            }
+          </div>
+          <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
         </div>
       );
     })()}
@@ -1183,5 +1211,19 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     </div>
   </div>
 </footer>
+
+<script>
+  const track = document.getElementById('gallery-track') as HTMLElement | null;
+  if (track) {
+    const prev = track.closest('.carousel-wrap')?.querySelector('.carousel-prev');
+    const next = track.closest('.carousel-wrap')?.querySelector('.carousel-next');
+    const step = () => {
+      const slide = track.querySelector('.carousel-slide') as HTMLElement | null;
+      return slide ? slide.offsetWidth + 16 : 0;
+    };
+    prev?.addEventListener('click', () => track.scrollBy({ left: -step() * 3, behavior: 'smooth' }));
+    next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
+  }
+</script>
 
 </SEOLayout>
