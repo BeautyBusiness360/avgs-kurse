@@ -732,7 +732,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           const foerd  = isAvgs ? 'AVGS-Gutschein' : 'Bildungsgutschein';
           const begin  = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
           const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : 'Basisschulung · Anfängerinnen';
-          const moduleImages: Record<string, string> = {
+          const moduleImages: { [key: string]: string } = {
             'pmu-augenbrauen': '/images/Modul-Bilder/augenbrauen.webp',
             'pmu-lippen':      '/images/Modul-Bilder/lippen.webp',
             'microblading':    '/images/Modul-Bilder/microblading.webp',
