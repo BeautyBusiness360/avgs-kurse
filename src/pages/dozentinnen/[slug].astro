@@ -255,6 +255,11 @@ body {
 @media(max-width:860px){
   .hero-left { padding-right:0; padding-bottom:48px; }
 }
+.hero-trust-mobile { display:none; padding-bottom:48px; }
+@media(max-width:860px){
+  .hero-trust-desktop { display:none; }
+  .hero-trust-mobile  { display:flex; }
+}
 .hero-h1 {
   font-family:var(--serif);
   font-size:clamp(40px, 5.5vw, 68px);
@@ -654,7 +659,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
       <div class="hero-divider"></div>
 
-      <div class="hero-trust-row">
+      <div class="hero-trust-row hero-trust-desktop">
         <span class="trust-chip">100&thinsp;% kostenfrei bei Bewilligung</span>
         <span class="trust-chip">AZAV-zertifizierte Schulungen</span>
         {hasRating &&
@@ -677,6 +682,16 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           />
         </div>
       )}
+    </div>
+
+    <div class="hero-trust-row hero-trust-mobile">
+      <span class="trust-chip">100&thinsp;% kostenfrei bei Bewilligung</span>
+      <span class="trust-chip">AZAV-zertifizierte Schulungen</span>
+      {hasRating &&
+        <span class="trust-chip">
+          {dozentin.rating}/5 ({dozentin.review_count} Bewertungen)
+        </span>
+      }
     </div>
 
   </div>
