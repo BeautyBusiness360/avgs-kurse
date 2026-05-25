@@ -255,21 +255,6 @@ body {
 @media(max-width:860px){
   .hero-left { padding-right:0; padding-bottom:48px; }
 }
-/* desktop: restore visual order — divider first, badges second */
-@media(min-width:861px){
-  .hero-divider   { order:1; }
-  .hero-trust-row { order:2; }
-}
-/* mobile: hide divider, compact badges inline */
-@media(max-width:860px){
-  .hero-divider { display:none; }
-  .hero-trust-row { margin-top:14px; gap:6px; }
-  .trust-chip {
-    font-size:11px;
-    padding:5px 11px;
-    margin-right:0; margin-bottom:6px;
-  }
-}
 .hero-h1 {
   font-family:var(--serif);
   font-size:clamp(40px, 5.5vw, 68px);
@@ -289,22 +274,11 @@ body {
   margin:36px 0;
   opacity:.6;
 }
-.hero-trust-row {
-  display:flex; align-items:center; gap:0;
-  flex-wrap:wrap;
-}
-.trust-chip {
-  display:flex; align-items:center; gap:8px;
-  font-size:12px; font-weight:400; color:var(--muted);
-  padding:10px 20px;
-  border:1px solid var(--border);
-  border-radius:100px;
-  background:var(--white);
-  margin-right:10px; margin-bottom:10px;
-}
-.trust-chip::before {
-  content:'✓'; color:var(--gold);
-  font-size:11px; font-weight:700;
+.hero-trust-list {
+  margin-top:20px;
+  font-size:13px; font-weight:500;
+  color:#8B6914;
+  line-height:2;
 }
 .hero-right {
   display:flex;
@@ -667,14 +641,9 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         kostenfrei absolvieren.
       </p>
 
-      <div class="hero-trust-row">
-        <span class="trust-chip">100&thinsp;% kostenfrei bei Bewilligung</span>
-        <span class="trust-chip">AZAV-zertifizierte Schulungen</span>
-        {hasRating &&
-          <span class="trust-chip">
-            {dozentin.rating}/5 ({dozentin.review_count} Bewertungen)
-          </span>
-        }
+      <div class="hero-trust-list">
+        ◆ 100 % kostenfrei bei Bewilligung<br />
+        ◆ AZAV-zertifizierte Schulungen
       </div>
 
       <div class="hero-divider"></div>
