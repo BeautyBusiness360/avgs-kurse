@@ -412,7 +412,6 @@ body {
   background:linear-gradient(90deg, var(--gold), var(--rose));
 }
 .module-card-body { padding:32px 28px 24px; flex:1; display:flex; flex-direction:column; gap:22px; }
-.module-icon { font-size:26px; display:block; }
 .module-name {
   font-family:var(--serif);
   font-size:24px; font-weight:600;
@@ -734,9 +733,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       </div>
 
       <div class="module-grid">
-        {services.map((s: any, i: number) => {
-          const icons = ['💄','✏️','👁️','🌿','✨','🎨'];
-          const icon  = icons[i % icons.length];
+        {services.map((s: any) => {
           const isAvgs = !!s.avgs_eligible;
           const dauer  = isAvgs ? '40 U. Stunden' : '350 U. Stunden';
           const zeiten = isAvgs ? 'Nach Vereinbarung' : '09:00 - 17:00 Uhr';
@@ -748,7 +745,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               <div class="module-card-accent" />
               <div class="module-card-body">
                 <div>
-                  <span class="module-icon">{icon}</span>
                   <span class="module-name">{s.name}</span>
                   <span class="module-tagline">{tagline}</span>
                 </div>
