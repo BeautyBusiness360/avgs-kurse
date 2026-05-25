@@ -431,15 +431,6 @@ body {
 .module-spec-row:last-child { border-bottom:none; }
 .ms-label { color:var(--muted); font-weight:400; }
 .ms-val   { font-weight:600; color:var(--black); text-align:right; }
-.module-points { list-style:none; display:flex; flex-direction:column; gap:9px; }
-.module-points li {
-  font-size:14px; font-weight:400; color:var(--black);
-  padding-left:22px; position:relative; line-height:1.6;
-}
-.module-points li::before {
-  content:'—'; position:absolute; left:0;
-  color:var(--gold); font-size:11px; top:1px;
-}
 .module-outcome {
   background:var(--gold-bg);
   border:1px solid #E8D9C4;
@@ -772,11 +763,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
                   </div>
                 </div>
 
-                <ul class="module-points">
-                  <li>Intensives 1:1 Einzelcoaching</li>
-                  <li>Direktes Feedback &amp; Korrekturen</li>
-                  <li>Staatlich anerkanntes Zertifikat</li>
-                </ul>
 
                 <div class="module-outcome">
                   🎯 Abschluss: Professioneller Einsatz von {s.name}
