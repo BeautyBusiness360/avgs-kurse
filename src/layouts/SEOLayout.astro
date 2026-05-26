@@ -23,5 +23,80 @@ const { title, description, canonical, schema } = Astro.props;
 
   <body>
     <slot />
+
+    <div id="cookie-hint" class="cookie-hint" role="dialog" aria-label="Cookie-Hinweis">
+      <p class="cookie-hint-text">
+        Diese Website verwendet ausschließlich technisch notwendige Cookies,
+        um die Funktion der Seite sicherzustellen. Mehr dazu in der
+        <a href="/datenschutz/">Datenschutzerklärung</a>.
+      </p>
+      <button id="cookie-hint-ok" class="cookie-hint-btn" type="button">Verstanden</button>
+    </div>
+
+    <style>
+    .cookie-hint {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: 680px;
+      width: calc(100% - 32px);
+      background: rgba(28,28,28,0.96);
+      backdrop-filter: blur(10px);
+      color: #f5f0e8;
+      padding: 16px 20px;
+      border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      font-family: var(--sans, system-ui, sans-serif);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    .cookie-hint.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .cookie-hint-text { font-size: 13px; line-height: 1.5; margin: 0; font-weight: 300; }
+    .cookie-hint-text a { color: #D4AF7A; text-decoration: underline; }
+    .cookie-hint-btn {
+      flex-shrink: 0;
+      background: #C8962E;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+      font-family: var(--sans, system-ui, sans-serif);
+    }
+    .cookie-hint-btn:hover { background: #D4AF7A; }
+    @media (max-width: 560px) {
+      .cookie-hint { flex-direction: column; align-items: stretch; gap: 12px; bottom: 12px; }
+      .cookie-hint-btn { width: 100%; }
+    }
+    </style>
+
+    <script is:inline>
+      (function () {
+        try {
+          var key = 'cookieHintAck';
+          var el = document.getElementById('cookie-hint');
+          if (!el) return;
+          if (!localStorage.getItem(key)) {
+            setTimeout(function(){ el.classList.add('show'); }, 800);
+          }
+          var btn = document.getElementById('cookie-hint-ok');
+          if (btn) btn.addEventListener('click', function(){
+            try { localStorage.setItem(key, '1'); } catch(e) {}
+            el.classList.remove('show');
+          });
+        } catch (e) {}
+      })();
+    </script>
   </body>
 </html>
