@@ -411,7 +411,8 @@ body {
 }
 
 /* ─── FAQ ────────────────────────────── */
-.faq-section { padding:100px 0; border-bottom:1px solid var(--border); }
+.faq-section { padding:100px 0; border-bottom:1px solid var(--border); margin-top:56px; }
+@media(max-width:767px){ .faq-section { margin-top:40px; } }
 .faq-grid {
   display:grid;
   grid-template-columns:380px 1fr;
@@ -662,7 +663,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <!-- ══════════════════════════════════
      FAQ
 ══════════════════════════════════ -->
-<section class="faq-section" id="faq" style="margin-top:96px;">
+<section class="faq-section" id="faq">
   <div class="w">
     <div class="faq-grid">
 
