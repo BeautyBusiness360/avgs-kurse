@@ -49,7 +49,16 @@ export async function getStaticPaths() {
         stadtName:      info?.stadt_name ?? (region.charAt(0).toUpperCase() + region.slice(1)),
         introStatistik: info?.intro_statistik ?? null,
         introQuelle:    info?.intro_quelle ?? null,
-        standorte:      standorteAll.filter(s => s.region === region),
+        standorte:      standorteAll
+          .filter(s => s.region === region)
+          .sort((a, b) => {
+            const aHub = a.city_slug === region ? 0 : 1;
+            const bHub = b.city_slug === region ? 0 : 1;
+            if (aHub !== bHub) return aHub - bHub;
+            const ortCmp = a.ort.localeCompare(b.ort, 'de');
+            if (ortCmp !== 0) return ortCmp;
+            return a.name.localeCompare(b.name, 'de');
+          }),
         dozentinnen:    dozByRegion[region] ?? [],
       }
     };
@@ -367,10 +376,10 @@ body {
 /* ─── DOZENTINNEN GRID ───────────────── */
 .doz-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+  grid-template-columns:repeat(3, 1fr);
   gap:28px;
 }
-@media(max-width:480px){ .doz-grid { grid-template-columns:repeat(2,1fr); gap:16px; } }
+@media(max-width:767px){ .doz-grid { grid-template-columns:1fr; gap:16px; } }
 .doz-card {
   text-decoration:none; color:inherit;
   display:flex; flex-direction:column;
