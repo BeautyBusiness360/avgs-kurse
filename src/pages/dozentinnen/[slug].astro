@@ -3,6 +3,7 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getDozentinFaqs, getDozentinBio } from '../../data/dozentin-content-pool';
 
 export const prerender = true;
 
@@ -109,6 +110,10 @@ const hasForm     = !!dozentin.jotform_id;
 const fullName    = `${dozentin.first_name} ${dozentin.last_name}`;
 
 const primaryService = services[0]?.name ?? 'Beauty Kurs';
+
+const poolVars = { name: fullName, stadt: city.name, service: primaryService };
+const faqItems = getDozentinFaqs(dozentin.slug, poolVars, 7);
+const poolBio  = getDozentinBio(dozentin.slug, poolVars);
 
 const seo = {
   title:
@@ -892,13 +897,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         </span>
         <div class="trust-quote-wrap">
           <blockquote class="trust-quote">
-            {hasBio
-              ? dozentin.bio_short
-              : `Meine Leidenschaft ist es, erfahrene
-                 Kosmetikerinnen auf das nächste Level zu bringen –
-                 durch präzises Einzelcoaching, das wirklich
-                 einen Unterschied macht.`
-            }
+            {hasBio ? dozentin.bio_short : poolBio}
           </blockquote>
         </div>
         <p class="trust-bio-text">
@@ -988,170 +987,17 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
       <div class="faq-list">
 
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Wie lange dauert die Ausbildung?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Die Kurse bei {fullName} in {city.name} sind als intensive
-              1:1-Einzelcoachings konzipiert und umfassen in der Regel
-              <strong>40 Unterrichtseinheiten pro Modul</strong>.
-              Die genaue Dauer richtet sich nach dem gewählten Schwerpunkt –
-              von PMU Augenbrauen über Microblading bis hin zur Wimpernverlängerung.
-            </p>
-            <p>
-              Anders als Gruppentrainings erlaubt das Einzelcoaching
-              ein flexibles Lerntempo: Du schließt ab, wenn du das gewünschte
-              Niveau erreicht hast – nicht nach einem fixen Kalender.
-              Die meisten Teilnehmerinnen in {city.name} schließen
-              ihren Kurs innerhalb weniger Wochen ab.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Welche Voraussetzungen brauche ich für den Kurs?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Die Perfektionstrainings bei {fullName} richten sich an
-              <strong>Kosmetikerinnen und PMU Artists mit bestehenden Grundkenntnissen</strong>,
-              die ihre Technik gezielt auf das nächste Level bringen möchten.
-              Eine abgeschlossene Grundausbildung in Kosmetik oder
-              ein vergleichbarer Hintergrund wird vorausgesetzt.
-            </p>
-            <p>
-              Du musst keine spezifischen Vorerfahrungen in PMU oder Microblading
-              mitbringen – der Kurs baut strukturiert auf deinen vorhandenen
-              Fähigkeiten auf. Wichtiger als technisches Vorwissen ist
-              die Bereitschaft, präzise zu arbeiten und offen für Feedback zu sein.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Was kostet der Kurs – und wie funktioniert AVGS?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Alle Kurse bei {fullName} in {city.name} sind
-              <strong>100&thinsp;% über den AVGS-Gutschein (Aktivierungs- und
-              Vermittlungsgutschein) förderbar</strong>.
-              Das bedeutet: du zahlst keinen Eigenanteil –
-              die Kosten werden vollständig von der Arbeitsagentur übernommen.
-            </p>
-            <p>
-              Um den Gutschein zu erhalten, meldest du dich bei deiner
-              zuständigen Arbeitsagentur oder deinem Jobcenter an
-              und beantragst den AVGS gezielt für diesen Kurs.
-              Unsere Unterlagen erleichtern dir den Antragsprozess –
-              du erhältst alles, was du für die Beantragung brauchst,
-              kostenfrei als Download.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Kann ich auch ohne Vorkenntnisse starten?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Die Perfektionstrainings bei {fullName} sind
-              für Fortgeschrittene konzipiert – sie setzen ein
-              grundlegendes Verständnis der Arbeit mit Farbe,
-              Haut und kosmetischen Geräten voraus.
-              <strong>Absoluten Anfängerinnen ohne jede Vorerfahrung
-              empfehlen wir, zunächst eine Basisausbildung abzuschließen.</strong>
-            </p>
-            <p>
-              Du bist dir unsicher, ob du die Voraussetzungen erfüllst?
-              Lade einfach unsere Unterlagen herunter und schildere
-              deine aktuelle Situation – {dozentin.first_name} findet
-              gemeinsam mit dir den richtigen Einstiegspunkt in {city.name}.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Welche Karrierechancen habe ich nach dem Kurs?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Permanent Make-up gehört zu den am schnellsten wachsenden
-              Bereichen der Beauty-Branche in Deutschland.
-              Nach deiner Ausbildung bei {fullName} bist du berechtigt,
-              <strong>selbstständig als PMU Artist zu arbeiten</strong> –
-              ob im eigenen Studio, als mobile Dienstleisterin
-              oder im Angestelltenverhältnis in einem Kosmetikstudio
-              in {city.name} oder darüber hinaus.
-            </p>
-            <p>
-              Mit dem staatlich anerkannten Zertifikat und dem Nachweis
-              der AZAV-zertifizierten Ausbildung verfügst du über
-              alle Grundlagen, um sofort am Markt zu starten.
-              Viele Absolventinnen aus {city.name} machen sich
-              innerhalb der ersten sechs Monate nach dem Abschluss
-              selbstständig.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Was unterscheidet die einzelnen Module voneinander?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Jedes Modul bei {fullName} fokussiert sich auf
-              <strong>eine spezifische Technik oder einen Behandlungsbereich</strong> –
-              zum Beispiel PMU Augenbrauen, Lippenpigmentierung
-              oder Microblading. Die Inhalte, Werkzeuge und
-              Anforderungen unterscheiden sich dabei deutlich.
-            </p>
-            <p>
-              Du kannst einzelne Module buchen oder mehrere
-              kombinieren, um ein breites Leistungsspektrum aufzubauen.
-              Welche Kombination für deinen Karriereweg in {city.name}
-              sinnvoll ist, besprechen wir gern in einem
-              kostenlosen Erstgespräch – einfach Unterlagen anfordern
-              und {dozentin.first_name} kontaktieren.
-            </p>
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-summary">
-            Wo findet der Unterricht statt?
-            <span class="faq-icon">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>
-              Die Kurse finden als <strong>Hybridunterricht</strong> statt –
-              eine Kombination aus Präsenzunterricht in {city.name}
-              und Online-Einheiten, je nach Modulinhalt und
-              individuellem Bedarf. Die praktischen Übungseinheiten
-              finden grundsätzlich vor Ort statt.
-            </p>
-            <p>
-              Genaue Unterrichtszeiten und -orte werden
-              individuell mit {dozentin.first_name} abgestimmt,
-              sodass der Kurs optimal zu deinem Alltag passt.
-              Flexible Terminplanung ist ein zentraler Vorteil
-              des 1:1-Formats in {city.name}.
-            </p>
-          </div>
-        </details>
+        {faqItems.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-summary">
+              {item.frage}
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>{item.antwort}</p>
+            </div>
+          </details>
+        ))}
 
       </div>
     </div>
