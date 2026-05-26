@@ -122,11 +122,9 @@ if (introStatistik) {
     : introStatistik.replace(/[.,]\s*$/, '');
 }
 
-const introP1 = introZahlSatz
-  ? `In ${stadtName} gibt es ${introZahlSatz}, in denen zahlreiche Kosmetikerinnen täglich Behandlungen durchführen. Viele Beauty-Behandlungen lassen sich tatsächlich in wenigen Stunden oder Tagen erlernen – Permanent Make-up und Wimpernverlängerung gehören jedoch nicht dazu. Diese Techniken sind deutlich anspruchsvoller: Sie erfordern Präzision, fundiertes Fachwissen und vor allem viel praktische Übung an Modellen.`
-  : `In ${stadtName} führen zahlreiche Kosmetikerinnen täglich Behandlungen durch. Viele Beauty-Behandlungen lassen sich tatsächlich in wenigen Stunden oder Tagen erlernen – Permanent Make-up und Wimpernverlängerung gehören jedoch nicht dazu. Diese Techniken sind deutlich anspruchsvoller: Sie erfordern Präzision, fundiertes Fachwissen und vor allem viel praktische Übung an Modellen.`;
-
-const introP2 = `Genau hier liegt das Problem: Viele Fachkräfte haben ihre Grundlagen in kurzen Tagesschulungen erworben – mit wenig Praxisanteil. Eine fundierte, mehrwöchige Fort- und Weiterbildung ist für viele schlicht zu teuer. Deshalb gibt es unsere staatlich geförderten Perfektionstrainings: anerkannt, zertifiziert und über den AVGS der Agentur für Arbeit zu 100 % förderbar. Die folgenden zertifizierten Schulungsstandorte in ${stadtName} bieten diese Trainings im persönlichen Einzelunterricht an.`;
+const introText = introZahlSatz
+  ? `In ${stadtName} gibt es ${introZahlSatz}. Doch nicht alle Studioinhaberinnen und Kosmetikerinnen beherrschen anspruchsvolle Techniken wie Permanent Make-up oder Wimpernverlängerung – diese erfordern fundierte Weiterbildung mit viel Praxis. Folgende Akademien sind anerkannt und zertifiziert:`
+  : `In ${stadtName} beherrschen nicht alle Studioinhaberinnen und Kosmetikerinnen anspruchsvolle Techniken wie Permanent Make-up oder Wimpernverlängerung – diese erfordern fundierte Weiterbildung mit viel Praxis. Folgende Akademien sind anerkannt und zertifiziert:`;
 
 const seoTitle = `Zertifizierte Kosmetikschulen in ${stadtName} – AVGS-gefördert`;
 const seoDescription =
@@ -583,9 +581,8 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <section class="section--intro">
   <div class="w">
     <div class="intro-wrap">
-      <p class="intro-text">{introP1}</p>
-      <p class="intro-text" style="margin-top:20px;">{introP2}</p>
-      {introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
+      <p class="intro-text">{introText}</p>
+      {introZahlSatz && introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
     </div>
   </div>
 </section>
@@ -638,8 +635,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           in <em>{stadtName}</em>
         </h2>
         <p class="section-desc">
-          Alle Dozentinnen sind zertifiziert und für AVGS-geförderte
-          Perfektionstrainings zugelassen.
+          Genau dafür gibt es unsere staatlich geförderten Perfektionstrainings:
+          anerkannt, zertifiziert und über den AVGS der Agentur für Arbeit zu
+          100 % förderbar – im persönlichen Einzelunterricht bei folgenden
+          Fachdozentinnen in {stadtName}:
         </p>
       </div>
 
