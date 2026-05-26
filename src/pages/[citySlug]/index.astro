@@ -113,6 +113,21 @@ const dozentinnenWithImg: DozWithImg[] = dozentinnen.map(d => {
 const hasStandorte   = standorte.length > 0;
 const hasDozentinnen = dozentinnenWithImg.length > 0;
 
+// Extract number-phrase from intro_statistik (strips "In {stadt} gibt es " prefix if present)
+let introZahlSatz: string | null = null;
+if (introStatistik) {
+  const prefix = `In ${stadtName} gibt es `;
+  introZahlSatz = introStatistik.toLowerCase().startsWith(prefix.toLowerCase())
+    ? introStatistik.slice(prefix.length).replace(/[.,]\s*$/, '')
+    : introStatistik.replace(/[.,]\s*$/, '');
+}
+
+const introP1 = introZahlSatz
+  ? `In ${stadtName} gibt es ${introZahlSatz}, in denen zahlreiche Kosmetikerinnen täglich Behandlungen durchführen. Viele Beauty-Behandlungen lassen sich tatsächlich in wenigen Stunden oder Tagen erlernen – Permanent Make-up und Wimpernverlängerung gehören jedoch nicht dazu. Diese Techniken sind deutlich anspruchsvoller: Sie erfordern Präzision, fundiertes Fachwissen und vor allem viel praktische Übung an Modellen.`
+  : `In ${stadtName} führen zahlreiche Kosmetikerinnen täglich Behandlungen durch. Viele Beauty-Behandlungen lassen sich tatsächlich in wenigen Stunden oder Tagen erlernen – Permanent Make-up und Wimpernverlängerung gehören jedoch nicht dazu. Diese Techniken sind deutlich anspruchsvoller: Sie erfordern Präzision, fundiertes Fachwissen und vor allem viel praktische Übung an Modellen.`;
+
+const introP2 = `Genau hier liegt das Problem: Viele Fachkräfte haben ihre Grundlagen in kurzen Tagesschulungen erworben – mit wenig Praxisanteil. Eine fundierte, mehrwöchige Fort- und Weiterbildung ist für viele schlicht zu teuer. Deshalb gibt es unsere staatlich geförderten Perfektionstrainings: anerkannt, zertifiziert und über den AVGS der Agentur für Arbeit zu 100 % förderbar. Die folgenden zertifizierten Schulungsstandorte in ${stadtName} bieten diese Trainings im persönlichen Einzelunterricht an.`;
+
 const seoTitle = `Zertifizierte Kosmetikschulen in ${stadtName} – AVGS-gefördert`;
 const seoDescription =
   `Staatlich geförderte Perfektionstrainings in ${stadtName}. ` +
@@ -144,6 +159,11 @@ const faqItems = [
   {
     q: `Wie melde ich mich für einen Kurs in ${stadtName} an?`,
     a: `Der Ablauf ist unkompliziert: Du wählst eine Fachdozentin aus, füllst das Formular auf ihrer Profilseite aus und wirst anschließend persönlich beraten. Danach wird gemeinsam mit dir der AVGS bei der Agentur für Arbeit beantragt. Sobald der Gutschein bewilligt ist, kann dein Perfektionstraining starten – kostenfrei und individuell auf dich abgestimmt.`,
+  },
+  {
+    q: `Wie kann ich selbst staatlich geförderte Kurse als Fachdozentin unterrichten?`,
+    a: `Du bist erfahrene Fachkraft im Bereich Permanent Make-up, Microblading oder Wimpernverlängerung und möchtest dein Wissen weitergeben? Als anerkannte Fachdozentin kannst du Teilnehmerinnen in staatlich geförderten Perfektionstrainings unterrichten – flexibel, an einem zertifizierten Schulungsstandort und ohne eigenen Schulungsraum. In einer kostenlosen Info-Veranstaltung erfährst du, wie der Einstieg funktioniert und welche Voraussetzungen du mitbringst. Mehr dazu erfährst du unter dein-beauty-kurs.de/fachdozentin-werden.`,
+    aHtml: `Du bist erfahrene Fachkraft im Bereich Permanent Make-up, Microblading oder Wimpernverlängerung und möchtest dein Wissen weitergeben? Als anerkannte Fachdozentin kannst du Teilnehmerinnen in staatlich geförderten Perfektionstrainings unterrichten – flexibel, an einem zertifizierten Schulungsstandort und ohne eigenen Schulungsraum. In einer kostenlosen Info-Veranstaltung erfährst du, wie der Einstieg funktioniert und welche Voraussetzungen du mitbringst. Mehr dazu erfährst du unter <a href="https://dein-beauty-kurs.de/fachdozentin-werden" style="color:var(--gold);">dein-beauty-kurs.de/fachdozentin-werden</a>.`,
   },
 ];
 
@@ -563,23 +583,9 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <section class="section--intro">
   <div class="w">
     <div class="intro-wrap">
-      {introStatistik
-        ? <>
-            <p class="intro-text">
-              {introStatistik} Staatlich geförderte Perfektionstrainings über den AVGS
-              sind dagegen nur an zertifizierten Schulungsstandorten möglich, die nach
-              der AZAV zugelassen sind. Im Großraum {stadtName} sind das die folgenden
-              Standorte.
-            </p>
-            {introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
-          </>
-        : <p class="intro-text">
-            {stadtName} gehört zu den Regionen mit hoher Nachfrage nach qualifizierten
-            Beauty-Fachkräften. Staatlich geförderte Perfektionstrainings über den AVGS
-            sind nur an zertifizierten Schulungsstandorten möglich, die nach der AZAV
-            zugelassen sind.
-          </p>
-      }
+      <p class="intro-text">{introP1}</p>
+      <p class="intro-text" style="margin-top:20px;">{introP2}</p>
+      {introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
     </div>
   </div>
 </section>
@@ -688,7 +694,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               <span class="faq-icon">+</span>
             </summary>
             <div class="faq-answer">
-              <p>{item.a}</p>
+              {item.aHtml ? <p set:html={item.aHtml} /> : <p>{item.a}</p>}
             </div>
           </details>
         ))}
