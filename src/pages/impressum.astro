@@ -1,0 +1,164 @@
+---
+import SEOLayout from '../layouts/SEOLayout.astro';
+---
+
+<SEOLayout
+  title="Impressum – BeautyBusiness360"
+  description="Impressum der Website dein-beauty-kurs.de – ein Projekt der Northpoint Consulting FZ-LLC unter der Marke BeautyBusiness360."
+  canonical="https://dein-beauty-kurs.de/impressum/"
+>
+
+<style>
+:root {
+  --cream:  #FAF8F5;
+  --black:  #111111;
+  --gold:   #C8962E;
+  --muted:  #555250;
+  --border: #E8E2D9;
+  --serif:  'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans:   'Inter', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--cream);
+  color: var(--black);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+.page-header {
+  border-bottom: 1px solid var(--border);
+  padding: 24px 40px;
+}
+.page-header a {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--black);
+  text-decoration: none;
+  letter-spacing: .06em;
+}
+.page-header a:hover { color: var(--gold); }
+.page-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 72px 40px 96px;
+}
+@media (max-width: 640px) {
+  .page-header { padding: 20px 22px; }
+  .page-wrap { padding: 48px 22px 72px; }
+}
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 600;
+  line-height: 1.08;
+  color: var(--black);
+  margin-bottom: 48px;
+}
+h2 {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 48px;
+  margin-bottom: 16px;
+}
+p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 8px;
+}
+.site-footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 32px 40px;
+}
+@media (max-width: 640px) { .site-footer { padding: 32px 22px; } }
+.footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-copy { font-size: 12px; color: rgba(255,255,255,.25); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 12px;
+  color: rgba(255,255,255,.35);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: rgba(255,255,255,.75); }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+<header class="page-header">
+  <a href="/">← BeautyBusiness360</a>
+</header>
+
+<main class="page-wrap">
+
+  <h1>Impressum</h1>
+
+  <p>Angaben gemäß § 5 TMG</p>
+
+  <h2>Anbieter</h2>
+  <p>Northpoint Consulting FZ-LLC<br />
+     Compass Building, Al Shohada Road<br />
+     Al Hamra Industrial Zone – FZ<br />
+     Ras Al Khaimah, Vereinigte Arabische Emirate</p>
+  <p>Lizenznummer: 47023840<br />
+     Lizenztyp: Free Zone Limited Liability Company (FZ-LLC)<br />
+     Tätigkeit: Project Management Consultancy</p>
+  <p>Geschäftsführer: Oualid Regaia<br />
+     E-Mail: info@dein-beauty-kurs.de<br />
+     Telefon: +49 157 39445805<br />
+     Webseite: www.dein-beauty-kurs.de</p>
+
+  <h2>Projektzuordnung</h2>
+  <p>Die Domain dein-beauty-kurs.de ist ein Projekt der Northpoint Consulting
+     FZ-LLC unter der Marke BeautyBusiness360.</p>
+
+  <h2>Verantwortlich für den Inhalt gemäß § 55 Abs. 2 RStV</h2>
+  <p>Oualid Regaia (handelnd für die Northpoint Consulting FZ-LLC)<br />
+     Compass Building, Al Shohada Road<br />
+     Al Hamra Industrial Zone – FZ<br />
+     Ras Al Khaimah, Vereinigte Arabische Emirate</p>
+
+  <h2>Haftungsausschluss</h2>
+  <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung
+     für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind
+     ausschließlich deren Betreiber verantwortlich. Die Inhalte dieser Website
+     wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit
+     und Aktualität der Inhalte übernehmen wir keine Gewähr.</p>
+
+  <h2>Hinweis</h2>
+  <p>Die Northpoint Consulting FZ-LLC ist ein in den Vereinigten Arabischen
+     Emiraten (RAK Free Zone) registriertes Unternehmen. Dieses Online-Angebot
+     richtet sich ausschließlich an volljährige Nutzerinnen und Nutzer.</p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 BeautyBusiness360</span>
+    <div class="footer-links">
+      <a href="/impressum/">Impressum</a>
+      <a href="/datenschutz/">Datenschutzerklärung</a>
+    </div>
+  </div>
+</footer>
+
+</SEOLayout>
