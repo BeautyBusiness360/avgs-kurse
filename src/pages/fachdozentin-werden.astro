@@ -480,43 +480,60 @@ body {
 /* ══════════════════════════════════════
    WEBINAR MODAL
 ══════════════════════════════════════ */
-.webinar-modal {
+.wb-modal[hidden]{ display:none; }
+.wb-modal{
   position:fixed; inset:0; z-index:9998;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(6px);
   display:flex; align-items:center; justify-content:center;
-  padding:20px;
-  opacity:0; pointer-events:none;
-  transition:opacity .3s ease;
+  padding:16px;
 }
-.webinar-modal.open { opacity:1; pointer-events:auto; }
-.webinar-modal-box {
+.wb-modal__backdrop{
+  position:absolute; inset:0;
+  background:rgba(17,17,17,.65);
+}
+.wb-modal__card{
+  position:relative; z-index:1;
+  width:100%; max-width:600px; max-height:92vh; overflow-y:auto;
+  background:var(--gold-bg);
+  border:1px solid rgba(200,150,46,.4);
+  border-top:4px solid var(--gold);
+  border-radius:18px;
+  padding:32px 28px 24px;
+  text-align:center;
+  box-shadow:0 24px 80px rgba(0,0,0,.35);
+}
+.wb-modal__close{
+  position:absolute; top:14px; right:14px;
+  width:38px; height:38px; border-radius:50%;
+  border:0; background:var(--white); color:var(--black);
+  font-size:22px; line-height:1; cursor:pointer;
+  transition:background .2s, color .2s;
+}
+.wb-modal__close:hover{ background:var(--gold); color:var(--white); }
+.wb-modal__eyebrow{
+  margin:0 0 6px;
+  font-size:12px; letter-spacing:.06em;
+  color:var(--gold); font-weight:500;
+}
+.wb-modal__title{
+  font-family:var(--serif);
+  margin:0 0 6px;
+  color:var(--black);
+  font-size:clamp(22px,4vw,27px); line-height:1.25; font-weight:600;
+}
+.wb-modal__sub{
+  margin:0 auto 18px; max-width:42ch;
+  color:var(--muted); font-size:15px;
+}
+.wb-modal__form{
+  display:flex; justify-content:center;
   background:var(--white);
-  border-radius:var(--radius);
-  width:100%; max-width:780px; max-height:90vh;
-  display:flex; flex-direction:column;
-  overflow:hidden;
-  box-shadow:0 24px 80px rgba(0,0,0,.4);
-  transform:translateY(24px);
-  transition:transform .3s ease;
+  border:1px solid var(--border);
+  border-radius:12px; padding:8px;
 }
-.webinar-modal.open .webinar-modal-box { transform:translateY(0); }
-.webinar-modal-head {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:16px 22px; border-bottom:1px solid var(--border); flex-shrink:0;
-}
-.webinar-modal-head-title {
-  font-size:13px; font-weight:600; color:var(--black);
-}
-.webinar-modal-close {
-  background:none; border:none; cursor:pointer;
-  font-size:22px; line-height:1; padding:4px 8px;
-  color:var(--muted); transition:color .2s;
-}
-.webinar-modal-close:hover { color:var(--black); }
-.webinar-iframe {
-  width:100%; min-height:640px; border:none; flex:1;
-  display:block;
+.wb-modal__form iframe{ width:100%; max-width:538px; border:0; display:block; }
+.wb-modal__trust{ margin:16px 0 2px; font-size:12.5px; color:rgba(85,82,80,.55); }
+@media(max-width:480px){
+  .wb-modal__card{ padding:26px 16px 18px; border-radius:16px; }
 }
 
 /* ─── FOOTER ─────────────────────────── */
@@ -814,75 +831,58 @@ body {
 <!-- ══════════════════════════════════
      WEBINAR MODAL
 ══════════════════════════════════ -->
-<div
-  id="webinar-modal"
-  class="webinar-modal"
-  role="dialog"
-  aria-modal="true"
-  aria-label="Webinar-Anmeldung"
->
-  <div class="webinar-modal-box">
-    <div class="webinar-modal-head">
-      <span class="webinar-modal-head-title">
-        Kostenfreie Online Info-Veranstaltung – Platz sichern
-      </span>
-      <button id="webinar-modal-close" class="webinar-modal-close" aria-label="Schließen">
-        ×
-      </button>
+<div id="webinar-modal" class="wb-modal" hidden>
+  <div class="wb-modal__backdrop" data-wb-close></div>
+  <div class="wb-modal__card" role="dialog" aria-modal="true" aria-labelledby="wb-modal-title">
+    <button class="wb-modal__close" type="button" data-wb-close aria-label="Schließen">&times;</button>
+    <p class="wb-modal__eyebrow">Kostenlose Online-Info-Veranstaltung</p>
+    <h2 id="wb-modal-title" class="wb-modal__title">Sichere dir deinen kostenfreien Platz</h2>
+    <p class="wb-modal__sub">Wähle einfach einen passenden Termin – 100 % kostenlos und unverbindlich.</p>
+
+    <div class="wb-modal__form">
+      <iframe
+        id="wbn-29241-iframe"
+        title="Info-Veranstaltung: Fachdozentin für Perfektionstrainings"
+        frameborder="0"
+        allowfullscreen
+        height="688"
+        data-src="https://21656.webinaris.co/customer/registration/viewer/29241/21656?form=iframe&v=4&mode=N"></iframe>
     </div>
-    <iframe
-      id="webinar-iframe"
-      class="webinar-iframe"
-      title="Webinar-Anmeldung"
-      loading="lazy"
-      allow="forms"
-      data-src="__WEBINARIS_REGISTRATION_URL__"
-    ></iframe>
+
+    <p class="wb-modal__trust">Mehrere Termine täglich · Bestätigung &amp; Zugangslink per E-Mail</p>
   </div>
 </div>
 
 
 <script>
   // ── Webinar Modal ──────────────────────────────────────────────────────────
-  (function () {
-    const modal   = document.getElementById('webinar-modal') as HTMLElement | null;
-    const closeBtn = document.getElementById('webinar-modal-close');
-    const iframe  = document.getElementById('webinar-iframe') as HTMLIFrameElement | null;
-    let   loaded  = false;
-
-    function openModal() {
-      if (!modal) return;
-      // Lazy-load the iframe src only on first open
+  (() => {
+    const modal = document.getElementById('webinar-modal');
+    if (!modal) return;
+    const iframe = document.getElementById('wbn-29241-iframe') as HTMLIFrameElement | null;
+    let loaded = false;
+    const open = () => {
+      (modal as HTMLElement & { hidden: boolean }).hidden = false;
+      document.documentElement.style.overflow = 'hidden';
       if (!loaded && iframe) {
-        const src = iframe.dataset.src ?? '';
-        if (src && src !== '__WEBINARIS_REGISTRATION_URL__') {
-          iframe.src = src;
-        }
+        iframe.src = (iframe as HTMLIFrameElement & { dataset: DOMStringMap }).dataset.src ?? '';
+        const s = document.createElement('script');
+        s.src = 'https://21656.webinaris.co/iframe/quellcode?v=4';
+        s.onload = () => {
+          try { (window as any).wbnIframe.getInstance().init('wbn-29241-iframe'); }
+          catch (e) { console.warn('Webinaris init', e); }
+        };
+        document.body.appendChild(s);
         loaded = true;
       }
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      if (!modal) return;
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    document.querySelectorAll<HTMLElement>('.js-webinar-cta').forEach(btn =>
-      btn.addEventListener('click', openModal),
-    );
-
-    closeBtn?.addEventListener('click', closeModal);
-
-    modal?.addEventListener('click', (e: MouseEvent) => {
-      if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
-    });
+    };
+    const close = () => {
+      (modal as HTMLElement & { hidden: boolean }).hidden = true;
+      document.documentElement.style.overflow = '';
+    };
+    document.querySelectorAll('.js-webinar-cta').forEach((b) => b.addEventListener('click', open));
+    modal.querySelectorAll('[data-wb-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !(modal as any).hidden) close(); });
   })();
 
   // ── Netzwerk-Carousel ──────────────────────────────────────────────────────
