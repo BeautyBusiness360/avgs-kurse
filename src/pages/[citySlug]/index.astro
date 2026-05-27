@@ -339,12 +339,7 @@ body {
 }
 
 /* ─── INTRO ──────────────────────────── */
-.section--intro {
-  padding:72px 0;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-}
-.intro-wrap { max-width:780px; }
+.intro-wrap { max-width:780px; margin-bottom:48px; }
 .intro-text {
   font-size:17px; line-height:1.95;
   color:var(--muted); margin-bottom:0;
@@ -576,30 +571,22 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
-     INTRO TEXT
-══════════════════════════════════ -->
-<section class="section--intro">
-  <div class="w">
-    <div class="intro-wrap">
-      <p class="intro-text">{introText}</p>
-      {introZahlSatz && introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     STANDORTE
+     STANDORTE (inkl. Intro-Text)
 ══════════════════════════════════ -->
 {hasStandorte && (
   <section class="section" style="border-bottom:none;padding-bottom:0;">
     <div class="w">
-      <div class="section-header" style="text-align:left;">
+      <div class="section-header" style="text-align:left;margin-bottom:28px;">
         <span class="section-eye">Schulungsstandorte</span>
         <h2 class="section-title">
           Zertifizierte Schulungsstandorte<br />
           in <em>{stadtName}</em>
         </h2>
+      </div>
+
+      <div class="intro-wrap">
+        <p class="intro-text">{introText}</p>
+        {introZahlSatz && introQuelle && <p class="intro-quelle">Quelle: {introQuelle}</p>}
       </div>
 
       <div class="standort-grid">
