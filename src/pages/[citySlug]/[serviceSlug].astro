@@ -1,6 +1,11 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
+import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { CITY_DISPLAY } from '../../data/location-overrides';
 import { supabase } from '../../lib/supabase';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export const prerender = true;
 
@@ -64,7 +69,7 @@ export async function getStaticPaths() {
         last_name:      dozentin.last_name,
         rating:         dozentin.rating,
         review_count:   dozentin.review_count,
-        avgs_certified: dozentin.avgs_certified
+        avgs_certified: dozentin.avgs_certified,
       });
     }
   }
@@ -80,6 +85,7 @@ export async function getStaticPaths() {
 
 const { city, service, dozentinnen } = Astro.props;
 
+// ── Modul-Bild ────────────────────────────────────────────────────────────────
 const MODULE_IMAGES: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': '/images/Modul-Bilder/augenbrauen.webp',
   'velvet-lips-lipstick-masterclass':   '/images/Modul-Bilder/lippen.webp',
@@ -87,30 +93,62 @@ const MODULE_IMAGES: Record<string, string> = {
   'wimpernverlaengerung-masterclass':   '/images/Modul-Bilder/wimpern.webp',
   'camouflage-removal-masterclass':     '/images/Modul-Bilder/entfernung.webp',
 };
-const moduleImage = MODULE_IMAGES[service.slug] ?? null;
+const moduleImageRel = MODULE_IMAGES[service.slug] ?? null;
+const hasModuleImage = moduleImageRel
+  ? fs.existsSync(path.join(process.cwd(), 'public', moduleImageRel))
+  : false;
 
-const seo = {
-  title:       `${service.name} in ${city.name} | AVGS gefördert – BeautyBusiness360`,
-  description: (service.description_template ?? '').replace('{city}', city.name)
-               || `${service.name} in ${city.name}. Staatlich gefördert über AVGS.`,
-  canonical:   `https://dein-beauty-kurs.de/${city.slug}/${service.slug}/`
-};
+// ── Profilbilder der Dozentinnen (build-time) ─────────────────────────────────
+const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
+  const localSlug = d.slug.replace(new RegExp(`-${city.slug}$`), '');
+  const rel       = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
+  const hasImg    = fs.existsSync(path.join(process.cwd(), 'public', rel));
+  return { ...d, profileImg: hasImg ? rel : null };
+});
 
-const schema = {
+// ── FAQ ───────────────────────────────────────────────────────────────────────
+const faqItems = [
+  {
+    q: `Ist ${service.name} in ${city.name} wirklich kostenlos?`,
+    a: `Ja. Bei Bewilligung durch die Agentur für Arbeit wird das Perfektionstraining zu 100 % über den Aktivierungs- und Vermittlungsgutschein (AVGS) finanziert. Für dich entstehen dabei keinerlei Kosten – weder Eigenanteil noch versteckte Gebühren.`,
+  },
+  {
+    q: `Wer kann den AVGS-Gutschein für dieses Modul beantragen?`,
+    a: `Den AVGS können nicht nur arbeitssuchende Personen beantragen, sondern auch Angestellte und Selbstständige – unabhängig davon, ob aktuell Leistungen bezogen werden. Entscheidend ist, dass die Weiterbildung deine berufliche Situation verbessert oder sichert. Ein Termin bei der Agentur für Arbeit klärt, ob der Gutschein in deinem Fall bewilligt wird.`,
+  },
+  {
+    q: `[PLATZHALTER] Welche Inhalte umfasst ${service.name}?`,
+    a: `[PLATZHALTER – Modul-spezifische Antwort zu Kursinhalten, Techniken und Ablauf wird hier ergänzt.]`,
+  },
+  {
+    q: `Welche Voraussetzungen brauche ich für die Teilnahme?`,
+    a: `Das Perfektionstraining richtet sich an erfahrene Teilnehmerinnen aus der Beauty-Branche, die ihre Technik gezielt weiterentwickeln möchten. Es handelt sich ausdrücklich nicht um einen Einsteigerkurs – praktische Vorerfahrung im jeweiligen Fachbereich wird vorausgesetzt.`,
+  },
+  {
+    q: `Wie melde ich mich für ${service.name} in ${city.name} an?`,
+    a: `Du wählst eine Fachdozentin aus, füllst das Formular auf ihrer Profilseite aus und wirst persönlich beraten. Danach wird gemeinsam mit dir der AVGS bei der Agentur für Arbeit beantragt. Sobald der Gutschein bewilligt ist, kann dein Perfektionstraining starten – kostenfrei und individuell auf dich abgestimmt.`,
+  },
+];
+
+const faqSchema = {
   "@context": "https://schema.org",
-  "@type": "Course",
-  "name": `${service.name} in ${city.name}`,
-  "url": seo.canonical,
-  "provider": {
-    "@type": "Organization",
-    "name": "BeautyBusiness360",
-    "url": "https://dein-beauty-kurs.de"
-  }
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": { "@type": "Answer", "text": item.a },
+  })),
 };
+
+// ── SEO ───────────────────────────────────────────────────────────────────────
+const seoTitle       = `${service.name} in ${city.name} | AVGS gefördert – BeautyBusiness360`;
+const seoDescription = (service.description_template ?? '').replace('{city}', city.name)
+                     || `${service.name} in ${city.name}. Staatlich gefördert über AVGS – 100 % kostenfrei bei Bewilligung.`;
+const canonical      = `https://dein-beauty-kurs.de/${city.slug}/${service.slug}/`;
 ---
 
-<SEOLayout title={seo.title} description={seo.description}
-           canonical={seo.canonical} schema={schema}>
+<SEOLayout title={seoTitle} description={seoDescription}
+           canonical={canonical} schema={faqSchema}>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -151,161 +189,267 @@ body {
   background:var(--cream);
   color:var(--black);
   font-family:var(--sans);
-  font-size:16px; font-weight:400; line-height:1.75;
+  font-size:16px;
+  font-weight:400;
+  line-height:1.75;
   -webkit-font-smoothing:antialiased;
 }
 
+/* ─── LAYOUT ─────────────────────────── */
 .w { max-width:1120px; margin:0 auto; padding:0 40px; }
 @media(max-width:640px){ .w { padding:0 22px; } }
 
-/* ─── HERO ─── */
+/* ─── BUTTONS ────────────────────────── */
+.cta-gold {
+  display:inline-block;
+  background:var(--gold);
+  color:var(--white);
+  font-family:var(--sans);
+  font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px;
+  border:none; border-radius:var(--radius);
+  text-decoration:none; cursor:pointer;
+  transition:background .25s, transform .2s, box-shadow .25s;
+  box-shadow:0 4px 18px rgba(184,150,90,.25);
+}
+.cta-gold:hover { background:var(--gold-lt); transform:translateY(-2px); box-shadow:0 8px 28px rgba(184,150,90,.35); }
+.cta-white {
+  display:inline-block;
+  background:var(--white);
+  color:var(--black);
+  font-family:var(--sans);
+  font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px;
+  border-radius:var(--radius);
+  text-decoration:none;
+  transition:opacity .2s, transform .2s;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+.cta-white:hover { opacity:.9; transform:translateY(-1px); }
+
+/* ─── HERO ───────────────────────────── */
 .hero {
   display:grid;
   grid-template-columns:55% 45%;
-  gap:0; min-height:540px; padding:80px 0 64px;
+  gap:0;
+  min-height:580px;
+  padding:88px 0 64px;
+  align-items:center;
 }
-@media(max-width:860px){ .hero { grid-template-columns:1fr; padding:48px 0 36px; } }
+@media(max-width:860px){
+  .hero { grid-template-columns:1fr; padding:52px 0 40px; min-height:auto; }
+}
 .hero-left {
-  display:flex; flex-direction:column; justify-content:center;
+  display:flex; flex-direction:column;
+  justify-content:center;
   padding-right:72px;
 }
-@media(max-width:860px){ .hero-left { padding-right:0; padding-bottom:28px; } }
+@media(max-width:860px){ .hero-left { padding-right:0; margin-bottom:36px; } }
 .hero-h1 {
   font-family:var(--serif);
-  font-size:clamp(40px, 5.5vw, 68px);
-  font-weight:600; line-height:1.06;
-  color:var(--black); margin-bottom:24px; letter-spacing:-.02em;
+  font-size:clamp(36px, 5vw, 60px);
+  font-weight:600; line-height:1.08;
+  color:var(--black); margin-bottom:24px;
+  letter-spacing:-.02em;
 }
-.hero-h1 em { font-style:italic; color:var(--gold); white-space:nowrap; }
+.hero-h1 em { font-style:italic; color:var(--gold); }
 .hero-sub {
   font-size:17px; font-weight:400;
   line-height:1.85; color:var(--muted);
-  max-width:440px;
+  margin-bottom:0; max-width:440px;
 }
-.hero-avgs {
-  margin-top:20px;
-  font-size:13px; font-weight:500; color:#8B6914; line-height:2;
+.hero-divider {
+  width:48px; height:1px;
+  background:var(--gold);
+  margin:28px 0;
+  opacity:.6;
 }
-.hero-divider { width:48px; height:1px; background:var(--gold); margin:24px 0 0; opacity:.6; }
+.hero-trust-list {
+  font-size:13px; font-weight:500;
+  color:#8B6914; line-height:2.2;
+}
 .hero-right { display:flex; align-items:center; justify-content:center; }
 .hero-img-frame {
-  width:clamp(280px, 78vw, 640px); max-width:100%;
-  aspect-ratio:1 / 1; position:relative;
-  border-radius:var(--radius); overflow:hidden; background:var(--cream-d);
-}
-.hero-img-frame img { width:100%; height:100%; object-fit:contain; display:block; }
-.hero-img-placeholder {
-  width:100%; height:100%;
+  width:100%;
+  aspect-ratio:1 / 1;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:linear-gradient(135deg, var(--cream-d), #DDD4C8);
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:56px;
-  color:rgba(184,150,90,.2);
 }
-.hero-sep { border:none; border-top:1px solid var(--border); margin:0; }
+.hero-img-frame img {
+  width:100%; height:100%;
+  object-fit:contain; display:block;
+}
 
-/* ─── SECTION BASICS ─── */
-.section { padding:80px 0; border-bottom:1px solid var(--border); }
-.section-header { margin-bottom:52px; }
+/* ─── SECTIONS ───────────────────────── */
+.section { padding:96px 0; border-bottom:1px solid var(--border); }
+.section-header { margin-bottom:56px; }
 .section-eye {
-  display:inline-block; font-size:11px; font-weight:500;
-  letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:16px;
+  display:inline-block;
+  font-size:11px; font-weight:500;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:18px;
 }
 .section-title {
-  font-family:var(--serif); font-size:clamp(36px, 5vw, 56px);
-  font-weight:600; line-height:1.06; color:var(--black); margin-bottom:16px;
+  font-family:var(--serif);
+  font-size:clamp(34px, 4.5vw, 56px);
+  font-weight:600; line-height:1.1;
+  color:var(--black); margin-bottom:18px;
 }
 .section-title em { font-style:italic; color:var(--gold); }
-.section-desc { font-size:16px; font-weight:400; line-height:1.85; color:var(--muted); }
+.section-desc {
+  font-size:16px; font-weight:400;
+  line-height:1.85; color:var(--muted);
+  max-width:680px;
+}
 
-/* ─── DOZENTINNEN CARDS ─── */
-.module-grid {
+/* ─── INTRO / ÜBER DAS MODUL ─────────── */
+.intro-text {
+  font-size:17px; line-height:1.95;
+  color:var(--muted); margin-bottom:28px;
+  max-width:720px;
+}
+.modul-badges { display:flex; flex-wrap:wrap; gap:10px; }
+.modul-badge {
+  font-size:11px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:#7A5C2E;
+  background:var(--gold-bg); border:1px solid #E8D9C4;
+  border-radius:var(--radius); padding:7px 14px;
+}
+
+/* ─── PLATZHALTER ────────────────────── */
+.ph {
+  background:var(--cream-d);
+  border:1.5px dashed var(--border);
+  border-radius:var(--radius);
+  padding:10px 16px;
+  color:var(--muted);
+  font-size:12px; font-style:italic;
+  display:inline-block;
+}
+
+/* ─── DOZENTINNEN GRID ───────────────── */
+.doz-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
-  gap:24px;
+  grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+  gap:28px;
 }
-.module-card {
-  background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
-  overflow:hidden; text-decoration:none; color:inherit;
+.doz-card {
+  text-decoration:none; color:inherit;
   display:flex; flex-direction:column;
-  transition:box-shadow .3s, transform .25s;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
   box-shadow:0 2px 16px rgba(0,0,0,.04);
+  transition:box-shadow .3s, transform .25s;
 }
-.module-card:hover { box-shadow:var(--shadow); transform:translateY(-4px); }
-.module-card-accent { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); }
-.module-card-body { padding:28px 24px 20px; flex:1; display:flex; flex-direction:column; gap:18px; }
-.module-name { font-family:var(--serif); font-size:22px; font-weight:600; color:var(--black); display:block; line-height:1.2; margin-bottom:2px; }
-.module-tagline { font-size:13px; color:var(--gold); font-weight:500; letter-spacing:.06em; }
-.module-specs { display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-.module-spec-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--border); font-size:13px; }
-.module-spec-row:last-child { border-bottom:none; }
-.ms-label { color:var(--muted); font-weight:400; }
-.ms-val   { font-weight:600; color:var(--black); text-align:right; }
-.module-cta {
-  display:block; text-align:center;
-  background:var(--gold-bg); border:1px solid #E8D9C4; border-radius:var(--radius);
-  padding:13px 18px; font-size:13px; color:#7A5C2E; font-weight:600; letter-spacing:.04em;
-  transition:background .2s;
+.doz-card:hover { transform:translateY(-5px); box-shadow:var(--shadow); }
+.doz-img-wrap {
+  width:100%; aspect-ratio:1;
+  overflow:hidden;
+  background:var(--cream-d);
 }
-.module-card:hover .module-cta { background:#F0E4CE; }
+.doz-img-wrap img {
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:transform .5s ease;
+}
+.doz-card:hover .doz-img-wrap img { transform:scale(1.05); }
+.doz-img-ph {
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; color:rgba(184,150,90,.2);
+}
 
-/* ─── CAROUSEL ─── */
-.carousel-wrap { position:relative; }
-.carousel-track { display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; scrollbar-width:none; }
-.carousel-track::-webkit-scrollbar { display:none; }
-.carousel-slide { flex:0 0 calc((100% - 32px) / 3); scroll-snap-align:start; border-radius:var(--radius); overflow:hidden; }
-.carousel-slide img { width:100%; aspect-ratio:1; object-fit:cover; display:block; transition:transform .6s ease; }
-.carousel-slide:hover img { transform:scale(1.05); }
-.carousel-ph { aspect-ratio:1; background:linear-gradient(135deg,var(--cream-d),#DDD4C8); display:flex; align-items:center; justify-content:center; font-size:24px; color:rgba(184,150,90,.25); }
-.carousel-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; background:var(--white); border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,.1); cursor:pointer; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; z-index:2; transition:box-shadow .2s; }
-.carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
-.carousel-prev { left:-20px; }
-.carousel-next { right:-20px; }
-.carousel-dots { display:none; justify-content:center; gap:8px; margin-top:16px; }
-.carousel-dot { width:8px; height:8px; border-radius:50%; border:1.5px solid var(--muted); background:transparent; transition:background .2s, border-color .2s; cursor:pointer; padding:0; }
-.carousel-dot.active { background:var(--gold); border-color:var(--gold); }
-@media(max-width:640px){ .carousel-slide { flex:0 0 100%; } .carousel-btn { display:none; } .carousel-dots { display:flex; } }
-
-/* ─── FAQ ─── */
-.faq-section { padding:80px 0; border-bottom:1px solid var(--border); }
-.faq-grid { display:grid; grid-template-columns:340px 1fr; gap:80px; align-items:start; }
-@media(max-width:900px){ .faq-grid { grid-template-columns:1fr; gap:40px; } }
+/* ─── FAQ ────────────────────────────── */
+.faq-section { padding:100px 0; border-bottom:1px solid var(--border); margin-top:37px; }
+@media(max-width:767px){ .faq-section { margin-top:21px; } }
+.faq-grid {
+  display:grid;
+  grid-template-columns:380px 1fr;
+  gap:80px; align-items:start;
+}
+@media(max-width:900px){ .faq-grid { grid-template-columns:1fr; gap:48px; } }
 .faq-sticky { position:sticky; top:24px; }
 @media(max-width:900px){ .faq-sticky { position:static; } }
-.faq-sticky-eye { font-size:11px; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:16px; }
-.faq-sticky-title { font-family:var(--serif); font-size:clamp(26px,3.5vw,40px); font-weight:600; line-height:1.15; color:var(--black); margin-bottom:16px; }
+.faq-sticky-eye {
+  font-size:11px; font-weight:500; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--gold); display:block; margin-bottom:18px;
+}
+.faq-sticky-title {
+  font-family:var(--serif);
+  font-size:clamp(28px,4vw,44px);
+  font-weight:600; line-height:1.15; color:var(--black); margin-bottom:20px;
+}
 .faq-sticky-title em { font-style:italic; color:var(--gold); }
 .faq-sticky-desc { font-size:15px; font-weight:400; line-height:1.8; color:var(--muted); }
-.faq-list { display:flex; flex-direction:column; }
-.faq-item { border-bottom:1px solid var(--border); }
+.faq-list { display:flex; flex-direction:column; gap:0; }
+.faq-item { border-bottom:1px solid var(--border); padding:0; }
 .faq-item:first-child { border-top:1px solid var(--border); }
-.faq-summary { display:flex; justify-content:space-between; align-items:center; padding:24px 0; cursor:pointer; gap:20px; list-style:none; font-family:var(--sans); font-size:clamp(14px,2vw,17px); font-weight:500; color:var(--black); line-height:1.3; }
+.faq-summary {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:26px 0; cursor:pointer; gap:20px;
+  list-style:none; font-family:var(--sans);
+  font-size:clamp(15px,2vw,18px); font-weight:500; color:var(--black);
+  line-height:1.3;
+}
 .faq-summary::-webkit-details-marker { display:none; }
 .faq-summary::marker { display:none; }
-.faq-icon { flex-shrink:0; width:26px; height:26px; border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--gold); font-weight:300; transition:transform .25s, background .2s; }
+.faq-icon {
+  flex-shrink:0; width:28px; height:28px;
+  border:1px solid var(--border); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:var(--gold); font-weight:300;
+  transition:transform .25s, background .2s;
+}
 details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
-.faq-answer { padding:0 36px 24px 0; font-size:15px; font-weight:400; line-height:1.9; color:var(--muted); }
+.faq-answer {
+  padding:0 40px 28px 0;
+  font-size:15px; font-weight:400; line-height:1.9; color:var(--muted);
+}
 
-/* ─── BACK LINK ─── */
-.back-link-wrap { padding:48px 0; text-align:center; }
-.back-link { font-size:14px; color:var(--muted); text-decoration:none; transition:color .2s; }
-.back-link:hover { color:var(--gold); }
-
-/* ─── FOOTER ─── */
-.site-footer { background:var(--black); border-top:1px solid rgba(255,255,255,.06); padding:32px 0; }
-.footer-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
-.footer-copy { font-size:12px; color:rgba(255,255,255,.25); }
-.footer-links { display:flex; gap:24px; }
-.footer-links a { font-size:12px; color:rgba(255,255,255,.35); text-decoration:none; transition:color .2s; }
-.footer-links a:hover { color:rgba(255,255,255,.75); }
-
-/* placeholder */
-.ph-block { background:var(--cream-d); border:1.5px dashed var(--border); border-radius:var(--radius); padding:10px 16px; color:var(--muted); font-size:12px; font-style:italic; display:inline-block; }
+/* ─── FINAL CTA ──────────────────────── */
+.final-cta {
+  padding:128px 0;
+  text-align:center;
+  background:var(--black);
+  position:relative; overflow:hidden;
+}
+.final-cta::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 60%, rgba(184,150,90,.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 25%, rgba(232,196,184,.07) 0%, transparent 55%);
+  pointer-events:none;
+}
+.final-cta-eye {
+  font-size:11px; font-weight:500; letter-spacing:.25em; text-transform:uppercase;
+  color:var(--gold); display:block; margin-bottom:24px; position:relative;
+}
+.final-cta-h2 {
+  font-family:var(--serif);
+  font-size:clamp(38px,6vw,72px);
+  font-weight:600; line-height:1.08;
+  color:var(--white); margin-bottom:22px; position:relative;
+}
+.final-cta-h2 em { font-style:italic; color:var(--gold-lt); }
+.final-cta-sub {
+  font-size:15px; font-weight:300; color:rgba(255,255,255,.45);
+  margin:0 auto 52px; max-width:460px; line-height:1.85; position:relative;
+}
 </style>
 
 
 <main>
 
 <!-- ══════════════════════════════════
-     1) INFO + BILD
+     HERO
 ══════════════════════════════════ -->
 <div class="w">
   <div class="hero">
@@ -317,117 +461,103 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       </h1>
 
       <p class="hero-sub">
-        <span class="ph-block">Platzhalter-Text – Untertext zum Modul, ca. 2–3 Sätze.</span>
+        Staatlich gefördertes Perfektionstraining –
+        100&thinsp;% kostenfrei bei Bewilligung
+        über die Agentur für Arbeit.
       </p>
 
-      <div class="hero-avgs">
-        ✓&nbsp;100&thinsp;% AVGS-gefördert &nbsp;·&nbsp; AZAV-zertifiziert
-      </div>
-
       <div class="hero-divider"></div>
+
+      <div class="hero-trust-list">
+        ◆ 100&thinsp;% kostenfrei bei Bewilligung<br />
+        ◆ AZAV-zertifizierte Schulungsstandorte<br />
+        ◆ Anerkannte Fachdozentinnen in {city.name}
+      </div>
     </div>
 
     <div class="hero-right">
-      {moduleImage
-        ? (
-          <div class="hero-img-frame">
-            <img
-              src={moduleImage}
+      <div class="hero-img-frame">
+        {hasModuleImage && moduleImageRel
+          ? <img
+              src={moduleImageRel}
               alt={`${service.name} in ${city.name}`}
               width="560" height="560"
               loading="eager"
               decoding="async"
             />
-          </div>
-        )
-        : (
-          <div class="hero-img-frame">
-            <div class="hero-img-placeholder">✦</div>
-          </div>
-        )
-      }
+          : <span style="font-family:var(--serif);font-size:56px;color:rgba(184,150,90,.15);">✦</span>
+        }
+      </div>
     </div>
 
   </div>
 </div>
-<hr class="hero-sep" />
 
 
 <!-- ══════════════════════════════════
-     2) BILDERGALERIE (Platzhalter)
+     ÜBER DAS MODUL
 ══════════════════════════════════ -->
-<section class="section">
+<section class="section" style="border-bottom:none;padding-bottom:0;padding-top:58px;">
   <div class="w">
-    <div class="section-header">
-      <span class="section-eye"><span class="ph-block">PLATZHALTER – Galerie Eyebrow</span></span>
+    <div class="section-header" style="text-align:left;margin-bottom:32px;">
+      <span class="section-eye">Über das Modul</span>
       <h2 class="section-title">
-        <span class="ph-block" style="font-size:18px;font-family:var(--sans);">PLATZHALTER – Galerie H2</span>
+        <span class="ph">PLATZHALTER – Modultitel / Claim</span>
       </h2>
     </div>
 
-    <div class="carousel-wrap">
-      <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
-      <div class="carousel-track" id="gallery-track">
-        {[1,2,3,4,5,6].map((_: number) => (
-          <div class="carousel-slide">
-            <div class="carousel-ph">✦</div>
-          </div>
-        ))}
-      </div>
-      <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
-      <div class="carousel-dots" id="gallery-dots" aria-hidden="true"></div>
+    <p class="intro-text">
+      <span class="ph">PLATZHALTER – 2–3 Sätze Beschreibung des Moduls und seiner Inhalte. Was lernst du? Welche Techniken werden vermittelt? Was macht dieses Modul besonders?</span>
+    </p>
+
+    <div class="modul-badges">
+      <span class="modul-badge">100 % AVGS-gefördert</span>
+      <span class="modul-badge">AZAV-zertifiziert</span>
+      <span class="modul-badge">Einzelunterricht</span>
+      <span class="modul-badge"><span class="ph" style="padding:0;border:none;background:none;">PLATZHALTER – z. B. Dauer</span></span>
     </div>
   </div>
 </section>
 
 
 <!-- ══════════════════════════════════
-     3) DOZENTINNEN IN DIESER STADT
+     FACHDOZENTINNEN
 ══════════════════════════════════ -->
-<section class="section">
+<section class="section" id="dozentinnen" style="border-bottom:none;padding-bottom:0;">
   <div class="w">
-    <div class="section-header">
-      <span class="section-eye">Anerkannte Akademien</span>
+    <div class="section-header" style="text-align:left;">
+      <span class="section-eye">Fachdozentinnen</span>
       <h2 class="section-title">
-        Deine Dozentinnen<br />
+        {service.name}<br />
         in <em>{city.name}</em>
       </h2>
       <p class="section-desc">
-        <span class="ph-block">Platzhalter-Text – Einleitung zur Dozentinnenliste.</span>
+        Genau dafür gibt es unsere staatlich geförderten Perfektionstrainings:
+        anerkannt, zertifiziert und über den AVGS der Agentur für Arbeit zu
+        100&thinsp;% förderbar – im persönlichen Einzelunterricht bei folgenden
+        Fachdozentinnen in {city.name}:
       </p>
     </div>
 
-    <div class="module-grid">
-      {dozentinnen.map((d: any) => (
-        <a href={`/dozentinnen/${d.slug}/`} class="module-card">
-          <div class="module-card-accent" />
-          <div class="module-card-body">
-            <div>
-              <span class="module-name">{d.first_name} {d.last_name}</span>
-              <span class="module-tagline">{service.name} · {city.name}</span>
-            </div>
-
-            <div class="module-specs">
-              {d.avgs_certified && (
-                <div class="module-spec-row">
-                  <span class="ms-label">Zertifizierung</span>
-                  <span class="ms-val">AVGS-zertifiziert</span>
-                </div>
-              )}
-              {(d.review_count ?? 0) > 0 && (
-                <div class="module-spec-row">
-                  <span class="ms-label">Bewertungen</span>
-                  <span class="ms-val">★ {d.rating}/5 ({d.review_count})</span>
-                </div>
-              )}
-              <div class="module-spec-row">
-                <span class="ms-label">Förderung</span>
-                <span class="ms-val">100 % AVGS</span>
-              </div>
-            </div>
-
-            <div class="module-cta">Zur Dozentin →</div>
+    <div class="doz-grid">
+      {dozentinnenWithImg.map((d: any) => (
+        <a href={`/dozentinnen/${d.slug}/`} class="doz-card">
+          <div class="doz-img-wrap">
+            {d.profileImg
+              ? <img
+                  src={d.profileImg}
+                  alt={`${d.first_name} ${d.last_name}`}
+                  width="280" height="280"
+                  loading="lazy"
+                />
+              : <div class="doz-img-ph">✦</div>
+            }
           </div>
+          <DozentinInfoBox
+            name={`${d.first_name} ${d.last_name}`}
+            standort={CITY_DISPLAY[d.slug] ?? city.name}
+            fachgebiete={[service.name]}
+          />
         </a>
       ))}
     </div>
@@ -436,7 +566,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
-     4) FAQ (Platzhalter)
+     FAQ
 ══════════════════════════════════ -->
 <section class="faq-section" id="faq">
   <div class="w">
@@ -445,23 +575,25 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="faq-sticky">
         <span class="faq-sticky-eye">Häufige Fragen</span>
         <h2 class="faq-sticky-title">
-          <span class="ph-block" style="font-size:16px;font-family:var(--sans);">PLATZHALTER –</span><br />
-          <em>FAQ-Titel</em>
+          Alles, was du über<br />
+          <em>deine Weiterbildung</em><br />
+          wissen möchtest.
         </h2>
         <p class="faq-sticky-desc">
-          <span class="ph-block">Platzhalter-Text – Einleitung zum FAQ-Block.</span>
+          Du hast Fragen zu Kosten, Voraussetzungen oder dem Ablauf von
+          {service.name} in {city.name}? Hier findest du die wichtigsten Antworten.
         </p>
       </div>
 
       <div class="faq-list">
-        {(['PLATZHALTER – Frage 1?', 'PLATZHALTER – Frage 2?', 'PLATZHALTER – Frage 3?', 'PLATZHALTER – Frage 4?'] as string[]).map(q => (
+        {faqItems.map(item => (
           <details class="faq-item">
             <summary class="faq-summary">
-              {q}
+              {item.q}
               <span class="faq-icon">+</span>
             </summary>
             <div class="faq-answer">
-              <p>Platzhalter-Antwort – wird in einem späteren Schritt befüllt.</p>
+              <p>{item.a}</p>
             </div>
           </details>
         ))}
@@ -473,59 +605,27 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
-     5) RÜCKLINK
+     FINAL CTA
 ══════════════════════════════════ -->
-<div class="back-link-wrap">
+<section class="final-cta">
   <div class="w">
-    <a href={`/${city.slug}/`} class="back-link">← Alle anerkannten Akademien in {city.name}</a>
+    <span class="final-cta-eye">Start in deine Weiterbildung</span>
+    <h2 class="final-cta-h2">
+      Bereit für dein<br />
+      <em>nächstes Level?</em>
+    </h2>
+    <p class="final-cta-sub">
+      Wähle deine Dozentin aus und starte dein AVGS-gefördertes
+      Perfektionstraining in {city.name} –
+      kostenfrei bei Bewilligung.
+    </p>
+    <a href="#dozentinnen" class="cta-white">Dozentinnen entdecken →</a>
   </div>
-</div>
+</section>
 
 </main>
 
 
-<!-- ══════════════════════════════════
-     FOOTER
-══════════════════════════════════ -->
-<footer class="site-footer">
-  <div class="w">
-    <div class="footer-inner">
-      <span class="footer-copy">© 2026 BeautyBusiness360</span>
-      <div class="footer-links">
-        <a href="/impressum/">Impressum</a>
-        <a href="/datenschutz/">Datenschutzerklärung</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script>
-  const track = document.getElementById('gallery-track') as HTMLElement | null;
-  const dotsWrap = document.getElementById('gallery-dots') as HTMLElement | null;
-  if (track) {
-    const prev = track.closest('.carousel-wrap')?.querySelector('.carousel-prev');
-    const next = track.closest('.carousel-wrap')?.querySelector('.carousel-next');
-    const slides = Array.from(track.querySelectorAll('.carousel-slide')) as HTMLElement[];
-    const step = () => (slides[0]?.offsetWidth ?? 0) + 16;
-
-    const dots: HTMLButtonElement[] = slides.map((_, i) => {
-      const d = document.createElement('button');
-      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      d.setAttribute('aria-label', `Bild ${i + 1}`);
-      d.addEventListener('click', () => track.scrollTo({ left: step() * i, behavior: 'smooth' }));
-      dotsWrap?.appendChild(d);
-      return d;
-    });
-
-    const updateDots = () => {
-      const idx = Math.round(track.scrollLeft / (step() || 1));
-      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-    };
-
-    track.addEventListener('scroll', updateDots, { passive: true });
-    prev?.addEventListener('click', () => track.scrollBy({ left: -step() * 3, behavior: 'smooth' }));
-    next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
-  }
-</script>
+<SiteFooter variant="lean" />
 
 </SEOLayout>
