@@ -1,20 +1,828 @@
 ---
-export const prerender = true;
+import SEOLayout from '../layouts/SEOLayout.astro';
+import DozentinInfoBox from '../components/DozentinInfoBox.astro';
 import { supabase } from '../lib/supabase';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { data: cities, error } = await supabase
-  .from('cities')
-  .select('slug, name');
+export const prerender = true;
+
+const { data: dozRaw } = await supabase
+  .from('dozentinnen')
+  .select(`
+    slug, first_name, last_name, image_url,
+    cities(slug, name),
+    dozentin_services(services(name))
+  `)
+  .eq('active', true)
+  .order('last_name');
+
+const dozentinnen = (dozRaw ?? [])
+  .map((d: any) => {
+    const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+    const citySlug = city?.slug ?? '';
+    const localSlug = d.slug.replace(new RegExp(`-${citySlug}$`), '');
+    const rel = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
+    const hasLocalImg = fs.existsSync(path.join(process.cwd(), 'public', rel));
+    const profileImg = hasLocalImg ? rel : (d.image_url ?? null);
+    const services = (Array.isArray(d.dozentin_services) ? d.dozentin_services : [])
+      .map((ds: any) => Array.isArray(ds?.services) ? ds.services[0] : ds?.services)
+      .filter(Boolean);
+    return { ...d, city, localSlug, profileImg, services };
+  })
+  .filter((d: any) => d.profileImg)
+  .slice(0, 18);
+
+const seo = {
+  title: 'Fachdozentin oder Schulungsstandort werden – AZAV-Partnernetzwerk | BeautyBusiness360',
+  description: 'Werde Fachdozentin oder Schulungsstandort in unserem bundesweiten AZAV-Netzwerk: unterrichte staatlich geförderte Perfektionstrainings – ohne eigene AZAV-Zulassung, mit voller Unterstützung und bis zu 1.500 € pro Modul.',
+  canonical: 'https://dein-beauty-kurs.de/',
+};
+
+const whyLeft = [
+  'Nur Privatzahler – kaum Nachfrage',
+  'Aufwendige Vermarktung, wenige Anfragen',
+  'Keine Fördermöglichkeiten',
+  'Schwankende Einnahmen',
+  'Leere Schulungsräume',
+  'Kein System, keine digitale Struktur',
+];
+
+const whyRight = [
+  'Förderbare Kurse über AZAV-zertifizierte Partnerstandorte',
+  'Hohe Anfragezahlen durch zentrale Vermarktung',
+  'Bis zu 1.500 € Honorar für 3 Tage Unterricht',
+  'Wir übernehmen Organisation, Struktur & digitale Prozesse',
+  'Eigene Profilseite + Vermarktung durch unser Team',
+  'Für Dozentinnen & Studios bundesweit geeignet',
+];
+
+const howWeDoItems = [
+  'Zentrale Vermarktung & Lead-Generierung',
+  'Vermittlung der Teilnehmerinnen an Standort oder Dozentin',
+  'Komplette Organisation & Kursablauf',
+  'Vorbereitung der Unterlagen',
+  'Digitale Tools & Vorlagen',
+  'Eigene Profilseite im Netzwerk',
+];
+
+const faqItems = [
+  {
+    q: 'Welche Voraussetzungen brauche ich als Dozentin?',
+    a: 'Eine abgeschlossene Beauty-Ausbildung oder nachweisbare Praxiserfahrung, den pädagogischen Eignungsnachweis (Dozentenschein, komplett online machbar) sowie Zuverlässigkeit.',
+  },
+  {
+    q: 'Muss ich selbst AZAV-zertifiziert sein?',
+    a: 'Nein. Die AZAV-Zulassung liegt bei unseren zertifizierten Partnerträgern. Du startest als Fachdozentin oder Standort ohne eigene Zertifizierung.',
+  },
+  {
+    q: 'Wie funktioniert die Zusammenarbeit?',
+    a: 'Wir übernehmen Vermarktung, die Vermittlung der Teilnehmerinnen und die komplette Organisation. Du konzentrierst dich aufs Unterrichten.',
+  },
+  {
+    q: 'Wie werde ich vergütet?',
+    a: 'Beim Perfektionstraining bis zu 1.500 € pro 3-Tage-Modul. Die Auszahlung erfolgt nach Kursabschluss.',
+  },
+  {
+    q: 'Wie werde ich Schulungsstandort?',
+    a: 'Du meldest dich über die kostenfreie Info-Veranstaltung. Wir prüfen Räume und Ziele; nach Freigabe bekommst du eine eigene Partnerseite, Marketing-Unterstützung und volle Betreuung.',
+  },
+  {
+    q: 'Wie schnell kann ich starten?',
+    a: 'Als Dozentin innerhalb weniger Tage nach Abschluss des Dozentenscheins, als Standort meist innerhalb von 1–2 Wochen.',
+  },
+];
 ---
 
-<html>
-  <body>
-    <h1>Verbindungstest</h1>
+<SEOLayout title={seo.title} description={seo.description} canonical={seo.canonical}>
 
-    {error && <p style="color:red">FEHLER: {error.message}</p>}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    {cities?.map(city => (
-      <p>✅ {city.name} ({city.slug})</p>
-    ))}
-  </body>
-</html>
+<style>
+:root {
+  --cream:   #FAF8F5;
+  --cream-d: #F3EEE8;
+  --black:   #111111;
+  --gold:    #C8962E;
+  --gold-lt: #D4AF7A;
+  --gold-bg: #FBF6EE;
+  --rose:    #E8C4B8;
+  --muted:   #555250;
+  --border:  #E8E2D9;
+  --white:   #FFFFFF;
+  --serif:   'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans:    'Inter', system-ui, sans-serif;
+  --radius:  3px;
+  --shadow:  0 8px 40px rgba(184,150,90,.10);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--cream);
+  color:var(--black);
+  font-family:var(--sans);
+  font-size:16px; font-weight:400; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ─── LAYOUT ─────────────────────────── */
+.w { max-width:1120px; margin:0 auto; padding:0 40px; }
+@media(max-width:640px){ .w { padding:0 22px; } }
+
+/* ─── BUTTONS ────────────────────────── */
+.cta-gold {
+  display:inline-block;
+  background:var(--gold); color:var(--white);
+  font-family:var(--sans); font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px; border:none; border-radius:var(--radius);
+  text-decoration:none; cursor:pointer;
+  transition:background .25s, transform .2s, box-shadow .25s;
+  box-shadow:0 4px 18px rgba(184,150,90,.25);
+}
+.cta-gold:hover { background:var(--gold-lt); transform:translateY(-2px); box-shadow:0 8px 28px rgba(184,150,90,.35); }
+.cta-white {
+  display:inline-block;
+  background:var(--white); color:var(--black);
+  font-family:var(--sans); font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px; border-radius:var(--radius);
+  text-decoration:none; cursor:pointer;
+  transition:opacity .2s, transform .2s;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+.cta-white:hover { opacity:.9; transform:translateY(-1px); }
+
+/* ─── SHARED SECTION LABELS ──────────── */
+.section-eye {
+  display:inline-block;
+  font-size:11px; font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:18px;
+}
+.section-title {
+  font-family:var(--serif);
+  font-size:clamp(36px, 5vw, 60px);
+  font-weight:600; line-height:1.08; color:var(--black); margin-bottom:18px;
+}
+.section-title em { font-style:italic; color:var(--gold); }
+.section-desc {
+  font-size:16px; font-weight:400; line-height:1.85; color:var(--muted);
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  background:var(--black);
+  position:relative; overflow:hidden;
+  padding:108px 0 96px;
+  text-align:center;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 18% 65%, rgba(184,150,90,.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 22%, rgba(232,196,184,.08) 0%, transparent 55%);
+  pointer-events:none;
+}
+.hero > .w { position:relative; }
+.hero-h1 {
+  font-family:var(--serif);
+  font-size:clamp(38px, 5.5vw, 70px);
+  font-weight:600; line-height:1.08;
+  color:var(--white); letter-spacing:-.02em;
+  max-width:900px; margin:0 auto 28px;
+}
+.hero-h1 em { font-style:italic; color:var(--gold-lt); }
+.hero-sub {
+  font-size:17px; font-weight:400; line-height:1.85;
+  color:rgba(255,255,255,.5);
+  max-width:660px; margin:0 auto 52px;
+}
+.hero-bullets {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:12px 32px;
+  max-width:760px; margin:0 auto 52px;
+}
+.hero-bullet {
+  display:flex; align-items:flex-start; gap:8px;
+  font-size:14px; font-weight:500; color:rgba(255,255,255,.78);
+}
+.hero-bullet-diamond { color:var(--gold); flex-shrink:0; font-size:10px; margin-top:3px; }
+.hero-note {
+  margin-top:16px;
+  font-size:12px; color:rgba(255,255,255,.28);
+}
+
+/* ══════════════════════════════════════
+   WARUM (Vergleich)
+══════════════════════════════════════ */
+.why-section { padding:96px 0; }
+.why-header { text-align:center; max-width:720px; margin:0 auto 64px; }
+.why-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:28px; align-items:stretch;
+}
+@media(max-width:860px){ .why-grid { grid-template-columns:1fr; } }
+
+.why-col { border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; }
+.why-col--bad { background:var(--black); position:relative; }
+.why-col--bad::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 0% 100%, rgba(184,150,90,.10) 0%, transparent 60%);
+  pointer-events:none;
+}
+.why-col--good { background:var(--white); border:1px solid var(--border); box-shadow:var(--shadow); }
+.why-col-accent { height:3px; flex-shrink:0; }
+.why-col--bad .why-col-accent { background:linear-gradient(90deg, #9A6E1E, var(--gold)); }
+.why-col--good .why-col-accent { background:linear-gradient(90deg, var(--gold), var(--rose)); }
+.why-col-body { padding:40px 36px; flex:1; position:relative; }
+.why-col-eye { margin-bottom:16px; }
+.why-col-h3 {
+  font-family:var(--serif);
+  font-size:clamp(22px, 2.5vw, 30px);
+  font-weight:600; line-height:1.18; margin-bottom:28px;
+}
+.why-col--bad .why-col-h3 { color:var(--white); }
+.why-col--good .why-col-h3 { color:var(--black); }
+
+.why-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+.why-item { display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.6; }
+.why-col--bad .why-item { color:rgba(255,255,255,.65); }
+.why-col--good .why-item { color:var(--black); }
+.why-icon-bad {
+  flex-shrink:0; margin-top:2px;
+  width:20px; height:20px; border-radius:50%;
+  background:rgba(255,100,100,.12); border:1px solid rgba(255,100,100,.22);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; color:#ff7070;
+}
+.why-icon-good {
+  flex-shrink:0; margin-top:2px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--gold-bg); border:1px solid #E8D9C4;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--gold);
+}
+
+/* ══════════════════════════════════════
+   ZWEI WEGE
+══════════════════════════════════════ */
+.ways-section {
+  padding:96px 0;
+  background:var(--cream-d);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.ways-header { text-align:center; margin-bottom:64px; }
+.ways-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-bottom:48px; }
+@media(max-width:700px){ .ways-grid { grid-template-columns:1fr; } }
+.ways-card {
+  background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;
+}
+.ways-card-accent { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); }
+.ways-card-body { padding:40px 36px; flex:1; display:flex; flex-direction:column; gap:16px; }
+.ways-card-icon { font-size:32px; }
+.ways-card-title {
+  font-family:var(--serif);
+  font-size:clamp(22px, 2.5vw, 30px);
+  font-weight:600; line-height:1.18; color:var(--black);
+}
+.ways-card-text { font-size:15px; line-height:1.8; color:var(--muted); }
+.ways-note { text-align:center; font-size:14px; color:var(--muted); margin-bottom:28px; }
+.ways-cta-wrap { text-align:center; }
+
+/* ══════════════════════════════════════
+   WIE ES FUNKTIONIERT
+══════════════════════════════════════ */
+.how-section { padding:96px 0; }
+.how-header { text-align:center; margin-bottom:64px; }
+.how-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+@media(max-width:860px){ .how-grid { grid-template-columns:1fr; gap:40px; } }
+.how-col-label {
+  font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:20px;
+}
+.how-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+.how-item { display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.6; color:var(--black); }
+.how-check {
+  flex-shrink:0; margin-top:2px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--gold-bg); border:1px solid #E8D9C4;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--gold);
+}
+.how-focus-box {
+  background:var(--black); border-radius:var(--radius); padding:40px 36px;
+  position:relative; overflow:hidden;
+}
+.how-focus-box::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 80% 20%, rgba(184,150,90,.13) 0%, transparent 60%);
+  pointer-events:none;
+}
+.how-focus-label {
+  font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:20px; position:relative;
+}
+.how-focus-title {
+  font-family:var(--serif);
+  font-size:clamp(22px, 2.5vw, 30px);
+  font-weight:600; color:var(--white); margin-bottom:20px; position:relative;
+}
+.how-focus-items { display:flex; flex-wrap:wrap; gap:10px; position:relative; }
+.how-focus-chip {
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:100px; padding:8px 16px;
+  font-size:14px; color:rgba(255,255,255,.78);
+}
+
+/* ══════════════════════════════════════
+   DOZENTENSCHEIN
+══════════════════════════════════════ */
+.doz-section {
+  padding:96px 0;
+  background:var(--cream-d);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.doz-inner { max-width:760px; margin:0 auto; text-align:center; }
+.doz-icon { font-size:48px; margin-bottom:24px; }
+.doz-p { font-size:17px; line-height:1.85; color:var(--muted); margin-top:20px; }
+
+/* ══════════════════════════════════════
+   NETZWERK-GALERIE
+══════════════════════════════════════ */
+.net-section { padding:96px 0; }
+.net-header { text-align:center; margin-bottom:64px; }
+.net-header .section-desc { max-width:640px; margin:0 auto; }
+
+.net-carousel-wrap { position:relative; }
+.net-track {
+  display:flex; gap:24px;
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; padding-bottom:4px;
+}
+.net-track::-webkit-scrollbar { display:none; }
+.net-slide { flex:0 0 calc((100% - 48px) / 3); scroll-snap-align:start; }
+@media(max-width:860px){ .net-slide { flex:0 0 calc((100% - 24px) / 2); } }
+@media(max-width:540px){ .net-slide { flex:0 0 100%; } }
+
+.net-card {
+  background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,.04);
+  display:flex; flex-direction:column;
+  text-decoration:none; color:inherit;
+  transition:box-shadow .3s, transform .25s;
+}
+.net-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+.net-img-wrap { aspect-ratio:1; overflow:hidden; background:var(--cream-d); }
+.net-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.net-card-cta {
+  display:block; padding:0 20px 18px;
+  font-size:12px; font-weight:600; letter-spacing:.10em; text-transform:uppercase;
+  color:var(--gold);
+}
+
+/* Carousel controls */
+.carousel-btn {
+  position:absolute; top:38%;
+  width:40px; height:40px; border-radius:50%;
+  background:var(--white); border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+  cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2; transition:box-shadow .2s; color:var(--black);
+}
+.carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
+.carousel-prev { left:-20px; }
+.carousel-next { right:-20px; }
+@media(max-width:860px){ .carousel-btn { display:none; } }
+.carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:24px; }
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--muted); background:transparent;
+  cursor:pointer; padding:0;
+  transition:background .2s, border-color .2s;
+}
+.carousel-dot.active { background:var(--gold); border-color:var(--gold); }
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+.faq-section {
+  padding:96px 0;
+  background:var(--cream-d);
+  border-top:1px solid var(--border);
+}
+.faq-header { text-align:center; margin-bottom:56px; }
+.faq-list { max-width:780px; margin:0 auto; }
+.faq-item { border-top:1px solid var(--border); }
+.faq-item:last-child { border-bottom:1px solid var(--border); }
+.faq-item summary {
+  list-style:none; cursor:pointer;
+  padding:22px 0;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  font-size:15px; font-weight:600; color:var(--black);
+}
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary::after {
+  content:'+'; flex-shrink:0;
+  font-size:20px; font-weight:300; color:var(--gold);
+  transition:transform .2s;
+}
+.faq-item[open] summary::after { transform:rotate(45deg); }
+.faq-answer { padding:0 0 22px; font-size:15px; line-height:1.8; color:var(--muted); }
+
+/* ══════════════════════════════════════
+   FINALER CTA
+══════════════════════════════════════ */
+.final-cta-section {
+  padding:96px 0;
+  background:var(--black); text-align:center;
+  position:relative; overflow:hidden;
+}
+.final-cta-section::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(184,150,90,.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 20%, rgba(232,196,184,.07) 0%, transparent 55%);
+  pointer-events:none;
+}
+.final-cta-inner { position:relative; max-width:640px; margin:0 auto; }
+.final-cta-h2 {
+  font-family:var(--serif);
+  font-size:clamp(32px, 4.5vw, 56px);
+  font-weight:600; color:var(--white); line-height:1.1; margin-bottom:20px;
+}
+.final-cta-h2 em { font-style:italic; color:var(--gold-lt); }
+.final-cta-p { font-size:16px; line-height:1.85; color:rgba(255,255,255,.45); margin-bottom:40px; }
+
+/* ─── FOOTER ─────────────────────────── */
+.site-footer {
+  background:var(--black);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:32px 0;
+}
+.footer-inner {
+  display:flex; align-items:center;
+  justify-content:space-between; flex-wrap:wrap; gap:16px;
+}
+.footer-copy { font-size:12px; color:rgba(255,255,255,.25); }
+.footer-links { display:flex; flex-wrap:wrap; gap:16px 24px; }
+.footer-links a {
+  font-size:12px; color:rgba(255,255,255,.35);
+  text-decoration:none; transition:color .2s;
+}
+.footer-links a:hover { color:rgba(255,255,255,.75); }
+</style>
+
+<main>
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section class="hero">
+  <div class="w">
+    <span class="section-eye">AZAV-Partnernetzwerk · bundesweit</span>
+    <h1 class="hero-h1">
+      Werde Fachdozentin oder Schulungsstandort<br />
+      in unserem <em>AZAV-Netzwerk</em>
+    </h1>
+    <p class="hero-sub">
+      Biete staatlich geförderte Perfektionstrainings an – ohne eigene AZAV-Zulassung.
+      Wir übernehmen Vermarktung, Teilnehmerinnen und Organisation,
+      du konzentrierst dich aufs Unterrichten.
+    </p>
+    <div class="hero-bullets">
+      <div class="hero-bullet">
+        <span class="hero-bullet-diamond">◆</span>
+        Bis zu 1.500 € Honorar pro 3-Tage-Modul
+      </div>
+      <div class="hero-bullet">
+        <span class="hero-bullet-diamond">◆</span>
+        Keine eigene AZAV-Zulassung nötig
+      </div>
+      <div class="hero-bullet">
+        <span class="hero-bullet-diamond">◆</span>
+        Mit oder ohne eigenes Studio möglich
+      </div>
+      <div class="hero-bullet">
+        <span class="hero-bullet-diamond">◆</span>
+        Bundesweit wachsendes Netzwerk
+      </div>
+    </div>
+    <a href="/fachdozentin-werden" class="cta-white">Zur kostenfreien Info-Veranstaltung</a>
+    <p class="hero-note">
+      In nur 20 Minuten erklärt dir Gründer Walid Regaia das komplette Konzept – online &amp; unverbindlich.
+    </p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     WARUM (Vergleich)
+══════════════════════════════════ -->
+<section class="why-section">
+  <div class="w">
+    <div class="why-header">
+      <span class="section-eye">Warum Netzwerk?</span>
+      <h2 class="section-title">
+        Warum sich Studios &amp; Dozentinnen<br />
+        <em>unserem Netzwerk</em> anschließen
+      </h2>
+      <p class="section-desc">
+        Wachstum, Förderung, volle Kurse und starke Sichtbarkeit durch unser deutschlandweites Partnernetzwerk.
+      </p>
+    </div>
+    <div class="why-grid">
+
+      <div class="why-col why-col--bad">
+        <div class="why-col-accent"></div>
+        <div class="why-col-body">
+          <span class="section-eye why-col-eye">Allein, ohne Netzwerk</span>
+          <h3 class="why-col-h3">Was bleibt, wenn man alleine versucht zu wachsen</h3>
+          <ul class="why-list">
+            {whyLeft.map(text => (
+              <li class="why-item">
+                <span class="why-icon-bad" aria-hidden="true">✕</span>
+                {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div class="why-col why-col--good">
+        <div class="why-col-accent"></div>
+        <div class="why-col-body">
+          <span class="section-eye why-col-eye">Mit BeautyBusiness360</span>
+          <h3 class="why-col-h3">Was das Netzwerk für dich verändert</h3>
+          <ul class="why-list">
+            {whyRight.map(text => (
+              <li class="why-item">
+                <span class="why-icon-good" aria-hidden="true">✓</span>
+                {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     ZWEI WEGE
+══════════════════════════════════ -->
+<section class="ways-section">
+  <div class="w">
+    <div class="ways-header">
+      <span class="section-eye">Dein Einstieg</span>
+      <h2 class="section-title">
+        Zwei Wege, Teil des<br /><em>Netzwerks</em> zu werden
+      </h2>
+    </div>
+    <div class="ways-grid">
+
+      <div class="ways-card">
+        <div class="ways-card-accent"></div>
+        <div class="ways-card-body">
+          <span class="ways-card-icon">🎓</span>
+          <h3 class="ways-card-title">Als Fachdozentin</h3>
+          <p class="ways-card-text">
+            Du bist erfahrene Beauty-Artistin und möchtest dein Wissen weitergeben.
+            Ohne eigenes Studio unterrichtest du an einem unserer zertifizierten Schulungsstandorte.
+          </p>
+        </div>
+      </div>
+
+      <div class="ways-card">
+        <div class="ways-card-accent"></div>
+        <div class="ways-card-body">
+          <span class="ways-card-icon">🏢</span>
+          <h3 class="ways-card-title">Als Schulungsstandort</h3>
+          <p class="ways-card-text">
+            Du hast einen eigenen Salon oder eine Akademie? Wir zertifizieren deinen Standort –
+            du wirst Schulungsort für staatlich geförderte Kurse.
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <p class="ways-note">Beide Wege starten gleich – in unserer kostenfreien Info-Veranstaltung.</p>
+    <div class="ways-cta-wrap">
+      <a href="/fachdozentin-werden" class="cta-gold">Zur kostenfreien Info-Veranstaltung</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     WIE ES FUNKTIONIERT
+══════════════════════════════════ -->
+<section class="how-section">
+  <div class="w">
+    <div class="how-header">
+      <span class="section-eye">So läuft es ab</span>
+      <h2 class="section-title">Du unterrichtest –<br /><em>den Rest übernehmen wir</em></h2>
+    </div>
+    <div class="how-grid">
+
+      <div>
+        <p class="how-col-label">BeautyBusiness360 übernimmt für dich:</p>
+        <ul class="how-list">
+          {howWeDoItems.map(text => (
+            <li class="how-item">
+              <span class="how-check" aria-hidden="true">✓</span>
+              {text}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="how-focus-box">
+        <p class="how-focus-label">Du konzentrierst dich auf:</p>
+        <h3 class="how-focus-title">Unterrichten, Qualität &amp; zufriedene Teilnehmerinnen</h3>
+        <div class="how-focus-items">
+          <span class="how-focus-chip">✦ Unterrichten</span>
+          <span class="how-focus-chip">✦ Qualität</span>
+          <span class="how-focus-chip">✦ Zufriedene Teilnehmerinnen</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     DOZENTENSCHEIN
+══════════════════════════════════ -->
+<section class="doz-section">
+  <div class="w">
+    <div class="doz-inner">
+      <div class="doz-icon">📜</div>
+      <span class="section-eye">Pädagogischer Nachweis</span>
+      <h2 class="section-title">
+        Pädagogischer Nachweis inklusive –<br /><em>der Dozentenschein</em>
+      </h2>
+      <p class="doz-p">
+        Wer staatlich geförderte Teilnehmerinnen unterrichtet, braucht einen pädagogischen Eignungsnachweis.
+        Den machst du bei uns komplett online (Train-the-Trainer) – flexibel und innerhalb weniger Tage.
+        Eine eigene AZAV-Zulassung brauchst du dafür nicht; die liegt bei unseren zertifizierten Partnerträgern.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     NETZWERK-GALERIE
+══════════════════════════════════ -->
+{dozentinnen.length > 0 && (
+  <section class="net-section">
+    <div class="w">
+      <div class="net-header">
+        <span class="section-eye">Netzwerk</span>
+        <h2 class="section-title">
+          Unser Netzwerk aus anerkannten<br />
+          <em>Fachdozentinnen</em> wächst bundesweit
+        </h2>
+        <p class="section-desc">
+          Erfahrene Beauty-Artistinnen aus ganz Deutschland geben ihr Können
+          in geförderten Perfektionstrainings weiter.
+        </p>
+      </div>
+
+      <div class="net-carousel-wrap">
+        <button class="carousel-btn carousel-prev" id="net-prev" aria-label="Vorherige Karte">&#8592;</button>
+        <div class="net-track" id="net-track">
+          {dozentinnen.map((d: any) => (
+            <div class="net-slide">
+              <a href={`/dozentinnen/${d.slug}/`} class="net-card">
+                <div class="net-img-wrap">
+                  <img
+                    src={d.profileImg}
+                    alt={`Fachdozentin ${d.first_name} ${d.last_name} in ${d.city?.name ?? ''}`}
+                    width="320" height="320"
+                    loading="lazy"
+                  />
+                </div>
+                <DozentinInfoBox
+                  name={`${d.first_name} ${d.last_name}`}
+                  standort={d.city?.name ?? undefined}
+                  fachgebiete={(d.services as any[]).map((s: any) => s.name).filter(Boolean)}
+                />
+                <span class="net-card-cta">Profil ansehen →</span>
+              </a>
+            </div>
+          ))}
+        </div>
+        <button class="carousel-btn carousel-next" id="net-next" aria-label="Nächste Karte">&#8594;</button>
+      </div>
+      <div class="carousel-dots" id="net-dots" aria-hidden="true"></div>
+    </div>
+  </section>
+)}
+
+
+<!-- ══════════════════════════════════
+     FAQ
+══════════════════════════════════ -->
+<section class="faq-section">
+  <div class="w">
+    <div class="faq-header">
+      <span class="section-eye">Häufige Fragen</span>
+      <h2 class="section-title">Häufige Fragen für<br /><em>Dozentinnen &amp; Studios</em></h2>
+    </div>
+    <div class="faq-list">
+      {faqItems.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p class="faq-answer">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     FINALER CTA
+══════════════════════════════════ -->
+<section class="final-cta-section">
+  <div class="w">
+    <div class="final-cta-inner">
+      <h2 class="final-cta-h2">Werde Teil des<br /><em>Netzwerks</em></h2>
+      <p class="final-cta-p">
+        Lerne das komplette Konzept in nur 20 Minuten kennen – kostenlos und unverbindlich.
+        Danach entscheidest du in Ruhe, ob es zu dir passt.
+      </p>
+      <a href="/fachdozentin-werden" class="cta-gold">Zur kostenfreien Info-Veranstaltung</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="w">
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 BeautyBusiness360</span>
+      <div class="footer-links">
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutzerklärung</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const track    = document.getElementById('net-track') as HTMLElement | null;
+    const dotsWrap = document.getElementById('net-dots')  as HTMLElement | null;
+    if (!track) return;
+
+    const prev   = document.getElementById('net-prev');
+    const next   = document.getElementById('net-next');
+    const slides = Array.from(track.querySelectorAll<HTMLElement>('.net-slide'));
+    const gap    = 24;
+    const step   = () => (slides[0]?.offsetWidth ?? 0) + gap;
+
+    const dots: HTMLButtonElement[] = slides.map((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', `Karte ${i + 1}`);
+      d.addEventListener('click', () =>
+        track.scrollTo({ left: step() * i, behavior: 'smooth' }),
+      );
+      dotsWrap?.appendChild(d);
+      return d;
+    });
+
+    const updateDots = () => {
+      const idx = Math.round(track.scrollLeft / (step() || 1));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    };
+
+    track.addEventListener('scroll', updateDots, { passive: true });
+    prev?.addEventListener('click', () =>
+      track.scrollBy({ left: -step() * 3, behavior: 'smooth' }),
+    );
+    next?.addEventListener('click', () =>
+      track.scrollBy({ left: step() * 3, behavior: 'smooth' }),
+    );
+  })();
+</script>
+
+</SEOLayout>
