@@ -181,9 +181,10 @@ body {
 .hero {
   background:var(--black);
   position:relative; overflow:hidden;
-  padding:108px 0 96px;
+  padding:33px 0 96px;
   text-align:center;
 }
+@media(max-width:640px){ .hero { padding-top:70px; } }
 .hero::before {
   content:''; position:absolute; inset:0;
   background:
