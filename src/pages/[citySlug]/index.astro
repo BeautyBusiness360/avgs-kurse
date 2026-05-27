@@ -1,5 +1,6 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
+import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,7 +13,7 @@ export async function getStaticPaths() {
     supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle').order('stadt_name'),
     supabase
       .from('dozentinnen')
-      .select('slug, first_name, last_name, cities(slug, name)')
+      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(name))')
       .eq('active', true)
       .order('last_name'),
   ]);
@@ -42,7 +43,13 @@ export async function getStaticPaths() {
     if (!city?.slug) continue;
     const region = cityToRegion[city.slug] ?? city.slug;
     if (!dozByRegion[region]) dozByRegion[region] = [];
-    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug });
+    const serviceNames = (Array.isArray(d.dozentin_services) ? d.dozentin_services : [])
+      .map((ds: any) => {
+        const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+        return s?.name ?? null;
+      })
+      .filter(Boolean) as string[];
+    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames });
   }
 
   return regions.map(region => {
@@ -82,6 +89,8 @@ interface DozRaw {
   first_name: string;
   last_name: string;
   citySlugOfDoz: string;
+  cityName: string;
+  serviceNames: string[];
 }
 interface DozWithImg extends DozRaw {
   profileImg: string | null;
@@ -406,13 +415,17 @@ body {
 .doz-card {
   text-decoration:none; color:inherit;
   display:flex; flex-direction:column;
-  align-items:center; gap:14px;
-  transition:transform .25s;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,.04);
+  transition:box-shadow .3s, transform .25s;
 }
-.doz-card:hover { transform:translateY(-5px); }
+.doz-card:hover { transform:translateY(-5px); box-shadow:var(--shadow); }
 .doz-img-wrap {
   width:100%; aspect-ratio:1;
-  overflow:hidden; border-radius:var(--radius);
+  overflow:hidden;
   background:var(--cream-d);
 }
 .doz-img-wrap img {
@@ -425,12 +438,6 @@ body {
   width:100%; height:100%;
   display:flex; align-items:center; justify-content:center;
   font-size:36px; color:rgba(184,150,90,.2);
-}
-.doz-name {
-  font-family:var(--serif);
-  font-size:18px; font-weight:600;
-  text-align:center; color:var(--black);
-  line-height:1.25;
 }
 
 /* ─── FAQ ────────────────────────────── */
@@ -684,7 +691,11 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
                 : <div class="doz-img-ph">✦</div>
               }
             </div>
-            <span class="doz-name">{d.first_name} {d.last_name}</span>
+            <DozentinInfoBox
+              name={`${d.first_name} ${d.last_name}`}
+              standort={d.cityName}
+              fachgebiete={d.serviceNames}
+            />
           </a>
         ))}
       </div>

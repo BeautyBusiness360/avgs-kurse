@@ -1,5 +1,6 @@
 ---
 import SEOLayout from '../layouts/SEOLayout.astro';
+import DozentinInfoBox from '../components/DozentinInfoBox.astro';
 import { supabase } from '../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -367,13 +368,7 @@ body {
   font-size:10px; letter-spacing:.1em;
   color:rgba(255,255,255,.45); margin-top:3px;
 }
-.net-card-body { padding:18px 20px 22px; display:flex; flex-direction:column; gap:6px; }
-.net-card-name {
-  font-family:var(--serif);
-  font-size:18px; font-weight:600; line-height:1.2; color:var(--black);
-}
-.net-card-meta { font-size:12px; color:var(--muted); line-height:1.65; }
-.net-card-meta strong { color:var(--black); font-weight:500; }
+/* .net-card-body styles live in DozentinInfoBox.astro */
 
 /* Carousel controls */
 .carousel-btn {
@@ -708,13 +703,11 @@ body {
                     <span class="net-badge-nr">{d.regNr}</span>
                   </div>
                 </div>
-                <div class="net-card-body">
-                  <span class="net-card-name">{d.first_name} {d.last_name}</span>
-                  <div class="net-card-meta">
-                    <strong>Standort:</strong> {d.city?.name ?? '–'}<br />
-                    <strong>Expertin:</strong> {(d.services as any[]).map(s => s.name).join(', ') || '–'}
-                  </div>
-                </div>
+                <DozentinInfoBox
+                  name={`${d.first_name} ${d.last_name}`}
+                  standort={d.city?.name ?? undefined}
+                  fachgebiete={(d.services as any[]).map((s: any) => s.name).filter(Boolean)}
+                />
               </div>
             </div>
           ))}

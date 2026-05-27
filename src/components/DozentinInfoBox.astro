@@ -1,0 +1,48 @@
+---
+interface Props {
+  name: string;
+  standort?: string | null;
+  fachgebiete?: string[];
+}
+
+const { name, standort, fachgebiete = [] } = Astro.props;
+---
+
+<div class="doz-info-box">
+  <span class="doz-info-name">{name}</span>
+  {standort && (
+    <div class="doz-info-meta">
+      <strong>Standort:</strong> {standort}
+    </div>
+  )}
+  {fachgebiete.length > 0 && (
+    <div class="doz-info-meta">
+      <strong>Expertin:</strong> {fachgebiete.join(', ')}
+    </div>
+  )}
+</div>
+
+<style>
+.doz-info-box {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doz-info-name {
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--black, #111111);
+}
+.doz-info-meta {
+  font-size: 12px;
+  color: var(--muted, #555250);
+  line-height: 1.65;
+}
+.doz-info-meta strong {
+  color: var(--black, #111111);
+  font-weight: 500;
+}
+</style>
