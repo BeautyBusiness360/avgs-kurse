@@ -352,22 +352,6 @@ body {
 }
 .net-img-wrap { position:relative; aspect-ratio:1; overflow:hidden; background:var(--cream-d); }
 .net-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-.net-badge {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:32px 14px 13px;
-  background:linear-gradient(to top, rgba(0,0,0,.82) 0%, transparent 100%);
-  text-align:center;
-}
-.net-badge-title {
-  display:block;
-  font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
-  color:var(--gold-lt);
-}
-.net-badge-nr {
-  display:block;
-  font-size:10px; letter-spacing:.1em;
-  color:rgba(255,255,255,.45); margin-top:3px;
-}
 /* .net-card-body styles live in DozentinInfoBox.astro */
 
 /* Carousel controls */
@@ -698,10 +682,6 @@ body {
                     width="320" height="320"
                     loading="lazy"
                   />
-                  <div class="net-badge">
-                    <span class="net-badge-title">Anerkannte Fachdozentin</span>
-                    <span class="net-badge-nr">{d.regNr}</span>
-                  </div>
                 </div>
                 <DozentinInfoBox
                   name={`${d.first_name} ${d.last_name}`}
