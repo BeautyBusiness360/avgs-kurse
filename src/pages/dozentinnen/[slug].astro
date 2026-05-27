@@ -1,7 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
-import { CITY_DISPLAY, PROFILE_ADDRESS } from '../../data/location-overrides';
+import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL } from '../../data/location-overrides';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDozentinFaqs, getDozentinBio } from '../../data/dozentin-content-pool';
@@ -83,6 +83,8 @@ const { dozentin } = Astro.props;
 const city = (Array.isArray(dozentin.cities) ? dozentin.cities[0] : dozentin.cities) as { slug: string; name: string };
 const displayCityName = CITY_DISPLAY[dozentin.slug] ?? city.name;
 const profileAddress  = PROFILE_ADDRESS[dozentin.slug] ?? null;
+const hubCitySlug     = HUB_CITY_SLUG[dozentin.slug]  ?? city.slug;
+const hubCityLabel    = HUB_CITY_LABEL[dozentin.slug] ?? displayCityName;
 const services = dozentin.services ?? [];
 
 // Local WebP image lookup (slug minus trailing -city)
@@ -1050,7 +1052,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     <div class="final-cta-form">
       {hasForm
         ? <a class={`cta-white lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
-        : <a href={`/${city.slug}/`} class="cta-white">Alle Kurse in {displayCityName} ansehen →</a>
+        : <a href={`/${hubCitySlug}/`} class="cta-white">Alle anerkannten Akademien in {hubCityLabel} ansehen →</a>
       }
     </div>
 
@@ -1063,7 +1065,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <footer class="site-footer">
   <div class="w">
     <nav class="footer-seo-links" aria-label={`Kurse in ${displayCityName}`}>
-      <a href={`/${city.slug}/`}>Alle Kurse in {displayCityName}</a>
+      <a href={`/${hubCitySlug}/`}>Alle anerkannten Akademien in {hubCityLabel}</a>
       {services.map((s: any) => (
         <a href={`/${city.slug}/${s.slug}/`}>{s.name} {displayCityName}</a>
       ))}
