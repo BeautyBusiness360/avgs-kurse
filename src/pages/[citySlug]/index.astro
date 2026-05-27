@@ -333,6 +333,7 @@ body {
   color:var(--black); margin-bottom:18px;
 }
 .section-title em { font-style:italic; color:var(--gold); }
+@media(min-width:768px){ .section-title { white-space:nowrap; font-size:clamp(28px,3vw,42px); } }
 .section-desc {
   font-size:16px; font-weight:400;
   line-height:1.85; color:var(--muted);
@@ -579,8 +580,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="section-header" style="text-align:left;margin-bottom:28px;">
         <span class="section-eye">Schulungsstandorte</span>
         <h2 class="section-title">
-          Zertifizierte Schulungsstandorte<br />
-          in <em>{stadtName}</em>
+          Zertifizierte Schulungsstandorte in <em>{stadtName}</em>
         </h2>
       </div>
 
@@ -618,8 +618,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="section-header" style="text-align:left;">
         <span class="section-eye">Fachdozentinnen</span>
         <h2 class="section-title">
-          Unsere Fachdozentinnen<br />
-          in <em>{stadtName}</em>
+          Unsere Fachdozentinnen in <em>{stadtName}</em>
         </h2>
         <p class="section-desc">
           Genau dafür gibt es unsere staatlich geförderten Perfektionstrainings:
