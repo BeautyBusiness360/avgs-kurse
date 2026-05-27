@@ -1,6 +1,7 @@
 ---
 import SEOLayout from '../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../components/DozentinInfoBox.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { supabase } from '../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -461,23 +462,6 @@ body {
 .final-cta-h2 em { font-style:italic; color:var(--gold-lt); }
 .final-cta-p { font-size:16px; line-height:1.85; color:rgba(255,255,255,.45); margin-bottom:40px; }
 
-/* ─── FOOTER ─────────────────────────── */
-.site-footer {
-  background:var(--black);
-  border-top:1px solid rgba(255,255,255,.06);
-  padding:32px 0;
-}
-.footer-inner {
-  display:flex; align-items:center;
-  justify-content:space-between; flex-wrap:wrap; gap:16px;
-}
-.footer-copy { font-size:12px; color:rgba(255,255,255,.25); }
-.footer-links { display:flex; flex-wrap:wrap; gap:16px 24px; }
-.footer-links a {
-  font-size:12px; color:rgba(255,255,255,.35);
-  text-decoration:none; transition:color .2s;
-}
-.footer-links a:hover { color:rgba(255,255,255,.75); }
 </style>
 
 <main>
@@ -772,20 +756,7 @@ body {
 </main>
 
 
-<!-- ══════════════════════════════════
-     FOOTER
-══════════════════════════════════ -->
-<footer class="site-footer">
-  <div class="w">
-    <div class="footer-inner">
-      <span class="footer-copy">© 2026 BeautyBusiness360</span>
-      <div class="footer-links">
-        <a href="/impressum/">Impressum</a>
-        <a href="/datenschutz/">Datenschutzerklärung</a>
-      </div>
-    </div>
-  </div>
-</footer>
+<SiteFooter variant="full" />
 
 <script>
   (function () {
