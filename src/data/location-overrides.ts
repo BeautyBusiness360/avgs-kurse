@@ -6,6 +6,16 @@ export const PROFILE_ADDRESS: Record<string, string> = {
   'dunya-said-hamburg': 'Eckhoffpl. 16, 22547 Hamburg',
 };
 
+// Per-service technique labels for the dozentinnen profile footer.
+// Services with two techniques produce two separate links, both pointing to the same module URL.
+export const SERVICE_LABELS: Record<string, string[]> = {
+  'powderbrows-ombrebrows-masterclass': ['PowderBrows MasterClass', 'OmbreBrows MasterClass'],
+  'velvet-lips-lipstick-masterclass':   ['Velvet Lips MasterClass', 'LipStick Effekt MasterClass'],
+  'microblading-masterclass':           ['Microblading MasterClass'],
+  'wimpernverlaengerung-masterclass':   ['1:1 Technik MasterClass', 'Volumen Technik MasterClass'],
+  'camouflage-removal-masterclass':     ['Camouflage MasterClass', 'Tattoo Removal MasterClass'],
+};
+
 // Hub-Link overrides: dozentin.slug → city slug/label for the "Alle anerkannten Akademien in X" link.
 // Used when city.slug has no own Stadtseite (elmshorn, wedel) or display differs from URL city (Hamburg-Lurup).
 export const HUB_CITY_SLUG: Record<string, string> = {

@@ -1,7 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
-import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL } from '../../data/location-overrides';
+import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL, SERVICE_LABELS } from '../../data/location-overrides';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDozentinFaqs, getDozentinBio } from '../../data/dozentin-content-pool';
@@ -1066,9 +1066,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
   <div class="w">
     <nav class="footer-seo-links" aria-label={`Kurse in ${displayCityName}`}>
       <a href={`/${hubCitySlug}/`}>Alle anerkannten Akademien in {hubCityLabel}</a>
-      {services.map((s: any) => (
-        <a href={`/${city.slug}/${s.slug}/`}>{s.name} {displayCityName}</a>
-      ))}
+      {services.flatMap((s: any) => {
+        const labels = SERVICE_LABELS[s.slug] ?? [s.name];
+        return labels.map((label: string) => (
+          <a href={`/${hubCitySlug}/${s.slug}/`}>{label}</a>
+        ));
+      })}
     </nav>
     <div class="footer-inner">
       <span class="footer-copy">© 2026 BeautyBusiness360</span>
