@@ -1,6 +1,7 @@
 ---
 import SEOLayout from '../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../components/DozentinInfoBox.astro';
+import { CITY_DISPLAY } from '../data/location-overrides';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { supabase } from '../lib/supabase';
@@ -673,7 +674,7 @@ body {
                 </div>
                 <DozentinInfoBox
                   name={`${d.first_name} ${d.last_name}`}
-                  standort={d.city?.name ?? undefined}
+                  standort={CITY_DISPLAY[d.slug] ?? d.city?.name ?? undefined}
                   fachgebiete={(d.services as any[]).map((s: any) => s.name).filter(Boolean)}
                 />
               </div>

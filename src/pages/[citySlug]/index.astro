@@ -1,6 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
+import { CITY_DISPLAY } from '../../data/location-overrides';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
@@ -636,7 +637,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             </div>
             <DozentinInfoBox
               name={`${d.first_name} ${d.last_name}`}
-              standort={d.cityName}
+              standort={CITY_DISPLAY[d.slug] ?? d.cityName}
               fachgebiete={d.serviceNames}
             />
           </a>
