@@ -306,30 +306,55 @@ body {
   max-width:680px;
 }
 
-/* ─── INTRO / ÜBER DAS MODUL ─────────── */
-.intro-text {
-  font-size:17px; line-height:1.95;
-  color:var(--muted); margin-bottom:28px;
-  max-width:720px;
+/* ─── CAROUSEL / GALERIE ─────────────── */
+.gallery-section { padding:80px 0; border-bottom:1px solid var(--border); }
+.carousel-wrap { position:relative; }
+.carousel-track {
+  display:flex; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none;
 }
-.modul-badges { display:flex; flex-wrap:wrap; gap:10px; }
-.modul-badge {
-  font-size:11px; font-weight:600;
-  letter-spacing:.12em; text-transform:uppercase;
-  color:#7A5C2E;
-  background:var(--gold-bg); border:1px solid #E8D9C4;
-  border-radius:var(--radius); padding:7px 14px;
+.carousel-track::-webkit-scrollbar { display:none; }
+.carousel-slide {
+  flex:0 0 calc((100% - 32px) / 3);
+  scroll-snap-align:start; border-radius:var(--radius); overflow:hidden;
 }
-
-/* ─── PLATZHALTER ────────────────────── */
-.ph {
-  background:var(--cream-d);
-  border:1.5px dashed var(--border);
-  border-radius:var(--radius);
-  padding:10px 16px;
-  color:var(--muted);
-  font-size:12px; font-style:italic;
-  display:inline-block;
+.carousel-slide img {
+  width:100%; aspect-ratio:1; object-fit:cover; display:block;
+  transition:transform .6s ease;
+}
+.carousel-slide:hover img { transform:scale(1.05); }
+.carousel-ph {
+  aspect-ratio:1;
+  background:linear-gradient(135deg,var(--cream-d),#DDD4C8);
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; color:rgba(184,150,90,.25);
+}
+.carousel-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px; height:40px; border-radius:50%;
+  background:var(--white); border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  cursor:pointer; font-size:18px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2; transition:box-shadow .2s;
+}
+.carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
+.carousel-prev { left:-20px; }
+.carousel-next { right:-20px; }
+.carousel-dots {
+  display:none; justify-content:center; gap:8px; margin-top:16px;
+}
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--muted); background:transparent;
+  transition:background .2s, border-color .2s; cursor:pointer; padding:0;
+}
+.carousel-dot.active { background:var(--gold); border-color:var(--gold); }
+@media(max-width:640px){
+  .carousel-slide { flex:0 0 100%; }
+  .carousel-btn { display:none; }
+  .carousel-dots { display:flex; }
 }
 
 /* ─── DOZENTINNEN GRID ───────────────── */
@@ -495,26 +520,31 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
-     ÜBER DAS MODUL
+     GALERIE
 ══════════════════════════════════ -->
-<section class="section" style="border-bottom:none;padding-bottom:0;padding-top:58px;">
+<section class="gallery-section">
   <div class="w">
-    <div class="section-header" style="text-align:left;margin-bottom:32px;">
-      <span class="section-eye">Über das Modul</span>
+    <div class="section-header" style="text-align:left;margin-bottom:40px;">
+      <span class="section-eye">Ergebnisse &amp; Einblicke</span>
       <h2 class="section-title">
-        <span class="ph">PLATZHALTER – Modultitel / Claim</span>
+        Galerie – <em>{service.name}</em>
       </h2>
+      <p class="section-desc" style="max-width:none;margin:0;">
+        Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in {city.name}.
+      </p>
     </div>
 
-    <p class="intro-text">
-      <span class="ph">PLATZHALTER – 2–3 Sätze Beschreibung des Moduls und seiner Inhalte. Was lernst du? Welche Techniken werden vermittelt? Was macht dieses Modul besonders?</span>
-    </p>
-
-    <div class="modul-badges">
-      <span class="modul-badge">100 % AVGS-gefördert</span>
-      <span class="modul-badge">AZAV-zertifiziert</span>
-      <span class="modul-badge">Einzelunterricht</span>
-      <span class="modul-badge"><span class="ph" style="padding:0;border:none;background:none;">PLATZHALTER – z. B. Dauer</span></span>
+    <div class="carousel-wrap">
+      <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
+      <div class="carousel-track" id="gallery-track">
+        {[1,2,3,4,5,6].map((_: number) => (
+          <div class="carousel-slide">
+            <div class="carousel-ph">✦</div>
+          </div>
+        ))}
+      </div>
+      <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
+      <div class="carousel-dots" id="gallery-dots" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -531,7 +561,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         {service.name}<br />
         in <em>{city.name}</em>
       </h2>
-      <p class="section-desc">
+      <p class="section-desc" style="max-width:none;">
         Genau dafür gibt es unsere staatlich geförderten Perfektionstrainings:
         anerkannt, zertifiziert und über den AVGS der Agentur für Arbeit zu
         100&thinsp;% förderbar – im persönlichen Einzelunterricht bei folgenden
@@ -626,6 +656,35 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 </main>
 
 
-<SiteFooter variant="lean" />
+<SiteFooter variant="full" activeCity={city.slug} />
+
+<script>
+  const track = document.getElementById('gallery-track') as HTMLElement | null;
+  const dotsWrap = document.getElementById('gallery-dots') as HTMLElement | null;
+  if (track) {
+    const prev = track.closest('.carousel-wrap')?.querySelector('.carousel-prev');
+    const next = track.closest('.carousel-wrap')?.querySelector('.carousel-next');
+    const slides = Array.from(track.querySelectorAll('.carousel-slide')) as HTMLElement[];
+    const step = () => (slides[0]?.offsetWidth ?? 0) + 16;
+
+    const dots: HTMLButtonElement[] = slides.map((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', `Bild ${i + 1}`);
+      d.addEventListener('click', () => track.scrollTo({ left: step() * i, behavior: 'smooth' }));
+      dotsWrap?.appendChild(d);
+      return d;
+    });
+
+    const updateDots = () => {
+      const idx = Math.round(track.scrollLeft / (step() || 1));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    };
+
+    track.addEventListener('scroll', updateDots, { passive: true });
+    prev?.addEventListener('click', () => track.scrollBy({ left: -step() * 3, behavior: 'smooth' }));
+    next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
+  }
+</script>
 
 </SEOLayout>
