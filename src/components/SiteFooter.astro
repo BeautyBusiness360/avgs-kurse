@@ -58,10 +58,13 @@ const cities = [
       <div class="sf-col">
         <h3 class="sf-col-title">Weitere Angebote</h3>
         <nav class="sf-link-list" aria-label="Weitere Angebote">
-          <a href="https://www.dozentenschein.de" class="sf-link" target="_blank" rel="noopener">
+          <a href="/fachdozentin-werden" class="sf-link">
+            Fachdozentin werden
+          </a>
+          <a href="https://www.dozentenschein.de" class="sf-link sf-link--ext" target="_blank" rel="noopener">
             Dozentenschein (Train-the-Trainer)
           </a>
-          <a href="https://www.azav-experten.de" class="sf-link" target="_blank" rel="noopener">
+          <a href="https://www.azav-experten.de" class="sf-link sf-link--ext" target="_blank" rel="noopener">
             AZAV-Zulassung &amp; QM-Beratung
           </a>
         </nav>
@@ -96,7 +99,6 @@ const cities = [
       <div class="sf-legal">
         <a href="/impressum/" class="sf-legal-link">Impressum</a>
         <a href="/datenschutz/" class="sf-legal-link">Datenschutzerklärung</a>
-        <a href="/fachdozentin-werden" class="sf-legal-link sf-legal-link--doz">Fachdozentin werden</a>
       </div>
       <div class="sf-social" aria-label="Social Media">
         <a href="https://www.instagram.com/beautybusiness360/" class="sf-social-link" target="_blank" rel="noopener" aria-label="Instagram">
@@ -130,7 +132,6 @@ const cities = [
       <div class="sf-legal">
         <a href="/impressum/" class="sf-legal-link">Impressum</a>
         <a href="/datenschutz/" class="sf-legal-link">Datenschutzerklärung</a>
-        <a href="/fachdozentin-werden" class="sf-legal-link sf-legal-link--doz">Fachdozentin werden</a>
       </div>
     </div>
   </div>
@@ -202,6 +203,7 @@ const cities = [
 }
 .sf-link--icon { display: flex; align-items: center; gap: 8px; }
 .sf-link--icon svg { flex-shrink: 0; opacity: .6; }
+.sf-link--ext::after { content: ' ↗'; font-size: 11px; opacity: .55; }
 
 .sf-divider { margin-top: 52px; border-top: 1px solid rgba(255,255,255,.06); }
 
@@ -236,12 +238,6 @@ const cities = [
   transition: color .2s;
 }
 .sf-legal-link:hover { color: rgba(255,255,255,.70); }
-.sf-legal-link--doz {
-  border-left: 1px solid rgba(255,255,255,.12);
-  padding-left: 20px;
-  color: rgba(255,255,255,.22);
-}
-.sf-legal-link--doz:hover { color: rgba(255,255,255,.60); }
 
 .sf-social { display: flex; gap: 16px; }
 .sf-social-link {
@@ -254,6 +250,5 @@ const cities = [
 @media (max-width: 540px) {
   .sf--full .sf-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
   .sf--lean .sf-bottom { flex-direction: column; align-items: flex-start; }
-  .sf-legal-link--doz { border-left: none; padding-left: 0; }
 }
 </style>
