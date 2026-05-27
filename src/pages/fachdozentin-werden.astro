@@ -2,6 +2,7 @@
 import SEOLayout from '../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../components/DozentinInfoBox.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import { supabase } from '../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -519,6 +520,8 @@ body {
 
 </style>
 
+
+<SiteHeader variant="brand-only" />
 
 <main>
 

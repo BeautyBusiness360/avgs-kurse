@@ -2,6 +2,7 @@
 import SEOLayout from '../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../components/DozentinInfoBox.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import { supabase } from '../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -463,6 +464,8 @@ body {
 .final-cta-p { font-size:16px; line-height:1.85; color:rgba(255,255,255,.45); margin-bottom:40px; }
 
 </style>
+
+<SiteHeader variant="linked" />
 
 <main>
 
