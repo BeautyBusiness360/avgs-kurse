@@ -38,8 +38,9 @@ const dozentinnen = (dozRaw ?? [])
     regNr: `BB360-FD-${String(i + 1).padStart(3, '0')}`,
   }));
 
+const founderImgPath = '/images/dozentinnen/walid-regaia/walid-regaia.jpg';
 const founderImgExists = fs.existsSync(
-  path.join(process.cwd(), 'public', 'walid-regaia.jpg'),
+  path.join(process.cwd(), 'public', founderImgPath),
 );
 
 const seo = {
@@ -730,7 +731,7 @@ body {
         <div class="founder-photo-frame">
           {founderImgExists
             ? <img
-                src="/walid-regaia.jpg"
+                src={founderImgPath}
                 alt="Walid Regaia – Gründer BeautyBusiness360"
                 width="380" height="507"
                 loading="lazy"
