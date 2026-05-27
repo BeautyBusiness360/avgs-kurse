@@ -9,7 +9,7 @@ export const prerender = true;
 export async function getStaticPaths() {
   const [standorteRes, staedteRes, dozRes] = await Promise.all([
     supabase.from('standorte').select('name, strasse, plz, ort, city_slug, region').order('name'),
-    supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle'),
+    supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle').order('stadt_name'),
     supabase
       .from('dozentinnen')
       .select('slug, first_name, last_name, cities(slug, name)')
@@ -29,6 +29,11 @@ export async function getStaticPaths() {
 
   // Distinct hub regions (one page per region)
   const regions = [...new Set(standorteAll.map(s => s.region).filter(Boolean))] as string[];
+
+  // All staedte for footer nav (only those that have a generated page)
+  const allStaedteNav = staedteAll
+    .filter(s => regions.includes(s.city_slug))
+    .sort((a, b) => a.stadt_name.localeCompare(b.stadt_name, 'de'));
 
   // Group dozentinnen by their region (derived via standorte mapping)
   const dozByRegion: Record<string, any[]> = {};
@@ -60,6 +65,7 @@ export async function getStaticPaths() {
             return a.name.localeCompare(b.name, 'de');
           }),
         dozentinnen:    dozByRegion[region] ?? [],
+        allStaedteNav,
       }
     };
   });
@@ -89,6 +95,7 @@ const {
   introQuelle,
   standorte,
   dozentinnen,
+  allStaedteNav,
 } = Astro.props as {
   citySlug: string;
   stadtName: string;
@@ -96,6 +103,7 @@ const {
   introQuelle: string | null;
   standorte: Standort[];
   dozentinnen: DozRaw[];
+  allStaedteNav: { city_slug: string; stadt_name: string }[];
 };
 
 // City hero image (build-time fs check)
@@ -507,19 +515,52 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 .site-footer {
   background:var(--black);
   border-top:1px solid rgba(255,255,255,.06);
-  padding:32px 0;
+  padding:40px 0 28px;
 }
+.footer-cities {
+  padding-bottom:28px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  margin-bottom:24px;
+}
+.footer-cities-label {
+  display:block;
+  font-size:10px; font-weight:500;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,255,255,.28);
+  margin-bottom:14px;
+}
+.footer-city-links {
+  display:flex; flex-wrap:wrap;
+  gap:8px 0;
+}
+.footer-city-link {
+  font-size:12px; color:rgba(255,255,255,.35);
+  text-decoration:none; transition:color .2s;
+  padding-right:20px;
+}
+.footer-city-link:hover { color:rgba(255,255,255,.75); }
+.footer-city-link--active { color:var(--gold-lt); }
 .footer-inner {
   display:flex; align-items:center;
   justify-content:space-between; flex-wrap:wrap; gap:16px;
 }
 .footer-copy { font-size:12px; color:rgba(255,255,255,.25); }
-.footer-links { display:flex; gap:24px; }
+.footer-links { display:flex; flex-wrap:wrap; gap:16px 24px; align-items:center; }
 .footer-links a {
   font-size:12px; color:rgba(255,255,255,.35);
   text-decoration:none; transition:color .2s;
 }
 .footer-links a:hover { color:rgba(255,255,255,.75); }
+.footer-doz-link {
+  color:rgba(255,255,255,.25) !important;
+  border-left:1px solid rgba(255,255,255,.1);
+  padding-left:24px;
+  margin-left:4px;
+}
+.footer-doz-link:hover { color:rgba(255,255,255,.6) !important; }
+@media(max-width:560px){
+  .footer-doz-link { border-left:none; padding-left:0; margin-left:0; }
+}
 </style>
 
 
@@ -718,13 +759,32 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 ══════════════════════════════════ -->
 <footer class="site-footer">
   <div class="w">
+
+    {allStaedteNav.length > 0 && (
+      <div class="footer-cities">
+        <span class="footer-cities-label">Kurse in deiner Stadt</span>
+        <nav class="footer-city-links">
+          {allStaedteNav.map(s => (
+            <a
+              href={`/${s.city_slug}/`}
+              class={`footer-city-link${s.city_slug === citySlug ? ' footer-city-link--active' : ''}`}
+            >
+              {s.stadt_name}
+            </a>
+          ))}
+        </nav>
+      </div>
+    )}
+
     <div class="footer-inner">
       <span class="footer-copy">© 2026 BeautyBusiness360</span>
       <div class="footer-links">
         <a href="/impressum/">Impressum</a>
         <a href="/datenschutz/">Datenschutzerklärung</a>
+        <a href="https://dein-beauty-kurs.de/fachdozentin-werden" class="footer-doz-link">Als Fachdozentin unterrichten</a>
       </div>
     </div>
+
   </div>
 </footer>
 
