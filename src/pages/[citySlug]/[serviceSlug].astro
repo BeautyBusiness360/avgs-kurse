@@ -139,6 +139,18 @@ const GALLERY_DESC: Record<string, string> = {
 };
 const galleryDesc = GALLERY_DESC[service.slug] ?? `Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in ${city.name}.`;
 
+// ── FAQ – modul-spezifische Inhalts-Frage (FAQ #3) ───────────────────────────
+const FAQ3: Record<string, { q: string; a: string }> = {
+  'powderbrows-ombrebrows-masterclass': {
+    q: `Welche Inhalte umfasst PowderBrows & OmbreBrows MasterClass?`,
+    a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex, dann echte Modellbehandlungen – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
+  },
+};
+const faq3 = FAQ3[service.slug] ?? {
+  q: `[PLATZHALTER] Welche Inhalte umfasst ${displayServiceName}?`,
+  a: `[PLATZHALTER – Modul-spezifische Antwort zu Kursinhalten, Techniken und Ablauf wird hier ergänzt.]`,
+};
+
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 const faqItems = [
   {
@@ -149,10 +161,7 @@ const faqItems = [
     q: `Wer kann den AVGS-Gutschein für dieses Modul beantragen?`,
     a: `Den AVGS können nicht nur arbeitssuchende Personen beantragen, sondern auch Angestellte und Selbstständige – unabhängig davon, ob aktuell Leistungen bezogen werden. Entscheidend ist, dass die Weiterbildung deine berufliche Situation verbessert oder sichert. Ein Termin bei der Agentur für Arbeit klärt, ob der Gutschein in deinem Fall bewilligt wird.`,
   },
-  {
-    q: `[PLATZHALTER] Welche Inhalte umfasst ${displayServiceName}?`,
-    a: `[PLATZHALTER – Modul-spezifische Antwort zu Kursinhalten, Techniken und Ablauf wird hier ergänzt.]`,
-  },
+  faq3,
   {
     q: `Welche Voraussetzungen brauche ich für die Teilnahme?`,
     a: `Das Perfektionstraining richtet sich an erfahrene Teilnehmerinnen aus der Beauty-Branche, die ihre Technik gezielt weiterentwickeln möchten. Es handelt sich ausdrücklich nicht um einen Einsteigerkurs – praktische Vorerfahrung im jeweiligen Fachbereich wird vorausgesetzt.`,
