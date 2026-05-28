@@ -90,7 +90,7 @@ const displayServiceName = SERVICE_DISPLAY_NAME[service.slug] ?? service.name;
 const MODULE_IMAGES: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': '/images/Modul-Bilder/augenbrauen.webp',
   'velvet-lips-lipstick-masterclass':   '/images/Modul-Bilder/velvet-lips-lipstick/gallery-3.webp',
-  'microblading-masterclass':           '/images/Modul-Bilder/microblading.webp',
+  'microblading-masterclass':           '/images/Modul-Bilder/microblading/hero.webp',
   'wimpernverlaengerung-masterclass':   '/images/Modul-Bilder/wimpern.webp',
   'camouflage-removal-masterclass':     '/images/Modul-Bilder/entfernung.webp',
 };
@@ -103,6 +103,7 @@ const hasModuleImage = moduleImageRel
 const GALLERY_FOLDERS: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': 'powderbrows-ombrebrows',
   'velvet-lips-lipstick-masterclass':   'velvet-lips-lipstick',
+  'microblading-masterclass':           'microblading',
 };
 const galleryFolder = GALLERY_FOLDERS[service.slug];
 const galleryImages: string[] = [];
@@ -111,7 +112,7 @@ if (galleryFolder) {
   if (fs.existsSync(folderAbs)) {
     galleryImages.push(
       ...fs.readdirSync(folderAbs)
-        .filter(f => /\.webp$/i.test(f))
+        .filter(f => /\.webp$/i.test(f) && f !== 'hero.webp')
         .sort((a, b) => {
           const na = parseInt(a.match(/\d+/)?.[0] ?? '0');
           const nb = parseInt(b.match(/\d+/)?.[0] ?? '0');
