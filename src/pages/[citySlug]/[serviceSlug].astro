@@ -92,7 +92,7 @@ const MODULE_IMAGES: Record<string, string> = {
   'velvet-lips-lipstick-masterclass':   '/images/Modul-Bilder/velvet-lips-lipstick/gallery-3.webp',
   'microblading-masterclass':           '/images/Modul-Bilder/microblading/hero.webp',
   'wimpernverlaengerung-masterclass':   '/images/Modul-Bilder/wimpernverlaengerung/hero.webp',
-  'camouflage-removal-masterclass':     '/images/Modul-Bilder/entfernung.webp',
+  'camouflage-removal-masterclass':     '/images/Modul-Bilder/camouflage-removal/hero.webp',
 };
 const moduleImageRel = MODULE_IMAGES[service.slug] ?? null;
 const hasModuleImage = moduleImageRel
@@ -105,6 +105,7 @@ const GALLERY_FOLDERS: Record<string, string> = {
   'velvet-lips-lipstick-masterclass':   'velvet-lips-lipstick',
   'microblading-masterclass':           'microblading',
   'wimpernverlaengerung-masterclass':   'wimpernverlaengerung',
+  'camouflage-removal-masterclass':     'camouflage-removal',
 };
 const galleryFolder = GALLERY_FOLDERS[service.slug];
 const galleryImages: string[] = [];
@@ -138,7 +139,7 @@ const GALLERY_DESC: Record<string, string> = {
   'velvet-lips-lipstick-masterclass':   'Velvet Lips & LipStick Effekt ist eine Permanent-Make-up-Technik für natürlich-definierte, frische Lippen mit gleichmäßiger Farbe – hier ein paar Ergebnisse aus unseren Trainings.',
   'microblading-masterclass':           'Microblading ist eine Permanent-Make-up-Technik mit feinen Härchen-Strichen für natürlich wirkende, dicht definierte Augenbrauen – hier ein paar Ergebnisse aus unseren Trainings.',
   'wimpernverlaengerung-masterclass':   'Wimpernverlängerung ist eine Lash-Technik mit feiner Einzelhaar-Verklebung für längere, dichtere Wimpern (1:1- und Volumen-Technik) – hier ein paar Ergebnisse aus unseren Trainings.',
-  'camouflage-removal-masterclass':     '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Camouflage & Tattoo Removal MasterClass-Training.]',
+  'camouflage-removal-masterclass':     'Camouflage & Tattoo Removal sind Korrektur-Techniken im Permanent Make-up zum gezielten Überdecken oder Entfernen unerwünschter Pigmentierungen – hier ein paar Ergebnisse aus unseren Trainings.',
 };
 const galleryDesc = GALLERY_DESC[service.slug] ?? `Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in ${city.name}.`;
 
@@ -159,6 +160,10 @@ const FAQ3: Record<string, { q: string; a: string }> = {
   'wimpernverlaengerung-masterclass': {
     q: `Welche Inhalte umfasst Wimpernverlängerung MasterClass?`,
     a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen am Übungskopf, dann echte Modellbehandlungen in 1:1- und Volumen-Technik – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
+  },
+  'camouflage-removal-masterclass': {
+    q: `Welche Inhalte umfasst Camouflage & Tattoo Removal MasterClass?`,
+    a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex (Camouflage und Removal), dann echte Modellbehandlungen – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
   },
 };
 const faq3 = FAQ3[service.slug] ?? {
