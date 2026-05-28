@@ -35,17 +35,24 @@ export async function getStaticPaths() {
 
   // Group dozentinnen by their region (derived via standorte mapping)
   const dozByRegion: Record<string, any[]> = {};
+  const servicesByRegion: Record<string, { slug: string; displayName: string }[]> = {};
   for (const d of dozAll) {
     const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
     if (!city?.slug) continue;
     const region = cityToRegion[city.slug] ?? city.slug;
     if (!dozByRegion[region]) dozByRegion[region] = [];
-    const serviceNames = (Array.isArray(d.dozentin_services) ? d.dozentin_services : [])
-      .map((ds: any) => {
-        const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
-        return s ? (SERVICE_DISPLAY_NAME[s.slug] ?? s.name) : null;
-      })
-      .filter(Boolean) as string[];
+    if (!servicesByRegion[region]) servicesByRegion[region] = [];
+    const dsRows = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
+    const serviceNames: string[] = [];
+    for (const ds of dsRows) {
+      const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+      if (!s?.slug) continue;
+      const displayName = SERVICE_DISPLAY_NAME[s.slug] ?? s.name;
+      serviceNames.push(displayName);
+      if (!servicesByRegion[region].find((x: any) => x.slug === s.slug)) {
+        servicesByRegion[region].push({ slug: s.slug, displayName });
+      }
+    }
     dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames });
   }
 
@@ -69,6 +76,7 @@ export async function getStaticPaths() {
             return a.name.localeCompare(b.name, 'de');
           }),
         dozentinnen:    dozByRegion[region] ?? [],
+        cityServices:   servicesByRegion[region] ?? [],
       }
     };
   });
@@ -92,6 +100,10 @@ interface DozWithImg extends DozRaw {
   profileImg: string | null;
   localSlug: string;
 }
+interface CityService {
+  slug: string;
+  displayName: string;
+}
 
 const {
   citySlug,
@@ -100,6 +112,7 @@ const {
   introQuelle,
   standorte,
   dozentinnen,
+  cityServices,
 } = Astro.props as {
   citySlug: string;
   stadtName: string;
@@ -107,6 +120,7 @@ const {
   introQuelle: string | null;
   standorte: Standort[];
   dozentinnen: DozRaw[];
+  cityServices: CityService[];
 };
 
 // City hero image (build-time fs check)
@@ -399,6 +413,48 @@ body {
   line-height:1.75; display:block;
 }
 
+/* ─── MASTERCLASS KARTEN ─────────────── */
+.mc-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:20px;
+}
+.mc-card {
+  display:flex; flex-direction:column;
+  text-decoration:none; color:inherit;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,.04);
+  transition:box-shadow .3s, transform .25s;
+}
+.mc-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+.mc-card-top { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); }
+.mc-card-body {
+  padding:24px 22px 20px;
+  display:flex; flex-direction:column; gap:12px; flex:1;
+}
+.mc-card-eye {
+  font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:#7A5C2E;
+  background:var(--gold-bg); border:1px solid #E8D9C4;
+  border-radius:var(--radius); padding:4px 10px;
+  align-self:flex-start;
+}
+.mc-card-name {
+  font-family:var(--serif);
+  font-size:20px; font-weight:600;
+  color:var(--black); line-height:1.25;
+}
+.mc-card-link {
+  font-size:12px; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gold); margin-top:auto; padding-top:4px;
+}
+.mc-card:hover .mc-card-link { color:var(--gold-lt); }
+
 /* ─── DOZENTINNEN GRID ───────────────── */
 .doz-grid {
   display:grid;
@@ -595,6 +651,39 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               </span>
             </div>
           </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+
+<!-- ══════════════════════════════════
+     MASTERCLASSES
+══════════════════════════════════ -->
+{cityServices.length > 0 && (
+  <section class="section" style="border-bottom:none;padding-bottom:0;">
+    <div class="w">
+      <div class="section-header" style="text-align:left;margin-bottom:40px;">
+        <span class="section-eye">Staatlich gefördert</span>
+        <h2 class="section-title">
+          MasterClasses in <em>{stadtName}</em>
+        </h2>
+        <p class="section-desc">
+          Diese Perfektionstrainings werden aktuell in {stadtName} angeboten –
+          100&thinsp;% förderfähig über AVGS-Gutschein.
+        </p>
+      </div>
+      <div class="mc-grid">
+        {cityServices.map(s => (
+          <a href={`/${citySlug}/${s.slug}/`} class="mc-card">
+            <div class="mc-card-top"></div>
+            <div class="mc-card-body">
+              <span class="mc-card-eye">AVGS-gefördert</span>
+              <span class="mc-card-name">{s.displayName}</span>
+              <span class="mc-card-link">Modul ansehen →</span>
+            </div>
+          </a>
         ))}
       </div>
     </div>
