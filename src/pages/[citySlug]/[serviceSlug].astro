@@ -89,7 +89,7 @@ const displayServiceName = SERVICE_DISPLAY_NAME[service.slug] ?? service.name;
 // ── Modul-Bild ────────────────────────────────────────────────────────────────
 const MODULE_IMAGES: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': '/images/Modul-Bilder/augenbrauen.webp',
-  'velvet-lips-lipstick-masterclass':   '/images/Modul-Bilder/lippen.webp',
+  'velvet-lips-lipstick-masterclass':   '/images/Modul-Bilder/velvet-lips-lipstick/gallery-3.webp',
   'microblading-masterclass':           '/images/Modul-Bilder/microblading.webp',
   'wimpernverlaengerung-masterclass':   '/images/Modul-Bilder/wimpern.webp',
   'camouflage-removal-masterclass':     '/images/Modul-Bilder/entfernung.webp',
@@ -133,7 +133,7 @@ const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
 // ── Galerie-Beschreibung (modul-spezifisch) ───────────────────────────────────
 const GALLERY_DESC: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': 'PowderBrows & OmbreBrows ist eine Permanent-Make-up-Technik für pudrig-weiche, definierte Augenbrauen – hier ein paar Ergebnisse aus unseren Trainings.',
-  'velvet-lips-lipstick-masterclass':   '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Velvet Lips & LipStick Effekt MasterClass-Training.]',
+  'velvet-lips-lipstick-masterclass':   'Velvet Lips & LipStick Effekt ist eine Permanent-Make-up-Technik für natürlich-definierte, frische Lippen mit gleichmäßiger Farbe – hier ein paar Ergebnisse aus unseren Trainings.',
   'microblading-masterclass':           '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Microblading MasterClass-Training.]',
   'wimpernverlaengerung-masterclass':   '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Wimpernverlängerung MasterClass-Training.]',
   'camouflage-removal-masterclass':     '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Camouflage & Tattoo Removal MasterClass-Training.]',
@@ -145,6 +145,10 @@ const FAQ3: Record<string, { q: string; a: string }> = {
   'powderbrows-ombrebrows-masterclass': {
     q: `Welche Inhalte umfasst PowderBrows & OmbreBrows MasterClass?`,
     a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex, dann echte Modellbehandlungen – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
+  },
+  'velvet-lips-lipstick-masterclass': {
+    q: `Welche Inhalte umfasst Velvet Lips & LipStick Effekt MasterClass?`,
+    a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex, dann echte Modellbehandlungen an den Lippen – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
   },
 };
 const faq3 = FAQ3[service.slug] ?? {
