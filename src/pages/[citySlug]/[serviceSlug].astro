@@ -2,7 +2,7 @@
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
-import { CITY_DISPLAY } from '../../data/location-overrides';
+import { CITY_DISPLAY, SERVICE_DISPLAY_NAME } from '../../data/location-overrides';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -84,6 +84,7 @@ export async function getStaticPaths() {
 }
 
 const { city, service, dozentinnen } = Astro.props;
+const displayServiceName = SERVICE_DISPLAY_NAME[service.slug] ?? service.name;
 
 // ── Modul-Bild ────────────────────────────────────────────────────────────────
 const MODULE_IMAGES: Record<string, string> = {
@@ -109,7 +110,7 @@ const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 const faqItems = [
   {
-    q: `Ist ${service.name} in ${city.name} wirklich kostenlos?`,
+    q: `Ist ${displayServiceName} in ${city.name} wirklich kostenlos?`,
     a: `Ja. Bei Bewilligung durch die Agentur für Arbeit wird das Perfektionstraining zu 100 % über den Aktivierungs- und Vermittlungsgutschein (AVGS) finanziert. Für dich entstehen dabei keinerlei Kosten – weder Eigenanteil noch versteckte Gebühren.`,
   },
   {
@@ -117,7 +118,7 @@ const faqItems = [
     a: `Den AVGS können nicht nur arbeitssuchende Personen beantragen, sondern auch Angestellte und Selbstständige – unabhängig davon, ob aktuell Leistungen bezogen werden. Entscheidend ist, dass die Weiterbildung deine berufliche Situation verbessert oder sichert. Ein Termin bei der Agentur für Arbeit klärt, ob der Gutschein in deinem Fall bewilligt wird.`,
   },
   {
-    q: `[PLATZHALTER] Welche Inhalte umfasst ${service.name}?`,
+    q: `[PLATZHALTER] Welche Inhalte umfasst ${displayServiceName}?`,
     a: `[PLATZHALTER – Modul-spezifische Antwort zu Kursinhalten, Techniken und Ablauf wird hier ergänzt.]`,
   },
   {
@@ -125,7 +126,7 @@ const faqItems = [
     a: `Das Perfektionstraining richtet sich an erfahrene Teilnehmerinnen aus der Beauty-Branche, die ihre Technik gezielt weiterentwickeln möchten. Es handelt sich ausdrücklich nicht um einen Einsteigerkurs – praktische Vorerfahrung im jeweiligen Fachbereich wird vorausgesetzt.`,
   },
   {
-    q: `Wie melde ich mich für ${service.name} in ${city.name} an?`,
+    q: `Wie melde ich mich für ${displayServiceName} in ${city.name} an?`,
     a: `Du wählst eine Fachdozentin aus, füllst das Formular auf ihrer Profilseite aus und wirst persönlich beraten. Danach wird gemeinsam mit dir der AVGS bei der Agentur für Arbeit beantragt. Sobald der Gutschein bewilligt ist, kann dein Perfektionstraining starten – kostenfrei und individuell auf dich abgestimmt.`,
   },
 ];
@@ -141,9 +142,9 @@ const faqSchema = {
 };
 
 // ── SEO ───────────────────────────────────────────────────────────────────────
-const seoTitle       = `${service.name} in ${city.name} | AVGS gefördert – BeautyBusiness360`;
+const seoTitle       = `${displayServiceName} in ${city.name} | AVGS gefördert – BeautyBusiness360`;
 const seoDescription = (service.description_template ?? '').replace('{city}', city.name)
-                     || `${service.name} in ${city.name}. Staatlich gefördert über AVGS – 100 % kostenfrei bei Bewilligung.`;
+                     || `${displayServiceName} in ${city.name}. Staatlich gefördert über AVGS – 100 % kostenfrei bei Bewilligung.`;
 const canonical      = `https://dein-beauty-kurs.de/${city.slug}/${service.slug}/`;
 ---
 
@@ -236,7 +237,7 @@ body {
   gap:0;
   min-height:580px;
   padding:88px 0 64px;
-  align-items:center;
+  align-items:start;
 }
 @media(max-width:860px){
   .hero { grid-template-columns:1fr; padding:52px 0 40px; min-height:auto; }
@@ -489,7 +490,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
     <div class="hero-left">
       <h1 class="hero-h1">
-        <em>{service.name}</em><br />
+        <em>{displayServiceName}</em><br />
         in {city.name}
       </h1>
 
@@ -518,7 +519,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         {hasModuleImage && moduleImageRel
           ? <img
               src={moduleImageRel}
-              alt={`${service.name} in ${city.name}`}
+              alt={`${displayServiceName} in ${city.name}`}
               width="560" height="560"
               loading="eager"
               decoding="async"
@@ -540,7 +541,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     <div class="section-header" style="text-align:left;margin-bottom:40px;">
       <span class="section-eye">Ergebnisse &amp; Einblicke</span>
       <h2 class="section-title">
-        Galerie – <em>{service.name}</em>
+        Galerie – <em>{displayServiceName}</em>
       </h2>
       <p class="section-desc" style="max-width:none;margin:0;">
         Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in {city.name}.
@@ -571,7 +572,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     <div class="section-header" style="text-align:left;">
       <span class="section-eye">Fachdozentinnen</span>
       <h2 class="section-title">
-        {service.name}<br />
+        {displayServiceName}<br />
         in <em>{city.name}</em>
       </h2>
       <p class="section-desc" style="max-width:none;">
@@ -599,7 +600,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           <DozentinInfoBox
             name={`${d.first_name} ${d.last_name}`}
             standort={CITY_DISPLAY[d.slug] ?? city.name}
-            fachgebiete={[service.name]}
+            fachgebiete={[displayServiceName]}
           />
         </a>
       ))}
@@ -624,7 +625,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         </h2>
         <p class="faq-sticky-desc">
           Du hast Fragen zu Kosten, Voraussetzungen oder dem Ablauf von
-          {service.name} in {city.name}? Hier findest du die wichtigsten Antworten.
+          {displayServiceName} in {city.name}? Hier findest du die wichtigsten Antworten.
         </p>
       </div>
 

@@ -1,7 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
-import { CITY_DISPLAY } from '../../data/location-overrides';
+import { CITY_DISPLAY, SERVICE_DISPLAY_NAME } from '../../data/location-overrides';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
     supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle').order('stadt_name'),
     supabase
       .from('dozentinnen')
-      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(name))')
+      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(slug, name))')
       .eq('active', true)
       .order('last_name'),
   ]);
@@ -43,7 +43,7 @@ export async function getStaticPaths() {
     const serviceNames = (Array.isArray(d.dozentin_services) ? d.dozentin_services : [])
       .map((ds: any) => {
         const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
-        return s?.name ?? null;
+        return s ? (SERVICE_DISPLAY_NAME[s.slug] ?? s.name) : null;
       })
       .filter(Boolean) as string[];
     dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames });

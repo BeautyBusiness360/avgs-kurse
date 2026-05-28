@@ -1,7 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import { supabase } from '../../lib/supabase';
-import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL, SERVICE_LABELS } from '../../data/location-overrides';
+import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL, SERVICE_LABELS, SERVICE_DISPLAY_NAME } from '../../data/location-overrides';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDozentinFaqs, getDozentinBio } from '../../data/dozentin-content-pool';
@@ -114,7 +114,7 @@ const hasBio      = !!dozentin.bio_short;
 const hasForm     = !!dozentin.jotform_id;
 const fullName    = `${dozentin.first_name} ${dozentin.last_name}`;
 
-const primaryService = services[0]?.name ?? 'Beauty Kurs';
+const primaryService = services[0] ? (SERVICE_DISPLAY_NAME[services[0].slug] ?? services[0].name) : 'Beauty Kurs';
 
 const poolVars = { name: fullName, stadt: displayCityName, service: primaryService };
 const faqItems = getDozentinFaqs(dozentin.slug, poolVars, 7);
@@ -155,7 +155,7 @@ const schema = {
       "name": "Kurse",
       "itemListElement": services.map((s: any) => ({
         "@type": "Course",
-        "name": s.name,
+        "name": SERVICE_DISPLAY_NAME[s.slug] ?? s.name,
         "provider": {
           "@type": "Person",
           "name": fullName
@@ -795,12 +795,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           const cardContent = (
             <>
               {img
-                ? <img src={img} alt={s.name} class="module-card-img" />
+                ? <img src={img} alt={SERVICE_DISPLAY_NAME[s.slug] ?? s.name} class="module-card-img" />
                 : <div class="module-card-accent" />
               }
               <div class="module-card-body">
                 <div>
-                  <span class="module-name">{s.name}</span>
+                  <span class="module-name">{SERVICE_DISPLAY_NAME[s.slug] ?? s.name}</span>
                   <span class="module-tagline">{tagline}</span>
                 </div>
 

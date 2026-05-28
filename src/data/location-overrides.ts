@@ -1,3 +1,9 @@
+// Display-name overrides for services (slug → label shown to users).
+// Slugs and URLs stay unchanged; only the visible text is overridden.
+export const SERVICE_DISPLAY_NAME: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': 'PowderBrows & OmbreBrows MasterClass',
+};
+
 export const CITY_DISPLAY: Record<string, string> = {
   'dunya-said-hamburg': 'Hamburg-Lurup',
 };
