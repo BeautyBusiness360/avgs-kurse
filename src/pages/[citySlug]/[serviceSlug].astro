@@ -135,7 +135,7 @@ const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
 const GALLERY_DESC: Record<string, string> = {
   'powderbrows-ombrebrows-masterclass': 'PowderBrows & OmbreBrows ist eine Permanent-Make-up-Technik für pudrig-weiche, definierte Augenbrauen – hier ein paar Ergebnisse aus unseren Trainings.',
   'velvet-lips-lipstick-masterclass':   'Velvet Lips & LipStick Effekt ist eine Permanent-Make-up-Technik für natürlich-definierte, frische Lippen mit gleichmäßiger Farbe – hier ein paar Ergebnisse aus unseren Trainings.',
-  'microblading-masterclass':           '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Microblading MasterClass-Training.]',
+  'microblading-masterclass':           'Microblading ist eine Permanent-Make-up-Technik mit feinen Härchen-Strichen für natürlich wirkende, dicht definierte Augenbrauen – hier ein paar Ergebnisse aus unseren Trainings.',
   'wimpernverlaengerung-masterclass':   '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Wimpernverlängerung MasterClass-Training.]',
   'camouflage-removal-masterclass':     '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Camouflage & Tattoo Removal MasterClass-Training.]',
 };
@@ -150,6 +150,10 @@ const FAQ3: Record<string, { q: string; a: string }> = {
   'velvet-lips-lipstick-masterclass': {
     q: `Welche Inhalte umfasst Velvet Lips & LipStick Effekt MasterClass?`,
     a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex, dann echte Modellbehandlungen an den Lippen – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
+  },
+  'microblading-masterclass': {
+    q: `Welche Inhalte umfasst Microblading MasterClass?`,
+    a: `In der MasterClass arbeitest du praxisnah: zuerst Übungen an Matrizen und Latex, dann echte Modellbehandlungen mit der Härchen-Strich-Technik – alles unter direkter Aufsicht deiner ausgewählten Fachdozentin.`,
   },
 };
 const faq3 = FAQ3[service.slug] ?? {
