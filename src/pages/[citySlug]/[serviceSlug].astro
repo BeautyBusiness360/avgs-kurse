@@ -107,6 +107,16 @@ const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
   return { ...d, profileImg: hasImg ? rel : null };
 });
 
+// ── Galerie-Beschreibung (modul-spezifisch) ───────────────────────────────────
+const GALLERY_DESC: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': 'PowderBrows & OmbreBrows ist eine Permanent-Make-up-Technik für pudrig-weiche, definierte Augenbrauen – hier ein paar Ergebnisse aus unseren Trainings.',
+  'velvet-lips-lipstick-masterclass':   '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Velvet Lips & LipStick Effekt MasterClass-Training.]',
+  'microblading-masterclass':           '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Microblading MasterClass-Training.]',
+  'wimpernverlaengerung-masterclass':   '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Wimpernverlängerung MasterClass-Training.]',
+  'camouflage-removal-masterclass':     '[PLATZHALTER – Ergebnisse und Eindrücke aus dem Camouflage & Tattoo Removal MasterClass-Training.]',
+};
+const galleryDesc = GALLERY_DESC[service.slug] ?? `Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in ${city.name}.`;
+
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 const faqItems = [
   {
@@ -547,7 +557,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         Galerie – <em>{displayServiceName}</em>
       </h2>
       <p class="section-desc" style="max-width:none;margin:0;">
-        Eindrücke aus unseren AVGS-geförderten Perfektionstrainings in {city.name}.
+        {galleryDesc}
       </p>
     </div>
 
