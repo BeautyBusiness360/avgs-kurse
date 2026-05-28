@@ -270,6 +270,14 @@ body {
   font-size:13px; font-weight:500;
   color:#8B6914; line-height:2.2;
 }
+.hero-scroll-link {
+  display:inline-block; margin-top:24px;
+  font-size:13px; font-weight:500;
+  color:var(--gold); text-decoration:none;
+  letter-spacing:.04em;
+  transition:opacity .2s, transform .2s;
+}
+.hero-scroll-link:hover { opacity:.75; transform:translateY(2px); }
 .hero-right { display:flex; align-items:center; justify-content:center; }
 .hero-img-frame {
   width:100%;
@@ -281,7 +289,7 @@ body {
 }
 .hero-img-frame img {
   width:100%; height:100%;
-  object-fit:contain; display:block;
+  object-fit:cover; display:block;
 }
 
 /* ─── SECTIONS ───────────────────────── */
@@ -496,8 +504,13 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="hero-trust-list">
         ◆ 100&thinsp;% kostenfrei bei Bewilligung<br />
         ◆ AZAV-zertifizierte Schulungsstandorte<br />
-        ◆ Anerkannte Fachdozentinnen in {city.name}
+        ◆ Anerkannte Fachdozentinnen in {city.name}<br />
+        ◆ Echtes 1:1-Einzeltraining – eine Fachdozentin, eine Teilnehmerin
       </div>
+
+      <a href="#dozentinnen" class="hero-scroll-link">
+        ↓ Deine Fachdozentinnen in {city.name}
+      </a>
     </div>
 
     <div class="hero-right">
