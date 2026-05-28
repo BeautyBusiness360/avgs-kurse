@@ -115,13 +115,16 @@ const {
 
 // Unique services offered in this city — derived from dozentinnen props (proven correct on Vercel)
 const seenServiceSlugs = new Set<string>();
-const cityServices: { slug: string; displayName: string }[] = [];
+const cityServices: { slug: string; displayName: string; imgSrc: string | null }[] = [];
 for (const d of dozentinnen) {
   for (let i = 0; i < (d.serviceSlugs ?? []).length; i++) {
     const slug = d.serviceSlugs[i];
     if (!seenServiceSlugs.has(slug)) {
       seenServiceSlugs.add(slug);
-      cityServices.push({ slug, displayName: d.serviceNames[i] ?? slug });
+      const folder = slug.replace(/-masterclass$/, '');
+      const rel = `/images/Modul-Bilder/${folder}/gallery-1.webp`;
+      const imgSrc = fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null;
+      cityServices.push({ slug, displayName: d.serviceNames[i] ?? slug, imgSrc });
     }
   }
 }
@@ -433,10 +436,25 @@ body {
   transition:box-shadow .3s, transform .25s;
 }
 .mc-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
-.mc-card-top { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); }
+.mc-card-img {
+  width:100%; height:180px;
+  object-fit:cover; display:block;
+  border-radius:var(--radius) var(--radius) 0 0;
+  transition:transform .5s ease;
+}
+.mc-card:hover .mc-card-img { transform:scale(1.04); }
+.mc-card-img-wrap {
+  width:100%; height:180px; overflow:hidden;
+  border-radius:var(--radius) var(--radius) 0 0;
+  background:var(--cream-d);
+}
+.mc-card-top { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); flex-shrink:0; }
 .mc-card-body {
-  padding:24px 22px 20px;
+  padding:20px 22px 20px;
   display:flex; flex-direction:column; gap:12px; flex:1;
+}
+@media(max-width:640px){
+  .mc-card-img-wrap { height:140px; }
 }
 .mc-card-eye {
   font-size:10px; font-weight:600;
@@ -680,6 +698,18 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="mc-grid">
         {cityServices.map(s => (
           <a href={`/${citySlug}/${s.slug}/`} class="mc-card">
+            <div class="mc-card-img-wrap">
+              {s.imgSrc && (
+                <img
+                  src={s.imgSrc}
+                  alt={s.displayName}
+                  class="mc-card-img"
+                  loading="lazy"
+                  decoding="async"
+                  width="400" height="180"
+                />
+              )}
+            </div>
             <div class="mc-card-top"></div>
             <div class="mc-card-body">
               <span class="mc-card-eye">AVGS-gefördert</span>
