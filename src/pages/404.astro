@@ -1,0 +1,168 @@
+---
+import SEOLayout from '../layouts/SEOLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+export const prerender = true;
+---
+
+<SEOLayout
+  title="Seite nicht gefunden – BeautyBusiness360"
+  description="Die gesuchte Seite existiert nicht. Hier findest du unsere Städteseiten und MasterClass-Trainings."
+  canonical="https://dein-beauty-kurs.de/404/"
+>
+  <meta name="robots" content="noindex,follow" slot="head" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --cream:   #FAF8F5;
+  --black:   #111111;
+  --gold:    #C8962E;
+  --gold-lt: #D4AF7A;
+  --gold-bg: #FBF6EE;
+  --rose:    #E8C4B8;
+  --muted:   #555250;
+  --border:  #E8E2D9;
+  --white:   #FFFFFF;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'Inter', system-ui, sans-serif;
+  --radius:  3px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--black); color:var(--white); font-family:var(--sans); -webkit-font-smoothing:antialiased; }
+.w { max-width:1120px; margin:0 auto; padding:0 40px; }
+@media(max-width:640px){ .w { padding:0 22px; } }
+
+/* ─── HERO ─── */
+.hero-404 {
+  padding:100px 0 80px;
+  text-align:center;
+  position:relative;
+  background:
+    radial-gradient(ellipse at 20% 60%, rgba(184,150,90,.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 25%, rgba(232,196,184,.07) 0%, transparent 55%);
+}
+.hero-eye {
+  display:inline-block;
+  font-size:11px; font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:24px;
+}
+.hero-h1 {
+  font-family:var(--serif);
+  font-size:clamp(36px, 6vw, 72px);
+  font-weight:600; line-height:1.1;
+  color:var(--white); margin-bottom:20px;
+  letter-spacing:-.02em;
+}
+.hero-h1 em { font-style:italic; color:var(--gold-lt); }
+.hero-sub {
+  font-size:17px; font-weight:400; line-height:1.8;
+  color:rgba(255,255,255,.5); margin:0 auto 40px; max-width:480px;
+}
+.cta-gold {
+  display:inline-block;
+  background:var(--gold); color:var(--white);
+  font-family:var(--sans); font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px; border-radius:var(--radius); text-decoration:none;
+  box-shadow:0 4px 18px rgba(184,150,90,.3);
+  transition:background .25s, transform .2s;
+}
+.cta-gold:hover { background:var(--gold-lt); transform:translateY(-2px); }
+
+/* ─── LINKS GRID ─── */
+.links-section {
+  padding:72px 0 96px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.links-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+}
+@media(max-width:680px){ .links-grid { grid-template-columns:1fr; gap:40px; } }
+
+.links-col-eye {
+  display:block;
+  font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:14px;
+}
+.links-col-h3 {
+  font-family:var(--serif);
+  font-size:clamp(22px, 3vw, 30px); font-weight:600;
+  color:var(--white); margin-bottom:20px; line-height:1.2;
+}
+.links-list {
+  list-style:none;
+  display:flex; flex-direction:column; gap:4px;
+}
+.links-list a {
+  display:block;
+  padding:10px 0;
+  font-size:15px; font-weight:400;
+  color:rgba(255,255,255,.65);
+  text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  transition:color .2s, padding-left .2s;
+}
+.links-list a:hover { color:var(--gold-lt); padding-left:6px; }
+</style>
+
+<SiteHeader variant="linked" />
+
+<main>
+
+<section class="hero-404">
+  <div class="w">
+    <span class="hero-eye">404 – Nicht gefunden</span>
+    <h1 class="hero-h1">
+      Diese Seite gibt es<br /><em>nicht (mehr)</em>
+    </h1>
+    <p class="hero-sub">
+      Vielleicht suchst du eine unserer MasterClasses oder eine Stadt?
+    </p>
+    <a href="/" class="cta-gold">← Zur Startseite</a>
+  </div>
+</section>
+
+<section class="links-section">
+  <div class="w">
+    <div class="links-grid">
+
+      <div>
+        <span class="links-col-eye">Städte</span>
+        <h3 class="links-col-h3">Zertifizierte Akademien</h3>
+        <ul class="links-list">
+          <li><a href="/berlin/">Berlin</a></li>
+          <li><a href="/hamburg/">Hamburg</a></li>
+          <li><a href="/essen/">Essen</a></li>
+          <li><a href="/mainz/">Mainz</a></li>
+          <li><a href="/ulm/">Ulm</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="links-col-eye">MasterClasses</span>
+        <h3 class="links-col-h3">Unsere Trainings</h3>
+        <ul class="links-list">
+          <li><a href="/berlin/powderbrows-ombrebrows-masterclass/">PowderBrows &amp; OmbreBrows MasterClass</a></li>
+          <li><a href="/berlin/velvet-lips-lipstick-masterclass/">Velvet Lips &amp; LipStick Effekt MasterClass</a></li>
+          <li><a href="/berlin/microblading-masterclass/">Microblading MasterClass</a></li>
+          <li><a href="/berlin/wimpernverlaengerung-masterclass/">Wimpernverlängerung MasterClass</a></li>
+          <li><a href="/berlin/camouflage-removal-masterclass/">Camouflage &amp; Tattoo Removal MasterClass</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<SiteFooter variant="full" />
+
+</SEOLayout>
