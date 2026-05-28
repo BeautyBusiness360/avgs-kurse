@@ -99,6 +99,28 @@ const hasModuleImage = moduleImageRel
   ? fs.existsSync(path.join(process.cwd(), 'public', moduleImageRel))
   : false;
 
+// ── Galerie-Bilder (build-time, aus Ordner) ───────────────────────────────────
+const GALLERY_FOLDERS: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': 'powderbrows-ombrebrows',
+};
+const galleryFolder = GALLERY_FOLDERS[service.slug];
+const galleryImages: string[] = [];
+if (galleryFolder) {
+  const folderAbs = path.join(process.cwd(), 'public', 'images', 'Modul-Bilder', galleryFolder);
+  if (fs.existsSync(folderAbs)) {
+    galleryImages.push(
+      ...fs.readdirSync(folderAbs)
+        .filter(f => /\.webp$/i.test(f))
+        .sort((a, b) => {
+          const na = parseInt(a.match(/\d+/)?.[0] ?? '0');
+          const nb = parseInt(b.match(/\d+/)?.[0] ?? '0');
+          return na - nb;
+        })
+        .map(f => `/images/Modul-Bilder/${galleryFolder}/${f}`)
+    );
+  }
+}
+
 // ── Profilbilder der Dozentinnen (build-time) ─────────────────────────────────
 const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
   const localSlug = d.slug.replace(new RegExp(`-${city.slug}$`), '');
@@ -564,11 +586,23 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     <div class="carousel-wrap">
       <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
       <div class="carousel-track" id="gallery-track">
-        {[1,2,3,4,5,6].map((_: number) => (
-          <div class="carousel-slide">
-            <div class="carousel-ph">✦</div>
-          </div>
-        ))}
+        {galleryImages.length > 0
+          ? galleryImages.map((src, i) => (
+              <div class="carousel-slide">
+                <img src={src}
+                     alt={`${displayServiceName} – Ergebnis ${i + 1}`}
+                     width="400" height="400"
+                     loading="lazy"
+                     decoding="async"
+                />
+              </div>
+            ))
+          : [1,2,3,4,5,6].map((_: number) => (
+              <div class="carousel-slide">
+                <div class="carousel-ph">✦</div>
+              </div>
+            ))
+        }
       </div>
       <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
       <div class="carousel-dots" id="gallery-dots" aria-hidden="true"></div>
