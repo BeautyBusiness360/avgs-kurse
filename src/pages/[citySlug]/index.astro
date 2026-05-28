@@ -35,25 +35,21 @@ export async function getStaticPaths() {
 
   // Group dozentinnen by their region (derived via standorte mapping)
   const dozByRegion: Record<string, any[]> = {};
-  const servicesByRegion: Record<string, { slug: string; displayName: string }[]> = {};
   for (const d of dozAll) {
     const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
     if (!city?.slug) continue;
     const region = cityToRegion[city.slug] ?? city.slug;
     if (!dozByRegion[region]) dozByRegion[region] = [];
-    if (!servicesByRegion[region]) servicesByRegion[region] = [];
     const dsRows = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
     const serviceNames: string[] = [];
+    const serviceSlugs: string[] = [];
     for (const ds of dsRows) {
       const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
       if (!s?.slug) continue;
-      const displayName = SERVICE_DISPLAY_NAME[s.slug] ?? s.name;
-      serviceNames.push(displayName);
-      if (!servicesByRegion[region].find((x: any) => x.slug === s.slug)) {
-        servicesByRegion[region].push({ slug: s.slug, displayName });
-      }
+      serviceNames.push(SERVICE_DISPLAY_NAME[s.slug] ?? s.name);
+      serviceSlugs.push(s.slug);
     }
-    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames });
+    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames, serviceSlugs });
   }
 
   return regions.map(region => {
@@ -76,7 +72,6 @@ export async function getStaticPaths() {
             return a.name.localeCompare(b.name, 'de');
           }),
         dozentinnen:    dozByRegion[region] ?? [],
-        cityServices:   servicesByRegion[region] ?? [],
       }
     };
   });
@@ -95,14 +90,11 @@ interface DozRaw {
   citySlugOfDoz: string;
   cityName: string;
   serviceNames: string[];
+  serviceSlugs: string[];
 }
 interface DozWithImg extends DozRaw {
   profileImg: string | null;
   localSlug: string;
-}
-interface CityService {
-  slug: string;
-  displayName: string;
 }
 
 const {
@@ -112,7 +104,6 @@ const {
   introQuelle,
   standorte,
   dozentinnen,
-  cityServices,
 } = Astro.props as {
   citySlug: string;
   stadtName: string;
@@ -120,8 +111,20 @@ const {
   introQuelle: string | null;
   standorte: Standort[];
   dozentinnen: DozRaw[];
-  cityServices: CityService[];
 };
+
+// Unique services offered in this city — derived from dozentinnen props (proven correct on Vercel)
+const seenServiceSlugs = new Set<string>();
+const cityServices: { slug: string; displayName: string }[] = [];
+for (const d of dozentinnen) {
+  for (let i = 0; i < (d.serviceSlugs ?? []).length; i++) {
+    const slug = d.serviceSlugs[i];
+    if (!seenServiceSlugs.has(slug)) {
+      seenServiceSlugs.add(slug);
+      cityServices.push({ slug, displayName: d.serviceNames[i] ?? slug });
+    }
+  }
+}
 
 // City hero image (build-time fs check)
 const cityImageRel = `/images/staedte/${citySlug}.webp`;
