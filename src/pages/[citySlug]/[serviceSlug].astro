@@ -1,6 +1,7 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { CITY_DISPLAY, SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../../data/location-overrides';
 import { supabase } from '../../lib/supabase';
@@ -554,6 +555,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <main>
+
+<Breadcrumbs trail={[
+  { label: 'Startseite', href: '/' },
+  { label: city.name, href: `/${city.slug}/` },
+  { label: displayServiceName },
+]} />
 
 <!-- ══════════════════════════════════
      HERO

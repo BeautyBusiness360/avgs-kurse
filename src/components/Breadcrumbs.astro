@@ -1,0 +1,82 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+interface Props {
+  trail: BreadcrumbItem[];
+}
+const { trail } = Astro.props;
+const BASE = 'https://dein-beauty-kurs.de';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": trail.map((item, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "name": item.label,
+    ...(item.href ? { "item": `${BASE}${item.href}` } : {}),
+  })),
+};
+---
+
+<nav class="bc" aria-label="Brotkrumen">
+  <ol class="bc-list">
+    {trail.map((item, i) => (
+      <li class="bc-item">
+        {i > 0 && <span class="bc-sep" aria-hidden="true">›</span>}
+        {item.href
+          ? <a class="bc-link" href={item.href}>{item.label}</a>
+          : <span class="bc-current" aria-current="page">{item.label}</span>
+        }
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<style>
+.bc {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 10px 40px;
+}
+.bc::-webkit-scrollbar { display: none; }
+.bc-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+.bc-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+}
+.bc-sep {
+  color: rgba(85, 82, 80, 0.35);
+  margin: 0 7px;
+  font-size: 10px;
+  user-select: none;
+}
+.bc-link {
+  color: rgba(85, 82, 80, 0.55);
+  text-decoration: none;
+  transition: color .2s;
+}
+.bc-link:hover { color: #C8962E; }
+.bc-current {
+  color: rgba(85, 82, 80, 0.8);
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  .bc { padding: 8px 22px; }
+}
+</style>

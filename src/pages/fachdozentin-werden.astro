@@ -1,6 +1,7 @@
 ---
 import SEOLayout from '../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../components/DozentinInfoBox.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { CITY_DISPLAY } from '../data/location-overrides';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -520,6 +521,11 @@ body {
 
 
 <SiteHeader variant="brand-only" />
+
+<Breadcrumbs trail={[
+  { label: 'Startseite', href: '/' },
+  { label: 'Fachdozentin werden' },
+]} />
 
 <main>
 
