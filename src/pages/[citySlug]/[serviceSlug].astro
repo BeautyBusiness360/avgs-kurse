@@ -4,6 +4,8 @@ import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { CITY_DISPLAY, SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../../data/location-overrides';
+import { getCombinedRating } from '../../lib/ratings';
+import RatingStars from '../../components/RatingStars.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,6 +24,10 @@ export async function getStaticPaths() {
       rating,
       review_count,
       avgs_certified,
+      google_rating_avg,
+      google_review_count,
+      treatwell_rating_avg,
+      treatwell_review_count,
       cities(slug, name),
       dozentin_services(
         services(slug, name, category, avgs_eligible, description_template)
@@ -76,13 +82,17 @@ export async function getStaticPaths() {
       }
 
       pageMap.get(key).dozentinnen.push({
-        slug:           dozentin.slug,
-        citySlug:       city.slug,
-        first_name:     dozentin.first_name,
-        last_name:      dozentin.last_name,
-        rating:         dozentin.rating,
-        review_count:   dozentin.review_count,
-        avgs_certified: dozentin.avgs_certified,
+        slug:                   dozentin.slug,
+        citySlug:               city.slug,
+        first_name:             dozentin.first_name,
+        last_name:              dozentin.last_name,
+        rating:                 dozentin.rating,
+        review_count:           dozentin.review_count,
+        avgs_certified:         dozentin.avgs_certified,
+        google_rating_avg:      dozentin.google_rating_avg,
+        google_review_count:    dozentin.google_review_count,
+        treatwell_rating_avg:   dozentin.treatwell_rating_avg,
+        treatwell_review_count: dozentin.treatwell_review_count,
       });
     }
   }
@@ -143,7 +153,13 @@ const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
   const localSlug = d.slug.replace(new RegExp(`-${d.citySlug}$`), '');
   const rel       = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
   const hasImg    = fs.existsSync(path.join(process.cwd(), 'public', rel));
-  return { ...d, profileImg: hasImg ? rel : null };
+  const combinedRating = getCombinedRating({
+    google_rating_avg:      d.google_rating_avg      ?? null,
+    google_review_count:    d.google_review_count    ?? null,
+    treatwell_rating_avg:   d.treatwell_rating_avg   ?? null,
+    treatwell_review_count: d.treatwell_review_count ?? null,
+  });
+  return { ...d, profileImg: hasImg ? rel : null, combinedRating };
 });
 
 // ── Galerie-Beschreibung (modul-spezifisch) ───────────────────────────────────
@@ -473,6 +489,7 @@ body {
   display:flex; align-items:center; justify-content:center;
   font-size:36px; color:rgba(184,150,90,.2);
 }
+.doz-card-rating { padding: 0 20px 18px; }
 
 /* ─── FAQ ────────────────────────────── */
 .faq-section { padding:100px 0; border-bottom:1px solid var(--border); margin-top:37px; }
@@ -694,6 +711,19 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             standort={CITY_DISPLAY[d.slug] ?? city.name}
             fachgebiete={[displayServiceName]}
           />
+          {d.combinedRating && (
+            <div class="doz-card-rating">
+              <RatingStars
+                rating={d.combinedRating.rating}
+                count={d.combinedRating.totalCount}
+                source="combined"
+                size="small"
+                showCount={true}
+                googleCount={d.combinedRating.googleCount}
+                treatwellCount={d.combinedRating.treatwellCount}
+              />
+            </div>
+          )}
         </a>
       ))}
     </div>

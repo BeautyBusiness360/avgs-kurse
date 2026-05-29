@@ -1,0 +1,79 @@
+---
+interface Props {
+  rating: number;
+  count: number;
+  source: 'google' | 'treatwell' | 'combined';
+  size?: 'small' | 'medium' | 'large';
+  showCount?: boolean;
+  linkUrl?: string;
+  googleCount?: number;
+  treatwellCount?: number;
+}
+
+const {
+  rating,
+  count,
+  source,
+  size = 'medium',
+  showCount = true,
+  linkUrl,
+  googleCount,
+  treatwellCount,
+} = Astro.props;
+
+const uid = Math.random().toString(36).slice(2, 8);
+const starFills = [1, 2, 3, 4, 5].map(i => Math.min(1, Math.max(0, rating - (i - 1))));
+const ratingFormatted = rating.toFixed(1).replace('.', ',');
+
+const countText = source === 'combined' && googleCount != null && treatwellCount != null
+  ? `(${googleCount} Google + ${treatwellCount} Treatwell)`
+  : `(${count.toLocaleString('de-DE')} Bewertungen)`;
+
+const starPath = 'M12 2L14.09 8.26L21 9.27L16 14.14L17.18 21.02L12 17.77L6.82 21.02L8 14.14L3 9.27L9.91 8.26Z';
+---
+
+<div
+  class={`rs rs--${size}`}
+  role="img"
+  aria-label={`${ratingFormatted} von 5 Sternen, ${count} Bewertungen`}
+>
+  <div class="rs-stars" aria-hidden="true">
+    {starFills.map((fill, i) => (
+      <svg class="rs-star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id={`rs-${uid}-${i}`}>
+            <rect x="0" y="0" width={fill * 24} height="24" />
+          </clipPath>
+        </defs>
+        <path d={starPath} fill="#E8E2D9" />
+        <path d={starPath} fill="#C8962E" clip-path={`url(#rs-${uid}-${i})`} />
+      </svg>
+    ))}
+  </div>
+  {showCount && (
+    linkUrl
+      ? <a href={linkUrl} class="rs-count" target="_blank" rel="noopener noreferrer">
+          {ratingFormatted} {countText}
+        </a>
+      : <span class="rs-count">{ratingFormatted} {countText}</span>
+  )}
+</div>
+
+<style>
+.rs { display: flex; align-items: center; gap: 8px; }
+.rs-stars { display: flex; gap: 2px; align-items: center; }
+.rs-star { display: block; flex-shrink: 0; }
+.rs--small  .rs-star { width: 14px; height: 14px; }
+.rs--medium .rs-star { width: 18px; height: 18px; }
+.rs--large  .rs-star { width: 22px; height: 22px; }
+.rs-count {
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+  color: var(--muted, #555250);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rs--small  .rs-count { font-size: 12px; }
+.rs--medium .rs-count { font-size: 13px; }
+.rs--large  .rs-count { font-size: 15px; }
+a.rs-count:hover { color: var(--gold, #C8962E); text-decoration: underline; }
+</style>

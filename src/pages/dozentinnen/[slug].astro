@@ -6,6 +6,8 @@ import { CITY_DISPLAY, PROFILE_ADDRESS, HUB_CITY_SLUG, HUB_CITY_LABEL, SERVICE_L
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDozentinFaqs, getDozentinBio } from '../../data/dozentin-content-pool';
+import { getCombinedRating } from '../../lib/ratings';
+import RatingStars from '../../components/RatingStars.astro';
 
 export const prerender = true;
 
@@ -25,6 +27,15 @@ export async function getStaticPaths() {
       logo_url,
       gallery_images,
       languages,
+      studio_name,
+      studio_city,
+      studio_url,
+      google_rating_avg,
+      google_review_count,
+      google_place_url,
+      treatwell_rating_avg,
+      treatwell_review_count,
+      treatwell_url,
       cities(slug, name),
       dozentin_services(
         services(slug, name, avgs_eligible, description_template)
@@ -109,7 +120,12 @@ try {
 
 const hasImage    = hasLocalImage || !!dozentin.image_url;
 const heroImageSrc = hasLocalImage ? localImageRel : dozentin.image_url;
-const hasRating   = (dozentin.review_count ?? 0) > 0;
+const combinedRating = getCombinedRating({
+  google_rating_avg:      dozentin.google_rating_avg      ?? null,
+  google_review_count:    dozentin.google_review_count    ?? null,
+  treatwell_rating_avg:   dozentin.treatwell_rating_avg   ?? null,
+  treatwell_review_count: dozentin.treatwell_review_count ?? null,
+});
 const hasServices = services.length > 0;
 const hasBio      = !!dozentin.bio_short;
 const hasForm     = !!dozentin.jotform_id;
@@ -151,11 +167,11 @@ const schema = {
     "addressLocality": displayCityName,
     "addressCountry": "DE"
   },
-  ...(hasRating && {
+  ...(combinedRating && {
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": dozentin.rating,
-      "reviewCount": dozentin.review_count
+      "ratingValue": combinedRating.rating,
+      "reviewCount": combinedRating.totalCount
     }
   }),
   ...(hasServices && {
@@ -737,6 +753,16 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
   transition: color .2s;
 }
 .footer-seo-links a:hover { color: rgba(255,255,255,0.7); }
+.hero-rating { margin-top: 14px; }
+.section--studio { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: none; }
+.studio-info { display: flex; flex-direction: column; gap: 6px; }
+.studio-name { font-size: 16px; font-weight: 600; color: var(--black); }
+.studio-city { font-size: 14px; color: var(--muted); }
+.studio-link {
+  display: inline-block; margin-top: 4px;
+  font-size: 13px; color: var(--gold); text-decoration: none; font-weight: 500;
+}
+.studio-link:hover { text-decoration: underline; }
 </style>
 
 
@@ -772,6 +798,21 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         ◆ AZAV-zertifizierte Schulungen
       </div>
 
+      {combinedRating && (
+        <div class="hero-rating">
+          <RatingStars
+            rating={combinedRating.rating}
+            count={combinedRating.totalCount}
+            source="combined"
+            size="small"
+            showCount={true}
+            googleCount={combinedRating.googleCount}
+            treatwellCount={combinedRating.treatwellCount}
+            linkUrl={dozentin.google_place_url ?? dozentin.treatwell_url ?? undefined}
+          />
+        </div>
+      )}
+
       <div class="hero-divider"></div>
     </div>
 
@@ -791,6 +832,25 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
   </div>
 </div>
+
+{dozentin.studio_name && (
+  <section class="section section--studio">
+    <div class="w">
+      <div class="studio-info">
+        <span class="section-eye">Studio</span>
+        <span class="studio-name">{dozentin.studio_name}</span>
+        {dozentin.studio_city && (
+          <span class="studio-city">{dozentin.studio_city}</span>
+        )}
+        {dozentin.studio_url && (
+          <a href={dozentin.studio_url} class="studio-link" target="_blank" rel="noopener noreferrer">
+            Website besuchen →
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+)}
 
 
 <!-- ══════════════════════════════════
@@ -954,13 +1014,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           Ihre Ausbildungen finden als intensives Einzelcoaching statt
           und sind vollständig über die Agentur für Arbeit förderbar.
         </p>
-        {hasRating && (
-          <p style="font-size:15px;color:var(--muted);">
-            ★★★★★ &nbsp;
-            <strong style="color:var(--black);">{dozentin.rating}/5</strong>
-            &nbsp;—&nbsp;{dozentin.review_count} verifizierte Bewertungen
-          </p>
-        )}
       </div>
 
       <div class="trust-facts">
