@@ -133,6 +133,14 @@ const seo = {
     `https://dein-beauty-kurs.de/dozentinnen/${dozentin.slug}/`
 };
 
+const COURSE_DESC: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': `AVGS-gefördertes Perfektionstraining für Permanent Make-up Powder Brows und Ombre Brows Technik. 1:1-Einzelcoaching mit zertifizierter Fachdozentin in ${displayCityName}.`,
+  'velvet-lips-lipstick-masterclass':   `AVGS-gefördertes Perfektionstraining für Permanent Make-up Velvet Lips und LipStick Effekt Technik. 1:1-Einzelcoaching mit zertifizierter Fachdozentin in ${displayCityName}.`,
+  'microblading-masterclass':           `AVGS-gefördertes Perfektionstraining für Microblading – haarstrichgenaues Permanent Make-up der Augenbrauen. 1:1-Einzelcoaching mit zertifizierter Fachdozentin in ${displayCityName}.`,
+  'wimpernverlaengerung-masterclass':   `AVGS-gefördertes Perfektionstraining für Wimpernverlängerung in 1:1-Technik und Volumen-Technik. Einzelcoaching mit zertifizierter Fachdozentin in ${displayCityName}.`,
+  'camouflage-removal-masterclass':     `AVGS-gefördertes Perfektionstraining für Camouflage Make-up und Tattoo Removal Verfahren. 1:1-Einzelcoaching mit zertifizierter Fachdozentin in ${displayCityName}.`,
+};
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
@@ -157,6 +165,10 @@ const schema = {
       "itemListElement": services.map((s: any) => ({
         "@type": "Course",
         "name": SERVICE_DISPLAY_NAME[s.slug] ?? s.name,
+        "description": COURSE_DESC[s.slug] ?? `AVGS-gefördertes Perfektionstraining für ${SERVICE_DISPLAY_NAME[s.slug] ?? s.name} in ${displayCityName}.`,
+        "courseMode": "in person",
+        "educationalLevel": "Professional",
+        "inLanguage": "de",
         "provider": {
           "@type": "Person",
           "name": fullName
