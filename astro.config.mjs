@@ -7,6 +7,7 @@ export default defineConfig({
   site: 'https://dein-beauty-kurs.de',
   trailingSlash: 'always',
   build: {
-    format: 'directory'
+    format: 'directory',
+    inlineStylesheets: 'always'
   }
 });
