@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../lib/supabase';
+import { HUB_CITY_SLUG } from '../data/location-overrides';
 
 export const prerender = true;
 
@@ -8,15 +9,6 @@ export const GET: APIRoute = async () => {
   const today = new Date().toISOString().split('T')[0];
 
   const urls = new Set<string>();
-
-  // All city pages
-  const { data: cities } = await supabase
-    .from('cities')
-    .select('slug');
-
-  for (const city of cities ?? []) {
-    if (city?.slug) urls.add(`${BASE_URL}/${city.slug}`);
-  }
 
   // Dozentin pages + city/service combinations
   const { data: dozentinnen } = await supabase
@@ -30,17 +22,41 @@ export const GET: APIRoute = async () => {
     `)
     .eq('active', true);
 
+  // Satellite cities: those whose dozentinnen have a different hub city
+  const satelliteCities = new Set<string>();
+  for (const d of dozentinnen ?? []) {
+    const hubSlug = HUB_CITY_SLUG[d.slug ?? ''];
+    const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+    if (hubSlug && city?.slug && hubSlug !== city.slug) {
+      satelliteCities.add(city.slug);
+    }
+  }
+
+  // Hub city pages only (exclude satellites)
+  const { data: cities } = await supabase
+    .from('cities')
+    .select('slug');
+
+  for (const city of cities ?? []) {
+    if (city?.slug && !satelliteCities.has(city.slug)) {
+      urls.add(`${BASE_URL}/${city.slug}`);
+    }
+  }
+
   for (const d of dozentinnen ?? []) {
     if (d?.slug) urls.add(`${BASE_URL}/dozentinnen/${d.slug}`);
 
     const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
     if (!city?.slug) continue;
 
+    // Satellite dozentinnen: use hub city slug for service URLs
+    const effectiveCitySlug = HUB_CITY_SLUG[d.slug ?? ''] ?? city.slug;
+
     const dsRows = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
     for (const ds of dsRows) {
       const service = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
       if (service?.slug) {
-        urls.add(`${BASE_URL}/${city.slug}/${service.slug}`);
+        urls.add(`${BASE_URL}/${effectiveCitySlug}/${service.slug}`);
       }
     }
   }
