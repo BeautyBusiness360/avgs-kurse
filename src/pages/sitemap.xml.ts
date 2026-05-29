@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 export const prerender = true;
 
 export const GET: APIRoute = async () => {
-  const BASE_URL = 'https://avgs-kurse.vercel.app';
+  const BASE_URL = 'https://dein-beauty-kurs.de';
   const today = new Date().toISOString().split('T')[0];
 
   const urls = new Set<string>();
