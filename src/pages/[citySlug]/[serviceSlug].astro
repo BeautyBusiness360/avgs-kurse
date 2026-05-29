@@ -2,7 +2,7 @@
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
-import { CITY_DISPLAY, SERVICE_DISPLAY_NAME } from '../../data/location-overrides';
+import { CITY_DISPLAY, SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../../data/location-overrides';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,6 +35,13 @@ export async function getStaticPaths() {
 
   console.log(`[city-service] ${dozentinnen?.length ?? 0} Dozentinnen geladen`);
 
+  // Build city name lookup from loaded data (avoids an extra Supabase query)
+  const cityNameBySlug: Record<string, string> = {};
+  for (const d of dozentinnen) {
+    const c = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+    if (c?.slug && c?.name) cityNameBySlug[c.slug] = c.name;
+  }
+
   const pageMap = new Map();
 
   for (const dozentin of dozentinnen) {
@@ -42,6 +49,10 @@ export async function getStaticPaths() {
       ? dozentin.cities[0]
       : dozentin.cities;
     if (!city?.slug) continue;
+
+    // Use hub city slug when defined (e.g. wedel → hamburg)
+    const effectiveCitySlug = HUB_CITY_SLUG[dozentin.slug] ?? city.slug;
+    const effectiveCityName = cityNameBySlug[effectiveCitySlug] ?? city.name;
 
     const dsRows = Array.isArray(dozentin.dozentin_services)
       ? dozentin.dozentin_services
@@ -53,11 +64,11 @@ export async function getStaticPaths() {
         : ds?.services;
       if (!service?.slug) continue;
 
-      const key = `${city.slug}__${service.slug}`;
+      const key = `${effectiveCitySlug}__${service.slug}`;
 
       if (!pageMap.has(key)) {
         pageMap.set(key, {
-          city: { slug: city.slug, name: city.name },
+          city: { slug: effectiveCitySlug, name: effectiveCityName },
           service,
           dozentinnen: []
         });
