@@ -1,1 +1,25 @@
-{}
+{
+  "redirects": [
+    { "source": "/berlin-nuray-kara",              "destination": "/dozentinnen/nuray-kara-berlin/",            "permanent": true },
+    { "source": "/berlin-amaya-beauty",            "destination": "/dozentinnen/weronique-brajewa-berlin/",     "permanent": true },
+    { "source": "/hamburg-hoa-academy",            "destination": "/dozentinnen/dunya-said-hamburg/",           "permanent": true },
+    { "source": "/hamburg-mariam-schafa",          "destination": "/dozentinnen/mariam-schafa-hamburg/",        "permanent": true },
+    { "source": "/hamburg-beauty-hamburg",         "destination": "/dozentinnen/jennifer-turudija-hamburg/",    "permanent": true },
+    { "source": "/hamburg-pmu-by-ambrosia",        "destination": "/dozentinnen/carina-ambrosia-hamburg/",      "permanent": true },
+    { "source": "/hamburg-khatoon-beauty",         "destination": "/dozentinnen/khatoon-haji-hamburg/",         "permanent": true },
+    { "source": "/wedel-beautysecrets-academy",    "destination": "/dozentinnen/katarina-hinz-hamburg/",        "permanent": true },
+    { "source": "/elmshorn-horst-sticht-zu",       "destination": "/dozentinnen/yvonne-klatt-elmshorn/",        "permanent": true },
+    { "source": "/essen-christina-beauty-academy", "destination": "/dozentinnen/christina-dentsa-essen/",       "permanent": true },
+    { "source": "/mainz-massis-beauty",            "destination": "/dozentinnen/masoumeh-din-mohammadi-mainz/", "permanent": true },
+    { "source": "/ulm-terra-nada",                 "destination": "/dozentinnen/nada-fischinger-ulm/",          "permanent": true },
+
+    { "source": "/agb",                          "destination": "/",         "permanent": true },
+    { "source": "/widerruf",                     "destination": "/",         "permanent": true },
+    { "source": "/hamburg-perla-beauty-medical", "destination": "/hamburg/", "permanent": true },
+    { "source": "/pinneberg-vyan-beauty",        "destination": "/hamburg/", "permanent": true },
+    { "source": "/stuttgart-skin-star-beauty",   "destination": "/",         "permanent": true },
+    { "source": "/hamburg-ati-beauty",           "destination": "/hamburg/", "permanent": true },
+    { "source": "/werbepartner",                 "destination": "/",         "permanent": true },
+    { "source": "/perfektionstraining",          "destination": "/",         "permanent": true }
+  ]
+}
