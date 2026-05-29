@@ -404,9 +404,21 @@ body {
 .module-card-accent {
   height:3px;
   background:linear-gradient(90deg, var(--gold), var(--rose));
+  flex-shrink:0;
+}
+.module-card-img-wrap {
+  width:100%; height:180px; overflow:hidden;
+  border-radius:var(--radius) var(--radius) 0 0;
+  background:var(--cream-d); flex-shrink:0;
 }
 .module-card-img {
-  display:block;width:100%;height:200px;object-fit:cover;
+  display:block; width:100%; height:180px; object-fit:cover;
+  transition:transform .5s ease;
+}
+.module-card:hover .module-card-img { transform:scale(1.04); }
+@media(max-width:640px){
+  .module-card-img-wrap { height:140px; }
+  .module-card-img { height:140px; }
 }
 .module-card-body { padding:32px 28px 24px; flex:1; display:flex; flex-direction:column; gap:22px; }
 .module-name {
@@ -781,19 +793,21 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           const begin  = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
           const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : 'Basisschulung · Anfängerinnen';
           const moduleImages: { [key: string]: string } = {
-            'pmu-augenbrauen':    '/images/Modul-Bilder/augenbrauen.webp',
-            'pmu-lippen':         '/images/Modul-Bilder/lippen.webp',
-            'microblading':       '/images/Modul-Bilder/microblading.webp',
-            'wimpernverlaengerung': '/images/Modul-Bilder/wimpern.webp',
-            'removal-camouflage': '/images/Modul-Bilder/entfernung.webp',
+            'powderbrows-ombrebrows-masterclass':  '/images/Modul-Bilder/powderbrows-ombrebrows/gallery-1.webp',
+            'velvet-lips-lipstick-masterclass':    '/images/Modul-Bilder/velvet-lips-lipstick/gallery-1.webp',
+            'microblading-masterclass':            '/images/Modul-Bilder/microblading/gallery-1.webp',
+            'wimpernverlaengerung-masterclass':    '/images/Modul-Bilder/wimpernverlaengerung/gallery-1.webp',
+            'camouflage-removal-masterclass':      '/images/Modul-Bilder/camouflage-removal/gallery-1.webp',
           };
           const img = moduleImages[s.slug];
           const cardContent = (
             <>
-              {img
-                ? <img src={img} alt={SERVICE_DISPLAY_NAME[s.slug] ?? s.name} class="module-card-img" />
-                : <div class="module-card-accent" />
-              }
+              <div class="module-card-img-wrap">
+                {img && (
+                  <img src={img} alt={SERVICE_DISPLAY_NAME[s.slug] ?? s.name} class="module-card-img" loading="lazy" decoding="async" width="400" height="180" />
+                )}
+              </div>
+              <div class="module-card-accent" />
               <div class="module-card-body">
                 <div>
                   <span class="module-name">{SERVICE_DISPLAY_NAME[s.slug] ?? s.name}</span>
