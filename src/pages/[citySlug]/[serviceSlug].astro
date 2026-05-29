@@ -76,6 +76,7 @@ export async function getStaticPaths() {
 
       pageMap.get(key).dozentinnen.push({
         slug:           dozentin.slug,
+        citySlug:       city.slug,
         first_name:     dozentin.first_name,
         last_name:      dozentin.last_name,
         rating:         dozentin.rating,
@@ -138,7 +139,7 @@ if (galleryFolder) {
 
 // ── Profilbilder der Dozentinnen (build-time) ─────────────────────────────────
 const dozentinnenWithImg = (dozentinnen as any[]).map(d => {
-  const localSlug = d.slug.replace(new RegExp(`-${city.slug}$`), '');
+  const localSlug = d.slug.replace(new RegExp(`-${d.citySlug}$`), '');
   const rel       = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
   const hasImg    = fs.existsSync(path.join(process.cwd(), 'public', rel));
   return { ...d, profileImg: hasImg ? rel : null };
