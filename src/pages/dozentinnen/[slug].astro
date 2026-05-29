@@ -792,25 +792,18 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           const foerd  = isAvgs ? 'AVGS-Gutschein' : 'Bildungsgutschein';
           const begin  = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
           const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : 'Basisschulung · Anfängerinnen';
-          const moduleImages: { [key: string]: string } = {
-            'powderbrows-ombrebrows-masterclass':  '/images/Modul-Bilder/powderbrows-ombrebrows/gallery-1.webp',
-            'velvet-lips-lipstick-masterclass':    '/images/Modul-Bilder/velvet-lips-lipstick/gallery-1.webp',
-            'microblading-masterclass':            '/images/Modul-Bilder/microblading/gallery-1.webp',
-            'wimpernverlaengerung-masterclass':    '/images/Modul-Bilder/wimpernverlaengerung/gallery-1.webp',
-            'camouflage-removal-masterclass':      '/images/Modul-Bilder/camouflage-removal/gallery-1.webp',
-          };
-          const img = moduleImages[s.slug];
-          const cardContent = (
-            <>
+          const moduleFolder = s.slug.replace(/-masterclass$/, '');
+          const img = `/images/Modul-Bilder/${moduleFolder}/gallery-1.webp`;
+          const moduleName = SERVICE_DISPLAY_NAME[s.slug] ?? s.name;
+          const cardInner = (
+            <Fragment>
               <div class="module-card-img-wrap">
-                {img && (
-                  <img src={img} alt={SERVICE_DISPLAY_NAME[s.slug] ?? s.name} class="module-card-img" loading="lazy" decoding="async" width="400" height="180" />
-                )}
+                <img src={img} alt={moduleName} class="module-card-img" loading="lazy" decoding="async" width="400" height="180" />
               </div>
-              <div class="module-card-accent" />
+              <div class="module-card-accent"></div>
               <div class="module-card-body">
                 <div>
-                  <span class="module-name">{SERVICE_DISPLAY_NAME[s.slug] ?? s.name}</span>
+                  <span class="module-name">{moduleName}</span>
                   <span class="module-tagline">{tagline}</span>
                 </div>
 
@@ -845,11 +838,11 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               <div class="module-card-foot">
                 <span class="mc-avgs">Unterlagen erhalten</span>
               </div>
-            </>
+            </Fragment>
           );
           return hasForm
-            ? <div class={`module-card lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">{cardContent}</div>
-            : <a href={`/${city.slug}/${s.slug}/`} class="module-card">{cardContent}</a>;
+            ? <div class={`module-card lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">{cardInner}</div>
+            : <a href={`/${city.slug}/${s.slug}/`} class="module-card">{cardInner}</a>;
         })}
       </div>
 
