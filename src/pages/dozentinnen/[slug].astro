@@ -752,7 +752,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
   display: block;
   font-size: 10px; font-weight: 600;
   letter-spacing: .18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.28);
+  color: #C8962E;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -1139,13 +1139,13 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
     <nav class="footer-seo-block" aria-label={`${dozentin.first_name}s Trainings in ${hubCityLabel}`}>
       <span class="footer-seo-label">{dozentin.first_name}s Trainings in {hubCityLabel}:</span>
       <div class="footer-seo-links">
-        <a href={`/${hubCitySlug}/`}>Alle anerkannten Akademien in {hubCityLabel}</a>
         {services.flatMap((s: any) => {
           const labels = SERVICE_LABELS[s.slug] ?? [s.name];
           return labels.map((label: string) => (
             <a href={`/${hubCitySlug}/${s.slug}/`}>{label}</a>
           ));
         })}
+        <a href={`/${hubCitySlug}/`}>Alle anerkannten Akademien in {hubCityLabel}</a>
       </div>
     </nav>
 
