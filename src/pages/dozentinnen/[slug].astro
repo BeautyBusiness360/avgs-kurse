@@ -704,12 +704,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 }
 .footer-links a:hover { color:rgba(255,255,255,.75); }
 .footer-doz-link {
-  color:rgba(255,255,255,.22) !important;
+  color: #C8962E !important;
   border-left:1px solid rgba(255,255,255,.1);
   padding-left:24px;
   margin-left:4px;
 }
-.footer-doz-link:hover { color:rgba(255,255,255,.55) !important; }
+.footer-doz-link:hover { color: #D4AF7A !important; text-decoration: underline; }
 @media(max-width:560px){
   .footer-doz-link { border-left:none; padding-left:0; margin-left:0; }
 }
@@ -1135,18 +1135,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="w">
-    <!-- Block A: alle 5 Städte – fix auf jeder Dozentinnen-Seite -->
-    <nav class="footer-seo-block" aria-label="Akademien nach Stadt">
-      <span class="footer-seo-label">Akademien in:</span>
-      <div class="footer-seo-links">
-        <a href="/berlin/">Berlin</a>
-        <a href="/hamburg/">Hamburg</a>
-        <a href="/essen/">Essen</a>
-        <a href="/mainz/">Mainz</a>
-        <a href="/ulm/">Ulm</a>
-      </div>
-    </nav>
-
     <!-- Block B: Module dieser Dozentin in ihrer Hub-Stadt -->
     <nav class="footer-seo-block" aria-label={`${dozentin.first_name}s Trainings in ${hubCityLabel}`}>
       <span class="footer-seo-label">{dozentin.first_name}s Trainings in {hubCityLabel}:</span>
@@ -1158,6 +1146,18 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             <a href={`/${hubCitySlug}/${s.slug}/`}>{label}</a>
           ));
         })}
+      </div>
+    </nav>
+
+    <!-- Block A: alle 5 Städte – fix auf jeder Dozentinnen-Seite -->
+    <nav class="footer-seo-block" aria-label="Akademien nach Stadt">
+      <span class="footer-seo-label">Akademien in:</span>
+      <div class="footer-seo-links">
+        <a href="/berlin/">Berlin</a>
+        <a href="/hamburg/">Hamburg</a>
+        <a href="/essen/">Essen</a>
+        <a href="/mainz/">Mainz</a>
+        <a href="/ulm/">Ulm</a>
       </div>
     </nav>
     <div class="footer-inner">

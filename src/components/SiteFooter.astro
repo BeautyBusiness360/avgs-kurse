@@ -56,7 +56,7 @@ const cities = [
       <div class="sf-col">
         <h3 class="sf-col-title">Weitere Angebote</h3>
         <nav class="sf-link-list" aria-label="Weitere Angebote">
-          <a href="/fachdozentin-werden" class="sf-link">
+          <a href="/fachdozentin-werden" class="sf-link sf-link--cta">
             Fachdozentin werden
           </a>
           <a href="https://www.dozentenschein.de" class="sf-link sf-link--ext" target="_blank" rel="noopener">
@@ -202,6 +202,8 @@ const cities = [
 .sf-link--icon { display: flex; align-items: center; gap: 8px; }
 .sf-link--icon svg { flex-shrink: 0; opacity: .6; }
 .sf-link--ext::after { content: ' ↗'; font-size: 11px; opacity: .55; }
+.sf-link--cta { color: #C8962E !important; }
+.sf-link--cta:hover { color: #D4AF7A !important; text-decoration: underline; }
 
 .sf-divider { margin-top: 52px; border-top: 1px solid rgba(255,255,255,.06); }
 
