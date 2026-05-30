@@ -171,13 +171,6 @@ const schema = {
     "addressLocality": displayCityName,
     "addressCountry": "DE"
   },
-  ...(combinedRating && {
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": combinedRating.rating,
-      "reviewCount": combinedRating.totalCount
-    }
-  }),
   ...(dozentin.studio_name && {
     "worksFor": {
       "@type": "HealthAndBeautyBusiness",
