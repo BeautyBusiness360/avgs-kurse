@@ -800,4 +800,26 @@ body {
   })();
 </script>
 
+<script is:inline>
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    var vw=document.documentElement.clientWidth, sw=document.documentElement.scrollWidth, off=[];
+    document.querySelectorAll('body *').forEach(function(el){
+      var r=el.getBoundingClientRect();
+      if(r.width===0&&r.height===0)return;
+      if(r.right>vw+1||r.left<-1) off.push({el:el,l:Math.round(r.left),rt:Math.round(r.right),w:Math.round(r.width)});
+    });
+    off.sort(function(a,b){return b.rt-a.rt;});
+    var t='viewport='+vw+'  scrollW='+sw+'  OVERFLOW='+(sw-vw)+'px\n--- Elemente ueber den Rand ---\n';
+    for(var i=0;i<Math.min(off.length,6);i++){var o=off[i],el=o.el;
+      var tag=el.tagName.toLowerCase()+(el.className?('.'+String(el.className).trim().replace(/\s+/g,'.')):'');
+      t+=tag.slice(0,48)+'\n  left='+o.l+' right='+o.rt+' w='+o.w+'\n';}
+    if(off.length===0)t+='(keine – evtl. behoben oder Cache)';
+    var b=document.createElement('div');
+    b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#111;color:#0f0;font:11px/1.35 monospace;padding:8px;white-space:pre-wrap;pointer-events:none;max-height:60vh;overflow:auto';
+    b.textContent=t; document.body.appendChild(b);
+  },400);
+});
+</script>
+
 </SEOLayout>
