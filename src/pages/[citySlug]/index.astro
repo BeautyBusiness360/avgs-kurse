@@ -399,11 +399,12 @@ body {
 .standort-body { padding:28px 24px 24px; display:flex; flex-direction:column; gap:10px; }
 .standort-badge {
   align-self:flex-start;
+  margin-top:6px;
   font-size:10px; font-weight:600;
   letter-spacing:.16em; text-transform:uppercase;
-  color:#7A5C2E;
-  background:var(--gold-bg); border:1px solid #E8D9C4;
-  border-radius:var(--radius); padding:5px 10px;
+  color:var(--gold);
+  border:1px solid var(--gold);
+  border-radius:var(--radius); padding:4px 10px;
 }
 .standort-name {
   font-family:var(--serif);
@@ -665,12 +666,12 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           <div class="standort-card">
             <div class="standort-top"></div>
             <div class="standort-body">
-              <span class="standort-badge">Zertifizierter Schulungsstandort</span>
               <strong class="standort-name">{s.name}</strong>
               <span class="standort-addr">
                 {s.strasse && <>{s.strasse}<br /></>}
                 {s.plz} {s.ort}
               </span>
+              <span class="standort-badge">Zertifizierter Schulungsstandort</span>
             </div>
           </div>
         ))}
