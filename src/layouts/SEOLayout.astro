@@ -107,31 +107,6 @@ const { title, description, canonical, schema } = Astro.props;
     </style>
 
     <script is:inline>
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    var de=document.documentElement, b=document.body;
-    var sh=de.scrollHeight, ih=window.innerHeight;
-    var f=document.querySelector('footer');
-    var fb=f?Math.round(f.getBoundingClientRect().bottom+window.scrollY):-1;
-    var maxEl=null,maxB=-1,all=b.querySelectorAll('*');
-    for(var i=0;i<all.length;i++){
-      var el=all[i],cs=getComputedStyle(el);
-      if(cs.position==='fixed')continue;
-      var r=el.getBoundingClientRect();
-      if(r.width===0&&r.height===0)continue;
-      var bot=Math.round(r.bottom+window.scrollY);
-      if(bot>maxB){maxB=bot;maxEl=el;}
-    }
-    var tag=maxEl?(maxEl.tagName.toLowerCase()+(maxEl.className?('.'+String(maxEl.className).trim().replace(/\s+/g,'.')):'')):'-';
-    var box=document.createElement('div');
-    box.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#111;color:#0f0;font:12px/1.4 monospace;padding:8px;white-space:pre-wrap;pointer-events:none';
-    box.textContent='scrollH='+sh+'  innerH='+ih+'\nfooterBottom='+fb+'  GAP='+(sh-fb)+'\nlowestEl='+tag+'  bottom='+maxB+'\nhtmlBg='+getComputedStyle(de).backgroundColor+'\nbodyBg='+getComputedStyle(b).backgroundColor;
-    document.body.appendChild(box);
-  },400);
-});
-    </script>
-
-    <script is:inline>
       (function () {
         try {
           var key = 'cookieHintAck';
