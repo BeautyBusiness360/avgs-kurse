@@ -133,6 +133,10 @@ const fullName    = `${dozentin.first_name} ${dozentin.last_name}`;
 
 const primaryService = services[0] ? (SERVICE_DISPLAY_NAME[services[0].slug] ?? services[0].name) : 'Beauty Kurs';
 
+const moduleIntroText = dozentin.studio_name
+  ? `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen in ${dozentin.studio_name}${dozentin.studio_city ? ` in ${dozentin.studio_city}` : ''} – einem zertifizierten Schulungsstandort. 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`
+  : `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen – 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`;
+
 const poolVars = { name: fullName, stadt: displayCityName, service: primaryService };
 const faqItems = getDozentinFaqs(dozentin.slug, poolVars, 7);
 const poolBio  = getDozentinBio(dozentin.slug, poolVars);
@@ -172,6 +176,18 @@ const schema = {
       "@type": "AggregateRating",
       "ratingValue": combinedRating.rating,
       "reviewCount": combinedRating.totalCount
+    }
+  }),
+  ...(dozentin.studio_name && {
+    "worksFor": {
+      "@type": "HealthAndBeautyBusiness",
+      "name": dozentin.studio_name,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": dozentin.studio_city,
+        "addressCountry": "DE"
+      },
+      ...(dozentin.studio_url && { "url": dozentin.studio_url })
     }
   }),
   ...(hasServices && {
@@ -754,15 +770,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 }
 .footer-seo-links a:hover { color: rgba(255,255,255,0.7); }
 .hero-rating { margin-top: 14px; }
-.section--studio { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: none; }
-.studio-info { display: flex; flex-direction: column; gap: 6px; }
-.studio-name { font-size: 16px; font-weight: 600; color: var(--black); }
-.studio-city { font-size: 14px; color: var(--muted); }
-.studio-link {
-  display: inline-block; margin-top: 4px;
-  font-size: 13px; color: var(--gold); text-decoration: none; font-weight: 500;
-}
-.studio-link:hover { text-decoration: underline; }
 </style>
 
 
@@ -833,24 +840,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
   </div>
 </div>
 
-{dozentin.studio_name && (
-  <section class="section section--studio">
-    <div class="w">
-      <div class="studio-info">
-        <span class="section-eye">Studio</span>
-        <span class="studio-name">{dozentin.studio_name}</span>
-        {dozentin.studio_city && (
-          <span class="studio-city">{dozentin.studio_city}</span>
-        )}
-        {dozentin.studio_url && (
-          <a href={dozentin.studio_url} class="studio-link" target="_blank" rel="noopener noreferrer">
-            Website besuchen →
-          </a>
-        )}
-      </div>
-    </div>
-  </section>
-)}
 
 
 <!-- ══════════════════════════════════
@@ -866,9 +855,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           in <em>{displayCityName}</em> mit {fullName}
         </h2>
         <p class="section-desc" style="max-width:none;margin:0;">
-          Ob Einstieg oder Weiterentwicklung: staatlich geförderte
-          Beauty- &amp; Kosmetik-Weiterbildungen – 100&thinsp;% AVGS-förderbar,
-          AZAV-zertifiziert, sofort buchbar.
+          {moduleIntroText}
         </p>
       </div>
 
