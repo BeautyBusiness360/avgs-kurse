@@ -64,6 +64,7 @@ export async function getStaticPaths() {
         ? ds.services[0]
         : ds?.services;
       if (!service?.slug) continue;
+      if (!service?.avgs_eligible) continue;
 
       const key = `${effectiveCitySlug}__${service.slug}`;
 

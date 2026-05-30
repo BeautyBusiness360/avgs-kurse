@@ -133,9 +133,15 @@ const fullName    = `${dozentin.first_name} ${dozentin.last_name}`;
 
 const primaryService = services[0] ? (SERVICE_DISPLAY_NAME[services[0].slug] ?? services[0].name) : 'Beauty Kurs';
 
-const moduleIntroText = dozentin.studio_name
-  ? `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen in ${dozentin.studio_name}${dozentin.studio_city ? ` in ${dozentin.studio_city}` : ''} – einem zertifizierten Schulungsstandort. 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`
-  : `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen – 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`;
+const foerderbar = dozentin.avgs_certified !== false;
+
+const moduleIntroText = foerderbar
+  ? (dozentin.studio_name
+      ? `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen in ${dozentin.studio_name}${dozentin.studio_city ? ` in ${dozentin.studio_city}` : ''} – einem zertifizierten Schulungsstandort. 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`
+      : `Staatlich geförderte Beauty- & Kosmetik-Weiterbildungen – 100 % AVGS-förderbar bei Bewilligung, AZAV-zertifiziert, sofort buchbar. Für erfahrene Fachkräfte aus der Beauty-Branche.`)
+  : (dozentin.studio_name
+      ? `Exklusive Fachschulungen in ${dozentin.studio_name} in ${displayCityName} – spezialisierte Einzelcoachings mit zertifizierter Fachdozentin. Sofort buchbar, flexible Terminvereinbarung.`
+      : `Exklusive Fachschulungen in ${displayCityName} – spezialisierte Einzelcoachings mit zertifizierter Fachdozentin. Sofort buchbar, flexible Terminvereinbarung.`);
 
 const poolVars = { name: fullName, stadt: displayCityName, service: primaryService };
 const faqItems = getDozentinFaqs(dozentin.slug, poolVars, 7);
@@ -143,12 +149,14 @@ const poolBio  = getDozentinBio(dozentin.slug, poolVars);
 
 const seo = {
   title:
-    `${fullName} – ${primaryService} ${displayCityName} | AVGS gefördert`,
+    foerderbar
+    ? `${fullName} – ${primaryService} ${displayCityName} | AVGS gefördert`
+    : `${fullName} – ${primaryService} in ${displayCityName}`,
   description:
     dozentin.bio_short ??
-    `${primaryService} Einzelcoaching in ${displayCityName} ` +
-    `mit ${fullName}. Staatlich gefördert über AVGS. ` +
-    `Jetzt kostenlos starten.`,
+    (foerderbar
+      ? `${primaryService} Einzelcoaching in ${displayCityName} mit ${fullName}. Staatlich gefördert über AVGS. Jetzt kostenlos starten.`
+      : `${primaryService} Fachschulung in ${displayCityName} mit ${fullName}. Exklusives Einzelcoaching im Privatkurs. Jetzt anfragen.`),
   canonical:
     `https://dein-beauty-kurs.de/dozentinnen/${dozentin.slug}/`
 };
@@ -783,22 +791,41 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
     <div class="hero-left">
 
-      <h1 class="hero-h1">
-        Kostenfreie Perfektionstrainings<br />
-        mit <em>{fullName}</em><br />
-        in {displayCityName}
-      </h1>
-
-      <p class="hero-sub">
-        Du arbeitest bereits in der Beauty&#8209;Branche und willst dich gezielt
-        weiterentwickeln? Bei {fullName} absolvierst du ein staatlich gefördertes
-        Perfektionstraining – kostenfrei bei Bewilligung.
-      </p>
-
-      <div class="hero-trust-list">
-        ◆ 100 % kostenfrei bei Bewilligung<br />
-        ◆ AZAV-zertifizierte Schulungen
-      </div>
+      {foerderbar ? (
+        <>
+          <h1 class="hero-h1">
+            Kostenfreie Perfektionstrainings<br />
+            mit <em>{fullName}</em><br />
+            in {displayCityName}
+          </h1>
+          <p class="hero-sub">
+            Du arbeitest bereits in der Beauty&#8209;Branche und willst dich gezielt
+            weiterentwickeln? Bei {fullName} absolvierst du ein staatlich gefördertes
+            Perfektionstraining – kostenfrei bei Bewilligung.
+          </p>
+          <div class="hero-trust-list">
+            ◆ 100 % kostenfrei bei Bewilligung<br />
+            ◆ AZAV-zertifizierte Schulungen
+          </div>
+        </>
+      ) : (
+        <>
+          <h1 class="hero-h1">
+            Beauty-Schulungen<br />
+            mit <em>{fullName}</em><br />
+            in {displayCityName}
+          </h1>
+          <p class="hero-sub">
+            {dozentin.studio_name
+              ? `Exklusive Fachschulungen in ${dozentin.studio_name} in ${displayCityName} – spezialisiertes Einzelcoaching auf höchstem Niveau.`
+              : `Exklusive Fachschulungen in ${displayCityName} – spezialisiertes Einzelcoaching auf höchstem Niveau bei ${fullName}.`}
+          </p>
+          <div class="hero-trust-list">
+            ◆ Exklusives Einzelcoaching<br />
+            ◆ Zertifizierte Fachdozentin
+          </div>
+        </>
+      )}
 
       {combinedRating && (
         <div class="hero-rating">
@@ -846,8 +873,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="section-header" style="text-align:left;">
         <span class="section-eye">Kurse &amp; Module</span>
         <h2 class="section-title">
-          Kostenlose Beauty- &amp; Kosmetik-Kurse<br />
-          in <em>{displayCityName}</em> mit {fullName}
+          {foerderbar
+            ? <Fragment>Kostenlose Beauty- &amp; Kosmetik-Kurse<br />in <em>{displayCityName}</em> mit {fullName}</Fragment>
+            : <Fragment>Exklusive Fachschulungen<br />in <em>{displayCityName}</em> mit {fullName}</Fragment>
+          }
         </h2>
         <p class="section-desc" style="max-width:none;margin:0;">
           {moduleIntroText}
@@ -857,19 +886,24 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <div class="module-grid">
         {services.map((s: any) => {
           const isAvgs = !!s.avgs_eligible;
-          const dauer  = isAvgs ? '40 U. Stunden' : '350 U. Stunden';
-          const zeiten = isAvgs ? 'Nach Vereinbarung' : '09:00 - 17:00 Uhr';
-          const foerd  = isAvgs ? 'AVGS-Gutschein' : 'Bildungsgutschein';
-          const begin  = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
-          const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : 'Basisschulung · Anfängerinnen';
+          const dauer   = isAvgs ? '40 U. Stunden' : (foerderbar ? '350 U. Stunden' : 'Auf Anfrage');
+          const zeiten  = isAvgs ? 'Nach Vereinbarung' : 'Nach Vereinbarung';
+          const kosten  = isAvgs ? 'Agentur für Arbeit' : (foerderbar ? 'Bildungsgutschein' : 'Privat');
+          const begin   = isAvgs ? 'Ab sofort' : 'Nächster Termin auf Anfrage';
+          const tagline = isAvgs ? 'Perfektionstraining · Fortgeschrittene' : (foerderbar ? 'Basisschulung · Anfängerinnen' : 'Fachschulung · Spezialistinnen');
           const moduleFolder = s.slug.replace(/-masterclass$/, '');
-          const img = `/images/Modul-Bilder/${moduleFolder}/gallery-1.webp`;
+          const cardImg = isAvgs
+            ? `/images/Modul-Bilder/${moduleFolder}/gallery-1.webp`
+            : (hasLocalImage ? localImageRel : null);
           const moduleName = SERVICE_DISPLAY_NAME[s.slug] ?? s.name;
           const cardInner = (
             <Fragment>
-              <div class="module-card-img-wrap">
-                <img src={img} alt={moduleName} class="module-card-img" loading="lazy" decoding="async" width="400" height="180" />
-              </div>
+              {cardImg
+                ? <div class="module-card-img-wrap">
+                    <img src={cardImg} alt={moduleName} class="module-card-img" loading="lazy" decoding="async" width="400" height="180" />
+                  </div>
+                : <div class="module-card-img-wrap" style="background:var(--cream-d);display:flex;align-items:center;justify-content:center;font-size:32px;color:rgba(184,150,90,.2);">✦</div>
+              }
               <div class="module-card-accent"></div>
               <div class="module-card-body">
                 <div>
@@ -888,15 +922,15 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
                   </div>
                   <div class="module-spec-row">
                     <span class="ms-label">Unterrichtsform</span>
-                    <span class="ms-val">Hybridunterricht</span>
+                    <span class="ms-val">{isAvgs ? 'Hybridunterricht' : 'Präsenz'}</span>
                   </div>
                   <div class="module-spec-row">
                     <span class="ms-label">Zielgruppe</span>
-                    <span class="ms-val">Arbeitssuchende, Angestellte &amp; Selbstständige</span>
+                    <span class="ms-val">{isAvgs ? 'Arbeitssuchende, Angestellte & Selbstständige' : 'Fachkräfte & Spezialistinnen'}</span>
                   </div>
                   <div class="module-spec-row">
                     <span class="ms-label">Kostenübernahme</span>
-                    <span class="ms-val">Agentur für Arbeit</span>
+                    <span class="ms-val">{kosten}</span>
                   </div>
                   <div class="module-spec-row">
                     <span class="ms-label">Kursbeginn</span>
@@ -906,13 +940,15 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               </div>
 
               <div class="module-card-foot">
-                <span class="mc-avgs">Unterlagen erhalten</span>
+                <span class="mc-avgs">{isAvgs ? 'Unterlagen erhalten' : 'Privatkurs · Anfragen'}</span>
               </div>
             </Fragment>
           );
           return hasForm
             ? <div class={`module-card lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">{cardInner}</div>
-            : <a href={`/${city.slug}/${s.slug}/`} class="module-card">{cardInner}</a>;
+            : (isAvgs
+              ? <a href={`/${city.slug}/${s.slug}/`} class="module-card">{cardInner}</a>
+              : <a href="#anmeldung" class="module-card">{cardInner}</a>);
         })}
       </div>
 
@@ -932,9 +968,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         Galerie von <em>{dozentin.first_name} {dozentin.last_name}</em>
       </h2>
       <p class="section-desc" style="max-width:none;margin:0;">
-        Eine Auswahl realer Arbeiten und Ergebnisse aus der Praxis.
-        Entstanden im Rahmen der AVGS-geförderten Einzelcoachings
-        in {displayCityName}.
+        {foerderbar
+          ? `Eine Auswahl realer Arbeiten und Ergebnisse aus der Praxis. Entstanden im Rahmen der AVGS-geförderten Einzelcoachings in ${displayCityName}.`
+          : `Eine Auswahl realer Arbeiten und Ergebnisse aus der Praxis von ${fullName} in ${displayCityName}.`
+        }
       </p>
     </div>
 
@@ -992,9 +1029,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           </blockquote>
         </div>
         <p class="trust-bio-text">
-          {fullName} ist zertifizierte Fachdozentin in {displayCityName}.
-          Ihre Ausbildungen finden als intensives Einzelcoaching statt
-          und sind vollständig über die Agentur für Arbeit förderbar.
+          {foerderbar
+            ? `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Ihre Ausbildungen finden als intensives Einzelcoaching statt und sind vollständig über die Agentur für Arbeit förderbar.`
+            : `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Sie bietet exklusive Fachschulungen als intensives Einzelcoaching – individuell, professionell und auf höchstem Niveau.`
+          }
         </p>
       </div>
 
@@ -1016,13 +1054,23 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             <span class="tf-val">Hybridunterricht · Präsenz &amp; Online</span>
           </div>
         </div>
-        <div class="tf-row">
-          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-          <div>
-            <span class="tf-label">Förderung</span>
-            <span class="tf-val">100&thinsp;% AVGS · Kostenlos bei Bewilligung</span>
+        {foerderbar ? (
+          <div class="tf-row">
+            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+            <div>
+              <span class="tf-label">Förderung</span>
+              <span class="tf-val">100&thinsp;% AVGS · Kostenlos bei Bewilligung</span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div class="tf-row">
+            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+            <div>
+              <span class="tf-label">Kursart</span>
+              <span class="tf-val">Exklusiver Privatkurs · Selbstzahler</span>
+            </div>
+          </div>
+        )}
         <div class="tf-row">
           <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
           <div>
@@ -1110,9 +1158,10 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <em>nächstes Level?</em>
     </h2>
     <p class="final-cta-sub">
-      Lade jetzt deine kostenlosen Unterlagen für die Arbeitsagentur
-      herunter und starte deinen AVGS-geförderten Kurs bei
-      {fullName} in {displayCityName}.
+      {foerderbar
+        ? `Lade jetzt deine kostenlosen Unterlagen für die Arbeitsagentur herunter und starte deinen AVGS-geförderten Kurs bei ${fullName} in ${displayCityName}.`
+        : `Interesse an einer exklusiven Fachschulung bei ${fullName} in ${displayCityName}? Jetzt anfragen und Termin vereinbaren.`
+      }
     </p>
 
     <div class="final-cta-form">
@@ -1135,12 +1184,13 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       <span class="footer-seo-label">{dozentin.first_name}s Trainings in {hubCityLabel}:</span>
       <div class="footer-seo-links">
         {services.flatMap((s: any) => {
+          if (!s.avgs_eligible) return [];
           const labels = SERVICE_LABELS[s.slug] ?? [s.name];
           return labels.map((label: string) => (
             <a href={`/${hubCitySlug}/${s.slug}/`}>{label}</a>
           ));
         })}
-        <a href={`/${hubCitySlug}/`}>Alle anerkannten Akademien in {hubCityLabel}</a>
+        <a href={`/${hubCitySlug}/`}>Alle Akademien in {hubCityLabel}</a>
       </div>
     </nav>
 
