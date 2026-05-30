@@ -62,14 +62,14 @@ const { title, description, canonical, schema } = Astro.props;
     .cookie-hint {
       position: fixed;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
+      left: 16px;
+      right: 16px;
+      margin-inline: auto;
       z-index: 9999;
       display: flex;
       align-items: center;
       gap: 18px;
       max-width: 680px;
-      width: calc(100% - 32px);
       background: rgba(28,28,28,0.96);
       backdrop-filter: blur(10px);
       color: #f5f0e8;
@@ -79,9 +79,9 @@ const { title, description, canonical, schema } = Astro.props;
       font-family: var(--sans, system-ui, sans-serif);
       opacity: 0;
       pointer-events: none;
-      transition: opacity .4s ease, transform .4s ease;
+      transition: opacity .4s ease;
     }
-    .cookie-hint.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .cookie-hint.show { opacity: 1; pointer-events: auto; }
     .cookie-hint-text { font-size: 13px; line-height: 1.5; margin: 0; font-weight: 300; }
     .cookie-hint-text a { color: #D4AF7A; text-decoration: underline; }
     .cookie-hint-btn {
@@ -101,7 +101,7 @@ const { title, description, canonical, schema } = Astro.props;
     }
     .cookie-hint-btn:hover { background: #D4AF7A; }
     @media (max-width: 560px) {
-      .cookie-hint { flex-direction: column; align-items: stretch; gap: 12px; bottom: 12px; }
+      .cookie-hint { flex-direction: column; align-items: stretch; gap: 12px; }
       .cookie-hint-btn { width: 100%; }
     }
     </style>
