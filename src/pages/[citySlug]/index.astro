@@ -4,8 +4,6 @@ import DozentinInfoBox from '../../components/DozentinInfoBox.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { CITY_DISPLAY, SERVICE_DISPLAY_NAME } from '../../data/location-overrides';
 import SiteFooter from '../../components/SiteFooter.astro';
-import { getCombinedRating } from '../../lib/ratings';
-import RatingStars from '../../components/RatingStars.astro';
 import { supabase } from '../../lib/supabase';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,7 +16,7 @@ export async function getStaticPaths() {
     supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle').order('stadt_name'),
     supabase
       .from('dozentinnen')
-      .select('slug, first_name, last_name, google_rating_avg, google_review_count, treatwell_rating_avg, treatwell_review_count, cities(slug, name), dozentin_services(services(slug, name))')
+      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(slug, name))')
       .eq('active', true)
       .order('last_name'),
   ]);
@@ -94,15 +92,10 @@ interface DozRaw {
   cityName: string;
   serviceNames: string[];
   serviceSlugs: string[];
-  google_rating_avg: number | null;
-  google_review_count: number | null;
-  treatwell_rating_avg: number | null;
-  treatwell_review_count: number | null;
 }
 interface DozWithImg extends DozRaw {
   profileImg: string | null;
   localSlug: string;
-  combinedRating: ReturnType<typeof getCombinedRating>;
 }
 
 const {
@@ -146,13 +139,7 @@ const dozentinnenWithImg: DozWithImg[] = dozentinnen.map(d => {
   const localSlug = d.slug.replace(new RegExp(`-${d.citySlugOfDoz}$`), '');
   const rel       = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
   const hasImg    = fs.existsSync(path.join(process.cwd(), 'public', rel));
-  const combinedRating = getCombinedRating({
-    google_rating_avg:      d.google_rating_avg      ?? null,
-    google_review_count:    d.google_review_count    ?? null,
-    treatwell_rating_avg:   d.treatwell_rating_avg   ?? null,
-    treatwell_review_count: d.treatwell_review_count ?? null,
-  });
-  return { ...d, localSlug, profileImg: hasImg ? rel : null, combinedRating };
+  return { ...d, localSlug, profileImg: hasImg ? rel : null };
 });
 
 const hasStandorte   = standorte.length > 0;
@@ -520,8 +507,6 @@ body {
   display:flex; align-items:center; justify-content:center;
   font-size:36px; color:rgba(184,150,90,.2);
 }
-.doz-card-rating { padding: 0 20px 18px; }
-
 /* ─── FAQ ────────────────────────────── */
 .faq-section { padding:100px 0; border-bottom:1px solid var(--border); margin-top:37px; }
 @media(max-width:767px){ .faq-section { margin-top:21px; } }
@@ -778,19 +763,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
               standort={CITY_DISPLAY[d.slug] ?? d.cityName}
               fachgebiete={d.serviceNames}
             />
-            {d.combinedRating && (
-              <div class="doz-card-rating">
-                <RatingStars
-                  rating={d.combinedRating.rating}
-                  count={d.combinedRating.totalCount}
-                  source="combined"
-                  size="small"
-                  showCount={true}
-                  googleCount={d.combinedRating.googleCount}
-                  treatwellCount={d.combinedRating.treatwellCount}
-                />
-              </div>
-            )}
           </a>
         ))}
       </div>
