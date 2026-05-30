@@ -807,7 +807,7 @@ window.addEventListener('load',function(){
     document.querySelectorAll('body *').forEach(function(el){
       var r=el.getBoundingClientRect();
       if(r.width===0&&r.height===0)return;
-      if(r.right>vw+1||r.left<-1) off.push({el:el,l:Math.round(r.left),rt:Math.round(r.right),w:Math.round(r.width)});
+      if((r.right>vw+1 && r.right<vw+600) || (r.left<-1 && r.left>-600)) off.push({el:el,l:Math.round(r.left),rt:Math.round(r.right),w:Math.round(r.width)});
     });
     off.sort(function(a,b){return b.rt-a.rt;});
     var t='viewport='+vw+'  scrollW='+sw+'  OVERFLOW='+(sw-vw)+'px\n--- Elemente ueber den Rand ---\n';
