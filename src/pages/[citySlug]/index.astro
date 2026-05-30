@@ -16,7 +16,7 @@ export async function getStaticPaths() {
     supabase.from('staedte').select('city_slug, stadt_name, intro_statistik, intro_quelle').order('stadt_name'),
     supabase
       .from('dozentinnen')
-      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(slug, name))')
+      .select('slug, first_name, last_name, cities(slug, name), dozentin_services(services(slug, name, avgs_eligible))')
       .eq('active', true)
       .order('last_name'),
   ]);
@@ -44,13 +44,15 @@ export async function getStaticPaths() {
     const dsRows = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
     const serviceNames: string[] = [];
     const serviceSlugs: string[] = [];
+    const serviceAvgsEligible: boolean[] = [];
     for (const ds of dsRows) {
       const s = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
       if (!s?.slug) continue;
       serviceNames.push(SERVICE_DISPLAY_NAME[s.slug] ?? s.name);
       serviceSlugs.push(s.slug);
+      serviceAvgsEligible.push(!!s.avgs_eligible);
     }
-    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames, serviceSlugs });
+    dozByRegion[region].push({ ...d, citySlugOfDoz: city.slug, cityName: city.name, serviceNames, serviceSlugs, serviceAvgsEligible });
   }
 
   return regions.map(region => {
@@ -92,6 +94,7 @@ interface DozRaw {
   cityName: string;
   serviceNames: string[];
   serviceSlugs: string[];
+  serviceAvgsEligible: boolean[];
 }
 interface DozWithImg extends DozRaw {
   profileImg: string | null;
@@ -119,6 +122,7 @@ const seenServiceSlugs = new Set<string>();
 const cityServices: { slug: string; displayName: string; imgSrc: string | null }[] = [];
 for (const d of dozentinnen) {
   for (let i = 0; i < (d.serviceSlugs ?? []).length; i++) {
+    if (!(d.serviceAvgsEligible?.[i] ?? true)) continue;
     const slug = d.serviceSlugs[i];
     if (!seenServiceSlugs.has(slug)) {
       seenServiceSlugs.add(slug);
