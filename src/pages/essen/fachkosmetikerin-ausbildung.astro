@@ -145,6 +145,28 @@ body {
 }
 @media(max-width:640px){ .hero-wrap { padding:52px 0 48px; } }
 
+.hero-inner {
+  display:grid;
+  grid-template-columns:55% 1fr;
+  gap:64px;
+  align-items:center;
+}
+@media(max-width:860px){
+  .hero-inner { grid-template-columns:1fr; gap:36px; }
+}
+.hero-img-wrap {
+  border-radius:4px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.hero-img-wrap img {
+  width:100%; aspect-ratio:1; object-fit:cover; display:block;
+  border-radius:4px;
+}
+@media(max-width:860px){
+  .hero-img-wrap img { aspect-ratio:4/3; max-height:320px; }
+}
+
 .hero-badge {
   display:inline-block;
   font-size:10px; font-weight:600;
@@ -392,23 +414,36 @@ body {
 <!-- ══ HERO ══ -->
 <div class="hero-wrap">
   <div class="w">
-    <span class="hero-badge">Für Einsteiger:innen · Bildungsgutschein</span>
-    <h1 class="hero-h1">
-      Ausbildung zur <em>Fachkosmetikerin</em><br />in Essen
-    </h1>
-    <p class="hero-sub">
-      Geförderte berufliche Weiterbildung nach §81 SGB III · 640 Unterrichtseinheiten in 4 Modulen ·
-      100 % über Bildungsgutschein · auch ohne Vorkenntnisse · trägerinternes Zertifikat
-    </p>
-    <p class="hero-legal-note">
-      <strong>Rechtlicher Hinweis:</strong> Diese Qualifizierung ist eine geförderte berufliche Weiterbildung
-      nach §81 SGB III – keine duale Berufsausbildung. Der Abschluss ist ein trägerinternes Zertifikat
-      „Fachkosmetikerin", kein IHK- oder staatlich anerkannter Berufsabschluss.
-    </p>
-    <div class="hero-cta-row">
-      <a class={`cta-gold lightbox-${QUAL_ID}`} style="cursor:pointer;">
-        Jetzt informieren &amp; anmelden →
-      </a>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <span class="hero-badge">Für Einsteiger:innen · Bildungsgutschein</span>
+        <h1 class="hero-h1">
+          Ausbildung zur <em>Fachkosmetikerin</em><br />in Essen
+        </h1>
+        <p class="hero-sub">
+          Geförderte berufliche Weiterbildung nach §81 SGB III · 640 Unterrichtseinheiten in 4 Modulen ·
+          100 % über Bildungsgutschein · auch ohne Vorkenntnisse · trägerinternes Zertifikat
+        </p>
+        <p class="hero-legal-note">
+          <strong>Rechtlicher Hinweis:</strong> Diese Qualifizierung ist eine geförderte berufliche Weiterbildung
+          nach §81 SGB III – keine duale Berufsausbildung. Der Abschluss ist ein trägerinternes Zertifikat
+          „Fachkosmetikerin", kein IHK- oder staatlich anerkannter Berufsabschluss.
+        </p>
+        <div class="hero-cta-row">
+          <a class={`cta-gold lightbox-${QUAL_ID}`} style="cursor:pointer;">
+            Jetzt informieren &amp; anmelden →
+          </a>
+        </div>
+      </div>
+      <div class="hero-img-wrap">
+        <img
+          src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-2.webp"
+          alt="Christina Dentsa – Berufliche Qualifizierung zur Fachkosmetikerin in Essen"
+          width="560" height="560"
+          loading="eager" decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </div>
 </div>
