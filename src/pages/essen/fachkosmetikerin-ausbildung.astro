@@ -1,0 +1,631 @@
+---
+import SEOLayout from '../../layouts/SEOLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const QUAL_ID = '261074759721462';
+const canonical = 'https://dein-beauty-kurs.de/essen/fachkosmetikerin-ausbildung/';
+
+const faqItems = [
+  {
+    q: 'Brauche ich Vorkenntnisse für die Qualifizierung?',
+    a: 'Nein. Die berufliche Qualifizierung richtet sich ausdrücklich an Einsteiger:innen ohne Vorkenntnisse in der Kosmetik. Voraussetzung ist lediglich der Arbeitssuchendenstatus und ein bewilligter Bildungsgutschein.',
+  },
+  {
+    q: 'Was kostet die Qualifizierung zur Fachkosmetikerin?',
+    a: 'Bei Bewilligung eines Bildungsgutscheins (§81 SGB III) durch die Agentur für Arbeit oder das Jobcenter entstehen dir keine Kosten. Die Maßnahme ist zu 100 % förderfähig.',
+  },
+  {
+    q: 'Ist das eine klassische Berufsausbildung mit IHK-Abschluss?',
+    a: 'Nein. Es handelt sich um eine geförderte berufliche Weiterbildung (Qualifizierung) nach §81 SGB III – keine duale Berufsausbildung. Der Abschluss ist ein trägerinternes Zertifikat „Fachkosmetikerin" sowie eine Teilnahmebescheinigung, kein IHK-Abschluss.',
+  },
+  {
+    q: 'Wie bekomme ich den Bildungsgutschein?',
+    a: 'Melde dich als arbeitssuchend bei der Agentur für Arbeit oder beim Jobcenter und beantrage dort einen Bildungsgutschein nach §81 SGB III. Nach Bewilligung reichst du den Gutschein bei Christina Beauty School ein.',
+  },
+  {
+    q: 'Welchen Abschluss erhalte ich?',
+    a: 'Nach erfolgreichem Abschluss aller 4 Module (640 Unterrichtseinheiten) erhältst du ein trägerinternes Zertifikat „Fachkosmetikerin" sowie eine Teilnahmebescheinigung. Es handelt sich um keinen staatlich anerkannten Berufsabschluss.',
+  },
+  {
+    q: 'Kann ich auch nur einzelne Module buchen?',
+    a: 'Ja. Jedes der 4 Module (Permanent Make-up, Wimpernverlängerung, Professionelle Gesichtsbehandlung, Haarverlängerung) ist einzeln buchbar. Bei der Gesamtmaßnahme bauen die Module aufeinander auf.',
+  },
+  {
+    q: 'Wo findet die Qualifizierung statt?',
+    a: 'Die Qualifizierung findet bei Christina Beauty School in Essen statt. Der Präsenzanteil (Praxis an Modellen) erfolgt in der Akademie; der Theorieteil wird ergänzend via Live-Online (Zoom) durchgeführt.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map(item => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<SEOLayout
+  title="Ausbildung zur Fachkosmetikerin in Essen – 100% gefördert (Bildungsgutschein)"
+  description="Berufliche Qualifizierung zur Fachkosmetikerin in Essen mit Christina Beauty School – gefördert über Bildungsgutschein (§81 SGB III). 640 UE in 4 Modulen, auch ohne Vorkenntnisse. Jetzt informieren."
+  canonical={canonical}
+  schema={faqSchema}
+>
+
+<SiteHeader />
+
+<style>
+:root {
+  --cream:   #FAF8F5;
+  --cream-d: #F3EEE8;
+  --black:   #111111;
+  --gold:    #C8962E;
+  --gold-lt: #D4AF7A;
+  --gold-bg: #FBF6EE;
+  --muted:   #555250;
+  --border:  #E8E2D9;
+  --white:   #FFFFFF;
+  --serif:   'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans:    'Inter', system-ui, sans-serif;
+  --radius:  3px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--cream);
+  color:var(--black);
+  font-family:var(--sans);
+  font-size:16px;
+  font-weight:400;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+
+.w { max-width:1120px; margin:0 auto; padding:0 40px; }
+@media(max-width:640px){ .w { padding:0 22px; } }
+
+/* ── Buttons ── */
+.cta-gold {
+  display:inline-block;
+  background:var(--gold);
+  color:var(--white);
+  font-family:var(--sans);
+  font-size:12px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:14px 34px;
+  border:none; border-radius:var(--radius);
+  text-decoration:none; cursor:pointer;
+  transition:background .25s, transform .2s, box-shadow .25s;
+  box-shadow:0 4px 18px rgba(184,150,90,.25);
+}
+.cta-gold:hover {
+  background:var(--gold-lt);
+  transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(184,150,90,.35);
+}
+
+/* ── Sections ── */
+.section {
+  padding:80px 0;
+  border-bottom:1px solid var(--border);
+}
+@media(max-width:640px){ .section { padding:56px 0; } }
+
+.section-header { margin-bottom:48px; }
+.section-eye {
+  display:inline-block;
+  font-size:10px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+.section-title {
+  font-family:var(--serif);
+  font-size:clamp(34px,4.5vw,54px);
+  font-weight:600; line-height:1.08;
+  letter-spacing:-.02em;
+  color:var(--black);
+  margin-bottom:20px;
+}
+.section-title em { font-style:italic; color:var(--gold); }
+.section-desc {
+  font-size:17px; color:var(--muted);
+  line-height:1.8; max-width:680px;
+}
+
+/* ── Hero ── */
+.hero-wrap {
+  padding:80px 0 72px;
+  border-bottom:1px solid var(--border);
+}
+@media(max-width:640px){ .hero-wrap { padding:52px 0 48px; } }
+
+.hero-badge {
+  display:inline-block;
+  font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:#1A5E3A; background:#E6F4EC;
+  border:1px solid #A8D5B5;
+  border-radius:var(--radius);
+  padding:5px 12px; margin-bottom:20px;
+}
+.hero-h1 {
+  font-family:var(--serif);
+  font-size:clamp(40px,5.5vw,68px);
+  font-weight:600; line-height:1.06;
+  color:var(--black); margin-bottom:24px;
+  letter-spacing:-.02em;
+  hyphens:none;
+}
+.hero-h1 em { font-style:italic; color:var(--gold); }
+.hero-sub {
+  font-size:17px; color:var(--muted);
+  line-height:1.85; max-width:640px;
+  margin-bottom:12px;
+}
+.hero-legal-note {
+  font-size:13px; color:#888;
+  line-height:1.6; max-width:580px;
+  margin-bottom:36px;
+  padding:12px 16px;
+  background:var(--gold-bg);
+  border-left:3px solid var(--gold);
+  border-radius:0 var(--radius) var(--radius) 0;
+}
+.hero-cta-row { display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+
+/* ── Eckdaten ── */
+.eckdaten-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+@media(max-width:640px){ .eckdaten-grid { grid-template-columns:1fr; } }
+
+.eckdaten-item {
+  background:var(--cream-d);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:18px 22px;
+}
+.eckdaten-label {
+  font-size:10px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:6px;
+}
+.eckdaten-value {
+  font-size:15px; color:var(--black);
+  line-height:1.55;
+}
+
+/* ── Module cards ── */
+.module-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+}
+@media(max-width:640px){ .module-grid { grid-template-columns:1fr; gap:16px; } }
+
+.module-card {
+  background:var(--cream-d);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:24px 26px 28px;
+}
+.module-card-num {
+  font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:10px;
+}
+.module-card-title {
+  font-family:var(--serif);
+  font-size:22px; font-weight:600;
+  color:var(--black); margin-bottom:14px;
+  line-height:1.2;
+}
+.module-card-ue {
+  display:inline-block;
+  font-size:11px; font-weight:600;
+  color:var(--muted);
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:3px 10px;
+  margin-bottom:14px;
+  letter-spacing:.05em;
+}
+.module-card-desc {
+  font-size:14px; color:var(--muted);
+  line-height:1.7;
+}
+
+/* ── Steps ── */
+.steps-list {
+  display:flex; flex-direction:column;
+  gap:0;
+  counter-reset:steps;
+}
+.step-item {
+  display:grid;
+  grid-template-columns:48px 1fr;
+  gap:0 20px;
+  align-items:start;
+  padding:20px 0;
+  border-bottom:1px solid var(--border);
+  counter-increment:steps;
+}
+.step-item:first-child { padding-top:0; }
+.step-item:last-child  { border-bottom:none; padding-bottom:0; }
+.step-num {
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--white);
+  font-family:var(--serif);
+  font-size:18px; font-weight:600;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; margin-top:2px;
+}
+.step-body { padding-top:8px; }
+.step-title {
+  font-size:15px; font-weight:600;
+  color:var(--black); margin-bottom:4px;
+}
+.step-desc { font-size:14px; color:var(--muted); line-height:1.65; }
+
+/* ── Unterrichtsform / Arbeitsmarkt prose ── */
+.prose-list {
+  list-style:none;
+  display:flex; flex-direction:column; gap:10px;
+  margin-top:24px;
+}
+.prose-list li {
+  font-size:15px; color:var(--muted);
+  line-height:1.65;
+  padding-left:20px; position:relative;
+}
+.prose-list li::before {
+  content:'◆';
+  position:absolute; left:0;
+  color:var(--gold); font-size:9px; top:5px;
+}
+
+/* ── FAQ ── */
+.faq-list { display:flex; flex-direction:column; gap:0; }
+.faq-item {
+  border-top:1px solid var(--border);
+  padding:0;
+}
+.faq-item:last-child { border-bottom:1px solid var(--border); }
+.faq-item summary {
+  list-style:none;
+  font-size:15px; font-weight:500;
+  color:var(--black); cursor:pointer;
+  padding:20px 40px 20px 0;
+  position:relative;
+  line-height:1.5;
+}
+.faq-item summary::-webkit-details-marker { display:none; }
+.faq-item summary::after {
+  content:'+';
+  position:absolute; right:0; top:50%;
+  transform:translateY(-50%);
+  font-size:20px; color:var(--gold);
+  font-weight:300; line-height:1;
+  transition:transform .2s;
+}
+.faq-item[open] summary::after { transform:translateY(-50%) rotate(45deg); }
+.faq-answer {
+  font-size:14px; color:var(--muted);
+  line-height:1.8;
+  padding-bottom:20px;
+  max-width:760px;
+}
+
+/* ── Closing CTA ── */
+.closing-cta {
+  text-align:center;
+  padding:80px 0;
+  border-bottom:none;
+}
+.closing-cta .section-title { margin-bottom:16px; }
+.closing-cta .section-desc { margin:0 auto 36px; }
+</style>
+
+<main>
+
+<Breadcrumbs trail={[
+  { label: 'Startseite', href: '/' },
+  { label: 'Essen', href: '/essen/' },
+  { label: 'Fachkosmetikerin-Ausbildung' },
+]} />
+
+<!-- ══ HERO ══ -->
+<div class="hero-wrap">
+  <div class="w">
+    <span class="hero-badge">Für Einsteiger:innen · Bildungsgutschein</span>
+    <h1 class="hero-h1">
+      Ausbildung zur <em>Fachkosmetikerin</em><br />in Essen
+    </h1>
+    <p class="hero-sub">
+      Geförderte berufliche Weiterbildung nach §81 SGB III · 640 Unterrichtseinheiten in 4 Modulen ·
+      100 % über Bildungsgutschein · auch ohne Vorkenntnisse · trägerinternes Zertifikat
+    </p>
+    <p class="hero-legal-note">
+      <strong>Rechtlicher Hinweis:</strong> Diese Qualifizierung ist eine geförderte berufliche Weiterbildung
+      nach §81 SGB III – keine duale Berufsausbildung. Der Abschluss ist ein trägerinternes Zertifikat
+      „Fachkosmetikerin", kein IHK- oder staatlich anerkannter Berufsabschluss.
+    </p>
+    <div class="hero-cta-row">
+      <a class={`cta-gold lightbox-${QUAL_ID}`} style="cursor:pointer;">
+        Jetzt informieren &amp; anmelden →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WARUM DIESE QUALIFIZIERUNG ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Hintergrund</span>
+      <h2 class="section-title">Warum diese <em>Qualifizierung</em>?</h2>
+      <p class="section-desc">
+        Ein erfolgreicher Einstieg in den Kosmetikberuf erfordert mehr als Begeisterung.
+        Fundierte Kenntnisse in Hygiene, sicherer Praxis und modernen Behandlungstechniken sind
+        die Voraussetzung, um Kund:innen professionell und verantwortungsbewusst zu versorgen.
+        Kurzschulungen ohne strukturierte Grundlage führen oft nicht zu nachhaltiger
+        beruflicher Integration.
+      </p>
+    </div>
+    <p class="section-desc">
+      Die berufliche Qualifizierung bei Christina Beauty School schließt diese Lücke: Mit 640 Unterrichtseinheiten
+      in 4 aufeinander aufbauenden Modulen erlernst du die zentralen Kosmetikdisziplinen praxisnah –
+      mit echten Modellen, strukturierter Theorie und direktem Bezug zum Arbeitsmarkt.
+      Das Ergebnis ist eine umfassende berufliche Qualifikation mit echter Handlungssicherheit.
+    </p>
+  </div>
+</section>
+
+<!-- ══ ECKDATEN ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Auf einen Blick</span>
+      <h2 class="section-title">Eckdaten der <em>Qualifizierung</em></h2>
+    </div>
+    <div class="eckdaten-grid">
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Umfang</div>
+        <div class="eckdaten-value">640 Unterrichtseinheiten (Vollzeit) in 4 Modulen à 160 UE</div>
+      </div>
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Unterrichtsform</div>
+        <div class="eckdaten-value">Hybrid – Präsenz an Modellen in der Akademie + Theorie via Live-Online (Zoom)</div>
+      </div>
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Nächster Beginn</div>
+        <div class="eckdaten-value">07. September 2026 bis 04. Dezember 2026</div>
+      </div>
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Zielgruppe</div>
+        <div class="eckdaten-value">Arbeitssuchende, auch ohne Vorkenntnisse im Kosmetikbereich</div>
+      </div>
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Förderung</div>
+        <div class="eckdaten-value">100 % förderfähig über Bildungsgutschein (Agentur für Arbeit / Jobcenter)</div>
+      </div>
+      <div class="eckdaten-item">
+        <div class="eckdaten-label">Abschluss</div>
+        <div class="eckdaten-value">Trägerinternes Zertifikat „Fachkosmetikerin" + Teilnahmebescheinigung</div>
+      </div>
+      <div class="eckdaten-item" style="grid-column:1/-1;">
+        <div class="eckdaten-label">Träger (AZAV-zertifiziert)</div>
+        <div class="eckdaten-value">Christina Beauty School · Christina Dentsa · Essen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DIE 4 MODULE ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Modulübersicht</span>
+      <h2 class="section-title">Die <em>4 Module</em> der Qualifizierung</h2>
+      <p class="section-desc">
+        Jedes Modul umfasst 160 Unterrichtseinheiten und ist einzeln oder als Gesamtmaßnahme buchbar.
+        Als Gesamtmaßnahme bauen die Module aufeinander auf.
+      </p>
+    </div>
+    <div class="module-grid">
+      <div class="module-card">
+        <div class="module-card-num">Modul 1</div>
+        <div class="module-card-title">Permanent Make-up</div>
+        <span class="module-card-ue">160 Unterrichtseinheiten</span>
+        <p class="module-card-desc">
+          Grundlegende und fortgeschrittene PMU-Techniken, Hygiene und Infektionsschutz,
+          Hautanalyse, Vorzeichnung und Gestaltungslehre, Praxis an echten Modellen.
+        </p>
+      </div>
+      <div class="module-card">
+        <div class="module-card-num">Modul 2</div>
+        <div class="module-card-title">Wimpernverlängerung</div>
+        <span class="module-card-ue">160 Unterrichtseinheiten</span>
+        <p class="module-card-desc">
+          Verlängerung und Verdichtung mit verschiedenen Techniken (Einzelhaar, Volumen),
+          Materialkunde, Hygieneprozesse, Praxis an Modellen.
+        </p>
+      </div>
+      <div class="module-card">
+        <div class="module-card-num">Modul 3</div>
+        <div class="module-card-title">Professionelle Gesichtsbehandlung</div>
+        <span class="module-card-ue">160 Unterrichtseinheiten</span>
+        <p class="module-card-desc">
+          Klassische und apparative Behandlungen, Hautanalyse, Wirkstoffkunde,
+          individuelle Behandlungsplanung, Praxis an Modellen.
+        </p>
+      </div>
+      <div class="module-card">
+        <div class="module-card-num">Modul 4</div>
+        <div class="module-card-title">Haarverlängerung</div>
+        <span class="module-card-ue">160 Unterrichtseinheiten</span>
+        <p class="module-card-desc">
+          Verlängerung und Verdichtung mit verschiedenen Bonding- und Klebe-Techniken,
+          Materialkunde und Qualitätsmerkmale, Praxis an Modellen.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ UNTERRICHTSFORM ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Wie wird gelernt?</span>
+      <h2 class="section-title">Unterrichtsform &amp; <em>Lernstruktur</em></h2>
+      <p class="section-desc">
+        Die Qualifizierung verbindet praxisnahen Präsenzunterricht mit ergänzendem Live-Online-Unterricht –
+        für einen optimalen Mix aus Hands-on-Erfahrung und strukturierter Theorie.
+      </p>
+    </div>
+    <ul class="prose-list">
+      <li>Präsenzunterricht in der Akademie von Christina Beauty School in Essen – Praxis an realen Modellen unter Aufsicht</li>
+      <li>Ergänzender Live-Online-Unterricht (Zoom) für Theorieinhalte – zeitflexibel und ortsunabhängig</li>
+      <li>Strukturierte Lernphasen mit klaren Modulzielen und Lernstandskontrollen</li>
+      <li>Bewerbungstraining zur Vorbereitung auf den Einstieg in den Arbeitsmarkt</li>
+      <li>Modellbehandlungen als zentrales Lernformat – jede Teilnehmerin behandelt echte Kund:innen unter Begleitung</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ ARBEITSMARKTBEZUG ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Berufsperspektive</span>
+      <h2 class="section-title">Deine Chancen auf dem <em>Arbeitsmarkt</em></h2>
+      <p class="section-desc">
+        Die Qualifizierung bereitet dich gezielt auf Tätigkeiten in der professionellen
+        Kosmetikbranche vor – mit dem klaren Ziel: direkter Einstieg in
+        sozialversicherungspflichtige Beschäftigung.
+      </p>
+    </div>
+    <ul class="prose-list">
+      <li>Kosmetikstudios und Beauty-Institute – als Fachkraft für PMU, Wimpern oder Gesichtsbehandlung</li>
+      <li>Beauty-Center mit apparativer Kosmetik – Einsatz moderner Behandlungsgeräte</li>
+      <li>Selbstständigkeit – als zertifizierte Fachkosmetikerin mit fundierter Grundlage</li>
+      <li>Mobile Beauty-Dienstleistungen – flexible Betreuung von Stammkund:innen</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ SO FUNKTIONIERT ES ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Nächste Schritte</span>
+      <h2 class="section-title">So funktioniert die Teilnahme mit <em>Bildungsgutschein</em></h2>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Als arbeitssuchend melden</div>
+          <p class="step-desc">Melde dich bei der Agentur für Arbeit oder deinem Jobcenter als arbeitssuchend. Das ist die Grundvoraussetzung für den Bildungsgutschein.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Bildungsgutschein (§81 SGB III) beantragen</div>
+          <p class="step-desc">Bitte deine Ansprechperson bei der Behörde um einen Bildungsgutschein nach §81 SGB III für die berufliche Qualifizierung zur Fachkosmetikerin.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Gutschein bei Christina Beauty School einreichen</div>
+          <p class="step-desc">Übermittle den bewilligten Gutschein an Christina Beauty School. Wir prüfen die Zulassungskriterien und bestätigen deinen Platz.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Start zum nächsten Termin</div>
+          <p class="step-desc">Nach Einreichen des Gutscheins startest du zum nächstmöglichen Beginn. Nächster Maßnahmenbeginn: <strong>07. September 2026</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Häufige Fragen</span>
+      <h2 class="section-title">Fragen zur <em>Qualifizierung</em></h2>
+    </div>
+    <div class="faq-list">
+      {faqItems.map(item => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p class="faq-answer">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ══ CLOSING CTA ══ -->
+<section class="section closing-cta">
+  <div class="w">
+    <span class="section-eye">Jetzt starten</span>
+    <h2 class="section-title">Bereit für deine <em>Karriere</em> in der Kosmetik?</h2>
+    <p class="section-desc">
+      Nächster Beginn: 07. September 2026. Sichere dir jetzt deinen Platz – kostenlos
+      über Bildungsgutschein.
+    </p>
+    <a class={`cta-gold lightbox-${QUAL_ID}`} style="cursor:pointer;margin-top:36px;">
+      Infos &amp; Anmeldung zur Qualifizierung →
+    </a>
+  </div>
+</section>
+
+</main>
+
+<SiteFooter variant="full" activeCity="essen" />
+
+<script src="https://cdn.jotfor.ms/s/static/latest/static/feedback2.js" type="text/javascript" is:inline></script>
+<script type="text/javascript" is:inline>
+  (function () {
+    var QUAL_ID = '261074759721462';
+    function initQualForm() {
+      new JotformFeedback({
+        formId: QUAL_ID,
+        base: 'https://form.jotform.com/',
+        windowTitle: 'Anmeldung zur Fachkosmetikerin-Qualifizierung',
+        backgroundColor: '#ffffff',
+        fontColor: '#ffffff',
+        type: '0',
+        height: 600,
+        width: 700,
+        openOnLoad: false
+      });
+    }
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initQualForm);
+    } else {
+      initQualForm();
+    }
+  })();
+</script>
+
+</SEOLayout>
