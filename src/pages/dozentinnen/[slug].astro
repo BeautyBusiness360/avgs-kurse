@@ -1045,12 +1045,14 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
     </div>
 
-    <div class="section-cta section-cta--about">
-      {hasForm
-        ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
-        : <a href="#anmeldung" class="cta-gold">Unterlagen erhalten</a>
-      }
-    </div>
+    {!isChristina && (
+      <div class="section-cta section-cta--about">
+        {hasForm
+          ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
+          : <a href="#anmeldung" class="cta-gold">Unterlagen erhalten</a>
+        }
+      </div>
+    )}
   </div>
 </section>
 
