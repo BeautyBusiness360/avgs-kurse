@@ -327,6 +327,50 @@ body {
   max-width:760px;
 }
 
+/* ── Carousel / Gallery ── */
+.carousel-wrap { position:relative; }
+.carousel-track {
+  display:flex; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none;
+}
+.carousel-track::-webkit-scrollbar { display:none; }
+.carousel-slide {
+  flex:0 0 calc((100% - 32px) / 3);
+  scroll-snap-align:start; border-radius:var(--radius); overflow:hidden;
+}
+.carousel-slide img {
+  width:100%; aspect-ratio:1; object-fit:cover; display:block;
+  transition:transform .6s ease;
+}
+.carousel-slide:hover img { transform:scale(1.05); }
+.carousel-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px; height:40px; border-radius:50%;
+  background:var(--white); border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  cursor:pointer; font-size:18px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2; transition:box-shadow .2s;
+}
+.carousel-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,.15); }
+.carousel-prev { left:-20px; }
+.carousel-next { right:-20px; }
+.carousel-dots {
+  display:none; justify-content:center; gap:8px; margin-top:16px;
+}
+.carousel-dot {
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--muted); background:transparent;
+  transition:background .2s, border-color .2s; cursor:pointer; padding:0;
+}
+.carousel-dot.active { background:var(--gold); border-color:var(--gold); }
+@media(max-width:640px){
+  .carousel-slide { flex:0 0 100%; }
+  .carousel-btn { display:none; }
+  .carousel-dots { display:flex; }
+}
+
 /* ── Closing CTA ── */
 .closing-cta {
   text-align:center;
@@ -566,6 +610,50 @@ body {
   </div>
 </section>
 
+<!-- ══ GALERIE ══ -->
+<section class="section">
+  <div class="w">
+    <div class="section-header">
+      <span class="section-eye">Einblicke &amp; Ergebnisse</span>
+      <h2 class="section-title">Eindrücke aus der Akademie von<br /><em>Christina Dentsa</em> in Essen</h2>
+      <p class="section-desc">
+        Echte Eindrücke aus Unterricht, Modellarbeit und von Absolventinnen der Christina Beauty School.
+      </p>
+    </div>
+    <div class="carousel-wrap">
+      <button class="carousel-btn carousel-prev" aria-label="Vorheriges Bild">&#8592;</button>
+      <div class="carousel-track" id="gallery-track">
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-1.webp"
+               alt="Christina Dentsa – PMU Augenbrauen Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-2.webp"
+               alt="Christina Dentsa – PMU Augenbrauen Ergebnis Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-lippen-essen-3.webp"
+               alt="Christina Dentsa – PMU Lippen Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-lippen-essen-4.webp"
+               alt="Christina Dentsa – PMU Lippen Ergebnis Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-wimpernverlaengerung-essen-5.webp"
+               alt="Christina Dentsa – Wimpernverlängerung Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+        <div class="carousel-slide">
+          <img src="/images/dozentinnen/christina-dentsa/christina-dentsa-wimpernverlaengerung-essen-6.webp"
+               alt="Christina Dentsa – Wimpernverlängerung Volumen Essen" width="360" height="360" loading="lazy" decoding="async" />
+        </div>
+      </div>
+      <button class="carousel-btn carousel-next" aria-label="Nächstes Bild">&#8594;</button>
+      <div class="carousel-dots" id="gallery-dots" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ══ FAQ ══ -->
 <section class="section">
   <div class="w">
@@ -602,6 +690,36 @@ body {
 </main>
 
 <SiteFooter variant="full" activeCity="essen" />
+
+<script is:inline>
+  (function () {
+    var track = document.getElementById('gallery-track');
+    var dotsWrap = document.getElementById('gallery-dots');
+    if (!track) return;
+    var prev = track.closest('.carousel-wrap').querySelector('.carousel-prev');
+    var next = track.closest('.carousel-wrap').querySelector('.carousel-next');
+    var slides = Array.from(track.querySelectorAll('.carousel-slide'));
+    var step = function () { return (slides[0] ? slides[0].offsetWidth : 0) + 16; };
+
+    var dots = slides.map(function (_, i) {
+      var d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Bild ' + (i + 1));
+      d.addEventListener('click', function () { track.scrollTo({ left: step() * i, behavior: 'smooth' }); });
+      if (dotsWrap) dotsWrap.appendChild(d);
+      return d;
+    });
+
+    var updateDots = function () {
+      var idx = Math.round(track.scrollLeft / (step() || 1));
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
+    };
+
+    track.addEventListener('scroll', updateDots, { passive: true });
+    if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step() * 3, behavior: 'smooth' }); });
+    if (next) next.addEventListener('click', function () { track.scrollBy({ left:  step() * 3, behavior: 'smooth' }); });
+  })();
+</script>
 
 <script src="https://cdn.jotfor.ms/s/static/latest/static/feedback2.js" type="text/javascript" is:inline></script>
 <script type="text/javascript" is:inline>
