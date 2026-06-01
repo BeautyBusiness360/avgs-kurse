@@ -12,12 +12,12 @@ const { name, standort, fachgebiete = [] } = Astro.props;
   <span class="doz-info-name">{name}</span>
   {standort && (
     <div class="doz-info-meta">
-      <strong>Standort:</strong> {standort}
+      <span class="doz-label">Standort:</span> {standort}
     </div>
   )}
   {fachgebiete.length > 0 && (
     <div class="doz-info-meta">
-      <strong>Expertin:</strong> {fachgebiete.join(', ')}
+      <span class="doz-label">Fachgebiet:</span> {fachgebiete.join(', ')}
     </div>
   )}
 </div>
@@ -41,7 +41,7 @@ const { name, standort, fachgebiete = [] } = Astro.props;
   color: var(--muted, #555250);
   line-height: 1.65;
 }
-.doz-info-meta strong {
+.doz-label {
   color: var(--black, #111111);
   font-weight: 500;
 }
