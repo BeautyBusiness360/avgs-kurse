@@ -147,6 +147,27 @@ const poolVars = { name: fullName, stadt: displayCityName, service: primaryServi
 const faqItems = getDozentinFaqs(dozentin.slug, poolVars, 7);
 const poolBio  = getDozentinBio(dozentin.slug, poolVars);
 
+const isChristina = dozentin.slug === 'christina-dentsa-essen';
+
+const christinaQualFaqs = isChristina ? [
+  {
+    frage: 'Brauche ich Vorkenntnisse für die berufliche Qualifizierung zur Fachkosmetikerin?',
+    antwort: 'Nein. Die berufliche Qualifizierung bei Christina Beauty School richtet sich ausdrücklich an Einsteiger:innen ohne Vorkenntnisse. Voraussetzung ist lediglich ein Schulabschluss sowie der Bezug von Leistungen der Agentur für Arbeit oder des Jobcenters (Bildungsgutschein nach §81 SGB III).',
+  },
+  {
+    frage: 'Was kostet die Qualifizierung zur Fachkosmetikerin?',
+    antwort: 'Bei Bewilligung eines Bildungsgutscheins (§81 SGB III) durch die Agentur für Arbeit oder das Jobcenter ist die Qualifizierung vollständig kostenfrei. Der Bildungsgutschein übernimmt 100 % der Lehrgangsgebühren – ohne Eigenanteil.',
+  },
+  {
+    frage: 'Wie läuft der Antrag auf den Bildungsgutschein ab?',
+    antwort: 'Der Ablauf ist überschaubar: 1. Als arbeitssuchend bei der Agentur für Arbeit oder dem Jobcenter melden. 2. Bildungsgutschein (§81 SGB III) beantragen. 3. Gutschein bei Christina Beauty School einreichen. 4. Start zum nächstmöglichen Termin – nächster Beginn: 07.09.2026.',
+  },
+  {
+    frage: 'Welchen Abschluss erhalte ich nach der Qualifizierung?',
+    antwort: 'Nach erfolgreichem Abschluss aller 4 Module (640 Unterrichtseinheiten) erhältst du ein trägerinternes Zertifikat „Fachkosmetikerin" sowie eine Teilnahmebescheinigung von Christina Beauty School. Es handelt sich um eine anerkannte berufliche Weiterbildung – keinen staatlich anerkannten Berufsabschluss.',
+  },
+] : [];
+
 const seo = {
   title:
     foerderbar
@@ -773,6 +794,71 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 }
 .footer-seo-links a:hover { color: var(--gold, #C8962E); }
 .hero-rating { margin-top: 14px; }
+
+/* ─── CHRISTINA: PERFEKTIONSTRAINING TRACK NOTE ─ */
+.pt-track-note {
+  margin-bottom:32px;
+  padding:16px 20px;
+  background:var(--gold-bg); border:1px solid #E8D9C4; border-radius:var(--radius);
+}
+.pt-track-badge {
+  display:inline-block;
+  font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--gold); border:1px solid var(--gold);
+  border-radius:var(--radius); padding:4px 10px; margin-bottom:10px;
+}
+.pt-track-desc { font-size:14px; color:var(--muted); line-height:1.7; margin-bottom:8px; }
+.pt-track-route { font-size:13px; color:var(--muted); }
+.pt-track-route a { color:var(--gold); text-decoration:underline; text-underline-offset:2px; }
+
+/* ─── CHRISTINA: FACHKOSMETIKERIN SEKTION ─ */
+.fachkos-badge {
+  display:inline-block;
+  font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:#1A5E3A; background:#E6F4EC; border:1px solid #A8D5B5;
+  border-radius:var(--radius); padding:5px 12px; margin-bottom:12px;
+}
+.fachkos-eye { font-size:13px; font-weight:500; color:var(--muted); margin-bottom:16px; display:block; }
+.fachkos-inner { display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start; }
+@media(max-width:767px){ .fachkos-inner { grid-template-columns:1fr; gap:28px; } }
+.fachkos-img-wrap { border-radius:var(--radius); overflow:hidden; aspect-ratio:1; background:var(--cream-d); }
+.fachkos-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.fachkos-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+.fachkos-list li { font-size:15px; color:var(--muted); line-height:1.6; padding-left:20px; position:relative; }
+.fachkos-list li::before { content:'◆'; position:absolute; left:0; color:var(--gold); font-size:9px; top:5px; }
+.fachkos-steps {
+  margin-bottom:28px;
+  padding:20px; background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
+}
+.fachkos-steps-title {
+  font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px; display:block;
+}
+.fachkos-steps ol { list-style:none; display:flex; flex-direction:column; gap:10px; counter-reset:fksteps; }
+.fachkos-steps li {
+  font-size:14px; color:var(--muted); line-height:1.6;
+  padding-left:30px; position:relative; counter-increment:fksteps;
+}
+.fachkos-steps li::before {
+  content:counter(fksteps);
+  position:absolute; left:0; top:1px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--gold); color:var(--white);
+  font-size:11px; font-weight:700; text-align:center; line-height:20px;
+}
+.fachkos-routing { margin-top:16px; font-size:13px; color:var(--muted); }
+.fachkos-routing a { color:var(--gold); text-decoration:underline; text-underline-offset:2px; }
+
+/* ─── CHRISTINA: FAQ-GRUPPEN ─ */
+.faq-group-label {
+  font-size:10px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold);
+  border-top:1px solid var(--border); padding:22px 0 10px; margin-top:4px;
+}
+.faq-group-label:first-child { border-top:none; padding-top:0; margin-top:0; }
+.faq-group-label + .faq-item { border-top:1px solid var(--border); }
 </style>
 
 
@@ -882,6 +968,14 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
           {moduleIntroText}
         </p>
       </div>
+
+      {isChristina && (
+        <div class="pt-track-note">
+          <span class="pt-track-badge">Für erfahrene Fachkräfte mit Vorkenntnissen · AVGS</span>
+          <p class="pt-track-desc">Diese Perfektionstrainings setzen praktische Vorerfahrung in PMU, Microblading oder Wimpernverlängerung voraus. Förderung über AVGS (Aktivierungs- und Vermittlungsgutschein der Agentur für Arbeit).</p>
+          <p class="pt-track-route">Einsteiger:in ohne Vorkenntnisse? → <a href="#fachkosmetikerin">Zur beruflichen Qualifizierung zur Fachkosmetikerin</a></p>
+        </div>
+      )}
 
       <div class="module-grid">
         {services.map((s: any) => {
@@ -1100,6 +1194,72 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
+     CHRISTINA: FACHKOSMETIKERIN-QUALIFIZIERUNG
+══════════════════════════════════ -->
+{isChristina && (
+  <section class="section" id="fachkosmetikerin" style="border-bottom:none;padding-bottom:0;">
+    <div class="w">
+      <div class="section-header" style="text-align:left;margin-bottom:36px;">
+        <span class="fachkos-badge">Für Einsteiger:innen · Bildungsgutschein</span>
+        <span class="fachkos-eye">Geförderte berufliche Weiterbildung nach §81 SGB III</span>
+        <h2 class="section-title">
+          Berufliche Qualifizierung zur <em>Fachkosmetikerin</em>
+        </h2>
+        <p class="section-desc" style="max-width:none;margin:0;text-align:left;">
+          Christina Dentsa bietet neben den AVGS-Perfektionstrainings für Erfahrene auch eine
+          vollständige berufliche Qualifizierung zur Fachkosmetikerin an – gefördert über den
+          Bildungsgutschein nach §81 SGB III, auch ohne Vorkenntnisse.
+        </p>
+      </div>
+
+      <div class="fachkos-inner">
+        <div class="fachkos-img-wrap">
+          <img
+            src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-2.webp"
+            alt="Christina Dentsa – Berufliche Qualifizierung Fachkosmetikerin Essen"
+            width="400" height="400"
+            loading="lazy" decoding="async"
+          />
+        </div>
+        <div>
+          <ul class="fachkos-list">
+            <li>640 UE (Vollzeit) in 4 Modulen à 160 UE</li>
+            <li>Module: Permanent Make-up · Wimpernverlängerung · Professionelle Gesichtsbehandlung · Haarverlängerung (einzeln oder als Gesamtmaßnahme buchbar)</li>
+            <li>Unterrichtsform: Hybrid – Präsenz an Modellen + Theorie via Live-Online</li>
+            <li>Beginn 07.09.2026 – 04.12.2026</li>
+            <li>Zielgruppe: Arbeitssuchende, auch ohne Vorkenntnisse</li>
+            <li>100 % förderfähig über Bildungsgutschein (Agentur für Arbeit / Jobcenter)</li>
+            <li>Abschluss: trägerinternes Zertifikat „Fachkosmetikerin" + Teilnahmebescheinigung</li>
+            <li>Träger (AZAV): Christina Beauty School (Christina Dentsa)</li>
+          </ul>
+
+          <div class="fachkos-steps">
+            <span class="fachkos-steps-title">So kommst du rein</span>
+            <ol>
+              <li>Als arbeitssuchend bei der Agentur für Arbeit oder dem Jobcenter melden</li>
+              <li>Bildungsgutschein (§81 SGB III) beantragen</li>
+              <li>Gutschein bei Christina Beauty School einreichen</li>
+              <li>Start zum nächstmöglichen Termin – nächster Beginn: 07.09.2026</li>
+            </ol>
+          </div>
+
+          <a
+            href="https://form.jotform.com/261074759721462"
+            class="cta-gold"
+            target="_blank" rel="noopener"
+          >Infos &amp; Anmeldung zur Qualifizierung →</a>
+          <p class="fachkos-routing">
+            Erfahrene Fachkraft mit PMU- / Microblading- / Wimpern-Vorkenntnissen?
+            → <a href="#module">Zu den AVGS-Perfektionstrainings</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+
+<!-- ══════════════════════════════════
      FAQ
 ══════════════════════════════════ -->
 <section class="faq-section" id="faq">
@@ -1110,7 +1270,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
         <span class="faq-sticky-eye">Häufige Fragen</span>
         <h2 class="faq-sticky-title">
           Alles, was du über<br />
-          <em>deine Ausbildung</em><br />
+          <em>deine Weiterbildung</em><br />
           wissen möchtest.
         </h2>
         <p class="faq-sticky-desc">
@@ -1122,17 +1282,46 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
       <div class="faq-list">
 
-        {faqItems.map((item) => (
-          <details class="faq-item">
-            <summary class="faq-summary">
-              {item.frage}
-              <span class="faq-icon">+</span>
-            </summary>
-            <div class="faq-answer">
-              <p>{item.antwort}</p>
-            </div>
-          </details>
-        ))}
+        {isChristina ? (
+          <>
+            <p class="faq-group-label">Qualifizierung zur Fachkosmetikerin – Einsteiger · Bildungsgutschein</p>
+            {christinaQualFaqs.map((item) => (
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  {item.frage}
+                  <span class="faq-icon">+</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>{item.antwort}</p>
+                </div>
+              </details>
+            ))}
+            <p class="faq-group-label">Perfektionstrainings – AVGS · Erfahrene Fachkräfte</p>
+            {faqItems.map((item) => (
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  {item.frage}
+                  <span class="faq-icon">+</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>{item.antwort}</p>
+                </div>
+              </details>
+            ))}
+          </>
+        ) : (
+          faqItems.map((item) => (
+            <details class="faq-item">
+              <summary class="faq-summary">
+                {item.frage}
+                <span class="faq-icon">+</span>
+              </summary>
+              <div class="faq-answer">
+                <p>{item.antwort}</p>
+              </div>
+            </details>
+          ))
+        )}
 
       </div>
     </div>
@@ -1286,6 +1475,25 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       })();
     </script>
   </Fragment>
+)}
+
+{isChristina && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      ...christinaQualFaqs.map((f: { frage: string; antwort: string }) => ({
+        "@type": "Question",
+        "name": f.frage,
+        "acceptedAnswer": { "@type": "Answer", "text": f.antwort }
+      })),
+      ...faqItems.map((f: { frage: string; antwort: string }) => ({
+        "@type": "Question",
+        "name": f.frage,
+        "acceptedAnswer": { "@type": "Answer", "text": f.antwort }
+      }))
+    ]
+  })} />
 )}
 
 </SEOLayout>
