@@ -2,8 +2,44 @@
 import SEOLayout from '../layouts/SEOLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { supabase } from '../lib/supabase';
+import { SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../data/location-overrides';
 
 export const prerender = true;
+
+const { data: dozentinnen } = await supabase
+  .from('dozentinnen')
+  .select(`slug, cities(slug), dozentin_services(services(slug, name, avgs_eligible))`)
+  .eq('active', true);
+
+// Build valid city+service combos (same logic as [serviceSlug].astro)
+const seenPages  = new Set<string>();
+const seenSvc    = new Set<string>();
+const allPages: Array<{ href: string; label: string }> = [];
+
+for (const d of dozentinnen ?? []) {
+  const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+  if (!city?.slug) continue;
+  const citySlug = HUB_CITY_SLUG[d.slug] ?? city.slug;
+  const dsRows   = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
+  for (const ds of dsRows) {
+    const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+    if (!svc?.slug || !svc?.avgs_eligible) continue;
+    const key = `${citySlug}__${svc.slug}`;
+    if (!seenPages.has(key)) {
+      seenPages.add(key);
+      allPages.push({ href: `/${citySlug}/${svc.slug}/`, label: SERVICE_DISPLAY_NAME[svc.slug] ?? svc.name });
+    }
+  }
+}
+
+// One link per service type (first city found wins)
+const moduleLinks = allPages.filter(l => {
+  const slug = l.href.split('/')[2];
+  if (seenSvc.has(slug)) return false;
+  seenSvc.add(slug);
+  return true;
+});
 ---
 
 <SEOLayout
@@ -145,11 +181,9 @@ body { background:var(--black); color:var(--white); font-family:var(--sans); -we
         <span class="links-col-eye">MasterClasses</span>
         <h3 class="links-col-h3">Unsere Trainings</h3>
         <ul class="links-list">
-          <li><a href="/berlin/powderbrows-ombrebrows-masterclass/">PowderBrows &amp; OmbreBrows MasterClass</a></li>
-          <li><a href="/berlin/velvet-lips-lipstick-masterclass/">Velvet Lips &amp; LipStick Effekt MasterClass</a></li>
-          <li><a href="/berlin/microblading-masterclass/">Microblading MasterClass</a></li>
-          <li><a href="/berlin/wimpernverlaengerung-masterclass/">Wimpernverlängerung MasterClass</a></li>
-          <li><a href="/berlin/camouflage-removal-masterclass/">Camouflage &amp; Tattoo Removal MasterClass</a></li>
+          {moduleLinks.map(l => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
         </ul>
       </div>
 

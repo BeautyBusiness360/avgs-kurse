@@ -71,11 +71,14 @@ function run() {
   const allUrls = new Set(pages.keys());
   for (const { to, valid } of edges) if (!valid) allUrls.add(to);
 
+  // Pages that intentionally have no incoming internal links
+  const ORPHAN_EXCLUSIONS = new Set(['/', '/404/', '/link-graph/']);
+
   const nodes = Array.from(allUrls).map(url => ({
     url,
     type: classify(url),
     incoming: incoming.get(url) ?? 0,
-    isOrphan: (incoming.get(url) ?? 0) === 0 && url !== '/',
+    isOrphan: (incoming.get(url) ?? 0) === 0 && !ORPHAN_EXCLUSIONS.has(url),
     exists: pages.has(url),
   }));
 
