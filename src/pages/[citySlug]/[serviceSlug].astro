@@ -88,16 +88,21 @@ export async function getStaticPaths() {
     }
   }
 
-  const paths = Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => ({
-    params: { citySlug: city.slug, serviceSlug: service.slug },
-    props:  { city, service, dozentinnen }
-  }));
+  const paths = Array.from(pageMap.values()).map(({ city, service, dozentinnen }) => {
+    const siblingServices = Array.from(pageMap.values())
+      .filter(e => e.city.slug === city.slug && e.service.slug !== service.slug)
+      .map(e => ({ slug: e.service.slug, name: e.service.name }));
+    return {
+      params: { citySlug: city.slug, serviceSlug: service.slug },
+      props:  { city, service, dozentinnen, siblingServices }
+    };
+  });
 
   console.log(`[city-service] ${paths.length} Seiten werden gebaut`);
   return paths;
 }
 
-const { city, service, dozentinnen } = Astro.props;
+const { city, service, dozentinnen, siblingServices } = Astro.props;
 const displayServiceName = SERVICE_DISPLAY_NAME[service.slug] ?? service.name;
 
 // ── Modul-Bild ────────────────────────────────────────────────────────────────
@@ -762,7 +767,13 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 </main>
 
 
-<SiteFooter variant="full" activeCity={city.slug} />
+<SiteFooter
+  variant="full"
+  activeCity={city.slug}
+  siblingCityLabel={city.name}
+  siblingCitySlug={city.slug}
+  siblingServices={siblingServices}
+/>
 
 <script>
   const track = document.getElementById('gallery-track') as HTMLElement | null;

@@ -1,10 +1,16 @@
 ---
+import { SERVICE_DISPLAY_NAME } from '../data/location-overrides';
+
 interface Props {
   variant?: 'full' | 'lean';
   activeCity?: string;
+  siblingCityLabel?: string;
+  siblingCitySlug?: string;
+  siblingServices?: Array<{ slug: string; name: string }>;
 }
 
-const { variant = 'full', activeCity } = Astro.props;
+const { variant = 'full', activeCity, siblingCityLabel, siblingCitySlug, siblingServices } = Astro.props;
+const hasSiblings = siblingServices && siblingServices.length > 0;
 
 const cities = [
   { slug: 'berlin',  name: 'Berlin' },
@@ -89,6 +95,19 @@ const cities = [
       </div>
 
     </div>
+
+    {hasSiblings && (
+      <nav class="sf-siblings" aria-label={`Weitere Kurse in ${siblingCityLabel}`}>
+        <span class="sf-col-title">Weitere Kosmetikkurse in {siblingCityLabel}</span>
+        <div class="sf-sibling-links">
+          {siblingServices!.map(s => (
+            <a href={`/${siblingCitySlug}/${s.slug}/`} class="sf-link">
+              {SERVICE_DISPLAY_NAME[s.slug] ?? s.name}
+            </a>
+          ))}
+        </div>
+      </nav>
+    )}
 
     <div class="sf-divider"></div>
 
@@ -205,7 +224,19 @@ const cities = [
 .sf-link--cta { color: #C8962E !important; }
 .sf-link--cta:hover { color: #D4AF7A !important; text-decoration: underline; }
 
-.sf-divider { margin-top: 52px; border-top: 1px solid rgba(255,255,255,.06); }
+.sf-siblings {
+  padding: 28px 0 0;
+  margin-top: 36px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.sf-siblings .sf-col-title { margin-bottom: 12px; }
+.sf-sibling-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.sf-divider { margin-top: 28px; border-top: 1px solid rgba(255,255,255,.06); }
 
 /* ── bottom bar ──────────────────────────────────────────────── */
 .sf--full .sf-bottom {
