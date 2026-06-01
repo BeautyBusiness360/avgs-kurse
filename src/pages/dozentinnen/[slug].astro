@@ -951,6 +951,159 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <!-- ══════════════════════════════════
+     DOZENTIN / TRUST
+══════════════════════════════════ -->
+<section class="section trust-top section--about" style="border-bottom:none;padding-bottom:0;">
+  <div class="w">
+    <div class="trust-grid">
+
+      <div>
+        <span class="section-eye" style="display:block;margin-bottom:24px;">
+          Über die Dozentin
+        </span>
+        <div class="trust-quote-wrap">
+          <blockquote class="trust-quote">
+            {hasBio ? dozentin.bio_short : poolBio}
+          </blockquote>
+        </div>
+        <p class="trust-bio-text">
+          {foerderbar
+            ? `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Ihre Ausbildungen finden als intensives Einzelcoaching statt und sind vollständig über die Agentur für Arbeit förderbar.`
+            : `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Sie bietet exklusive Fachschulungen als intensives Einzelcoaching – individuell, professionell und auf höchstem Niveau.`
+          }
+        </p>
+      </div>
+
+      <div class="trust-facts">
+        <div class="tf-row">
+          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+          <div>
+            <span class="tf-label">Standort</span>
+            <span class="tf-val">{displayCityName}</span>
+            {profileAddress && (
+              <span class="tf-address">{profileAddress}</span>
+            )}
+          </div>
+        </div>
+        <div class="tf-row">
+          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+          <div>
+            <span class="tf-label">Unterrichtsform</span>
+            <span class="tf-val">Hybridunterricht · Präsenz &amp; Online</span>
+          </div>
+        </div>
+        {foerderbar ? (
+          <div class="tf-row">
+            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+            <div>
+              <span class="tf-label">Förderung</span>
+              <span class="tf-val">100&thinsp;% AVGS · Kostenlos bei Bewilligung</span>
+            </div>
+          </div>
+        ) : (
+          <div class="tf-row">
+            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+            <div>
+              <span class="tf-label">Kursart</span>
+              <span class="tf-val">Exklusiver Privatkurs · Selbstzahler</span>
+            </div>
+          </div>
+        )}
+        <div class="tf-row">
+          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+          <div>
+            <span class="tf-label">Zertifizierung</span>
+            <span class="tf-val">Staatlich anerkannt · AZAV-zertifiziert</span>
+          </div>
+        </div>
+        <div class="tf-row">
+          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
+          <div>
+            <span class="tf-label">Kursbeginn</span>
+            <span class="tf-val">Ab sofort · Termine nach Vereinbarung</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-cta section-cta--about">
+      {hasForm
+        ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
+        : <a href="#anmeldung" class="cta-gold">Unterlagen erhalten</a>
+      }
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     CHRISTINA: FACHKOSMETIKERIN-QUALIFIZIERUNG
+══════════════════════════════════ -->
+{isChristina && (
+  <section class="section" id="fachkosmetikerin" style="border-bottom:none;padding-bottom:0;">
+    <div class="w">
+      <div class="section-header" style="text-align:left;margin-bottom:36px;">
+        <span class="fachkos-badge">Für Einsteiger:innen · Bildungsgutschein</span>
+        <span class="fachkos-eye">Geförderte berufliche Weiterbildung nach §81 SGB III</span>
+        <h2 class="section-title">
+          Berufliche Qualifizierung zur <em>Fachkosmetikerin</em>
+        </h2>
+        <p class="section-desc" style="max-width:none;margin:0;text-align:left;">
+          Christina Dentsa bietet neben den AVGS-Perfektionstrainings für Erfahrene auch eine
+          vollständige berufliche Qualifizierung zur Fachkosmetikerin an – gefördert über den
+          Bildungsgutschein nach §81 SGB III, auch ohne Vorkenntnisse.
+        </p>
+      </div>
+
+      <div class="fachkos-inner">
+        <div class="fachkos-img-wrap">
+          <img
+            src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-2.webp"
+            alt="Christina Dentsa – Berufliche Qualifizierung Fachkosmetikerin Essen"
+            width="400" height="400"
+            loading="lazy" decoding="async"
+          />
+        </div>
+        <div>
+          <ul class="fachkos-list">
+            <li>640 UE (Vollzeit) in 4 Modulen à 160 UE</li>
+            <li>Module: Permanent Make-up · Wimpernverlängerung · Professionelle Gesichtsbehandlung · Haarverlängerung (einzeln oder als Gesamtmaßnahme buchbar)</li>
+            <li>Unterrichtsform: Hybrid – Präsenz an Modellen + Theorie via Live-Online</li>
+            <li>Beginn 07.09.2026 – 04.12.2026</li>
+            <li>Zielgruppe: Arbeitssuchende, auch ohne Vorkenntnisse</li>
+            <li>100 % förderfähig über Bildungsgutschein (Agentur für Arbeit / Jobcenter)</li>
+            <li>Abschluss: trägerinternes Zertifikat „Fachkosmetikerin" + Teilnahmebescheinigung</li>
+            <li>Träger (AZAV): Christina Beauty School (Christina Dentsa)</li>
+          </ul>
+
+          <div class="fachkos-steps">
+            <span class="fachkos-steps-title">So kommst du rein</span>
+            <ol>
+              <li>Als arbeitssuchend bei der Agentur für Arbeit oder dem Jobcenter melden</li>
+              <li>Bildungsgutschein (§81 SGB III) beantragen</li>
+              <li>Gutschein bei Christina Beauty School einreichen</li>
+              <li>Start zum nächstmöglichen Termin – nächster Beginn: 07.09.2026</li>
+            </ol>
+          </div>
+
+          <a
+            href="https://form.jotform.com/261074759721462"
+            class="cta-gold"
+            target="_blank" rel="noopener"
+          >Infos &amp; Anmeldung zur Qualifizierung →</a>
+          <p class="fachkos-routing">
+            Erfahrene Fachkraft mit PMU- / Microblading- / Wimpern-Vorkenntnissen?
+            → <a href="#module">Zu den AVGS-Perfektionstrainings</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+
+<!-- ══════════════════════════════════
      MODUL-SEKTION
 ══════════════════════════════════ -->
 {hasServices && (
@@ -1104,159 +1257,6 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
   </div>
 </section>
-
-
-<!-- ══════════════════════════════════
-     DOZENTIN / TRUST
-══════════════════════════════════ -->
-<section class="section trust-top section--about" style="border-bottom:none;padding-bottom:0;">
-  <div class="w">
-    <div class="trust-grid">
-
-      <div>
-        <span class="section-eye" style="display:block;margin-bottom:24px;">
-          Über die Dozentin
-        </span>
-        <div class="trust-quote-wrap">
-          <blockquote class="trust-quote">
-            {hasBio ? dozentin.bio_short : poolBio}
-          </blockquote>
-        </div>
-        <p class="trust-bio-text">
-          {foerderbar
-            ? `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Ihre Ausbildungen finden als intensives Einzelcoaching statt und sind vollständig über die Agentur für Arbeit förderbar.`
-            : `${fullName} ist zertifizierte Fachdozentin in ${displayCityName}. Sie bietet exklusive Fachschulungen als intensives Einzelcoaching – individuell, professionell und auf höchstem Niveau.`
-          }
-        </p>
-      </div>
-
-      <div class="trust-facts">
-        <div class="tf-row">
-          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-          <div>
-            <span class="tf-label">Standort</span>
-            <span class="tf-val">{displayCityName}</span>
-            {profileAddress && (
-              <span class="tf-address">{profileAddress}</span>
-            )}
-          </div>
-        </div>
-        <div class="tf-row">
-          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-          <div>
-            <span class="tf-label">Unterrichtsform</span>
-            <span class="tf-val">Hybridunterricht · Präsenz &amp; Online</span>
-          </div>
-        </div>
-        {foerderbar ? (
-          <div class="tf-row">
-            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-            <div>
-              <span class="tf-label">Förderung</span>
-              <span class="tf-val">100&thinsp;% AVGS · Kostenlos bei Bewilligung</span>
-            </div>
-          </div>
-        ) : (
-          <div class="tf-row">
-            <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-            <div>
-              <span class="tf-label">Kursart</span>
-              <span class="tf-val">Exklusiver Privatkurs · Selbstzahler</span>
-            </div>
-          </div>
-        )}
-        <div class="tf-row">
-          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-          <div>
-            <span class="tf-label">Zertifizierung</span>
-            <span class="tf-val">Staatlich anerkannt · AZAV-zertifiziert</span>
-          </div>
-        </div>
-        <div class="tf-row">
-          <span class="tf-icon"><span class="gold-star"><svg viewBox="0 0 24 24"><path fill="url(#goldGrad)" d="M12 0l2.4 7.6L22 10l-7.6 2.4L12 24l-2.4-11.6L2 10l7.6-2.4z"/></svg></span></span>
-          <div>
-            <span class="tf-label">Kursbeginn</span>
-            <span class="tf-val">Ab sofort · Termine nach Vereinbarung</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="section-cta section-cta--about">
-      {hasForm
-        ? <a class={`cta-gold lightbox-${dozentin.jotform_id}`} style="cursor:pointer;">Unterlagen erhalten</a>
-        : <a href="#anmeldung" class="cta-gold">Unterlagen erhalten</a>
-      }
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     CHRISTINA: FACHKOSMETIKERIN-QUALIFIZIERUNG
-══════════════════════════════════ -->
-{isChristina && (
-  <section class="section" id="fachkosmetikerin" style="border-bottom:none;padding-bottom:0;">
-    <div class="w">
-      <div class="section-header" style="text-align:left;margin-bottom:36px;">
-        <span class="fachkos-badge">Für Einsteiger:innen · Bildungsgutschein</span>
-        <span class="fachkos-eye">Geförderte berufliche Weiterbildung nach §81 SGB III</span>
-        <h2 class="section-title">
-          Berufliche Qualifizierung zur <em>Fachkosmetikerin</em>
-        </h2>
-        <p class="section-desc" style="max-width:none;margin:0;text-align:left;">
-          Christina Dentsa bietet neben den AVGS-Perfektionstrainings für Erfahrene auch eine
-          vollständige berufliche Qualifizierung zur Fachkosmetikerin an – gefördert über den
-          Bildungsgutschein nach §81 SGB III, auch ohne Vorkenntnisse.
-        </p>
-      </div>
-
-      <div class="fachkos-inner">
-        <div class="fachkos-img-wrap">
-          <img
-            src="/images/dozentinnen/christina-dentsa/christina-dentsa-pmu-augenbrauen-essen-2.webp"
-            alt="Christina Dentsa – Berufliche Qualifizierung Fachkosmetikerin Essen"
-            width="400" height="400"
-            loading="lazy" decoding="async"
-          />
-        </div>
-        <div>
-          <ul class="fachkos-list">
-            <li>640 UE (Vollzeit) in 4 Modulen à 160 UE</li>
-            <li>Module: Permanent Make-up · Wimpernverlängerung · Professionelle Gesichtsbehandlung · Haarverlängerung (einzeln oder als Gesamtmaßnahme buchbar)</li>
-            <li>Unterrichtsform: Hybrid – Präsenz an Modellen + Theorie via Live-Online</li>
-            <li>Beginn 07.09.2026 – 04.12.2026</li>
-            <li>Zielgruppe: Arbeitssuchende, auch ohne Vorkenntnisse</li>
-            <li>100 % förderfähig über Bildungsgutschein (Agentur für Arbeit / Jobcenter)</li>
-            <li>Abschluss: trägerinternes Zertifikat „Fachkosmetikerin" + Teilnahmebescheinigung</li>
-            <li>Träger (AZAV): Christina Beauty School (Christina Dentsa)</li>
-          </ul>
-
-          <div class="fachkos-steps">
-            <span class="fachkos-steps-title">So kommst du rein</span>
-            <ol>
-              <li>Als arbeitssuchend bei der Agentur für Arbeit oder dem Jobcenter melden</li>
-              <li>Bildungsgutschein (§81 SGB III) beantragen</li>
-              <li>Gutschein bei Christina Beauty School einreichen</li>
-              <li>Start zum nächstmöglichen Termin – nächster Beginn: 07.09.2026</li>
-            </ol>
-          </div>
-
-          <a
-            href="https://form.jotform.com/261074759721462"
-            class="cta-gold"
-            target="_blank" rel="noopener"
-          >Infos &amp; Anmeldung zur Qualifizierung →</a>
-          <p class="fachkos-routing">
-            Erfahrene Fachkraft mit PMU- / Microblading- / Wimpern-Vorkenntnissen?
-            → <a href="#module">Zu den AVGS-Perfektionstrainings</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-)}
 
 
 <!-- ══════════════════════════════════
