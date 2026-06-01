@@ -792,11 +792,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             <li>Abschluss: trägerinternes Zertifikat „Fachkosmetikerin"</li>
             <li>Träger (AZAV): Christina Beauty School (Christina Dentsa)</li>
           </ul>
-          <a
-            href="https://form.jotform.com/261074759721462"
-            class="cta-gold"
-            target="_blank" rel="noopener"
-          >Infos &amp; Anmeldung →</a>
+          <a class="cta-gold lightbox-261074759721462" style="cursor:pointer;">Infos &amp; Anmeldung →</a>
           <p class="fachkos-routing">
             Erfahrene Fachkraft mit PMU- / Microblading- / Wimpern-Vorkenntnissen?
             → <a href="#dozentinnen">Zu den AVGS-Perfektionstrainings</a>
@@ -968,5 +964,34 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
 
 
 <SiteFooter variant="full" activeCity={citySlug} />
+
+{citySlug === 'essen' && (
+  <Fragment>
+    <script src="https://cdn.jotfor.ms/s/static/latest/static/feedback2.js" type="text/javascript" is:inline></script>
+    <script type="text/javascript" is:inline>
+      (function () {
+        var QUAL_ID = '261074759721462';
+        function initQualForm() {
+          new JotformFeedback({
+            formId: QUAL_ID,
+            base: 'https://form.jotform.com/',
+            windowTitle: 'Anmeldung zur Fachkosmetikerin-Qualifizierung',
+            backgroundColor: '#ffffff',
+            fontColor: '#ffffff',
+            type: '0',
+            height: 600,
+            width: 700,
+            openOnLoad: false
+          });
+        }
+        if (document.readyState === 'loading') {
+          window.addEventListener('DOMContentLoaded', initQualForm);
+        } else {
+          initQualForm();
+        }
+      })();
+    </script>
+  </Fragment>
+)}
 
 </SEOLayout>

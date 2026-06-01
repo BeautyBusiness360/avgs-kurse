@@ -1107,11 +1107,7 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
             </ol>
           </div>
 
-          <a
-            href="https://form.jotform.com/261074759721462"
-            class="cta-gold"
-            target="_blank" rel="noopener"
-          >Infos &amp; Anmeldung zur Qualifizierung →</a>
+          <a class="cta-gold lightbox-261074759721462" style="cursor:pointer;">Infos &amp; Anmeldung zur Qualifizierung →</a>
           <p class="fachkos-routing">
             Erfahrene Fachkraft mit PMU- / Microblading- / Wimpern-Vorkenntnissen?
             → <a href="#module">Zu den AVGS-Perfektionstrainings</a>
@@ -1495,6 +1491,32 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       })();
     </script>
   </Fragment>
+)}
+
+{isChristina && (
+  <script type="text/javascript" is:inline>
+    (function () {
+      var QUAL_ID = '261074759721462';
+      function initQualForm() {
+        new JotformFeedback({
+          formId: QUAL_ID,
+          base: 'https://form.jotform.com/',
+          windowTitle: 'Anmeldung zur Fachkosmetikerin-Qualifizierung',
+          backgroundColor: '#ffffff',
+          fontColor: '#ffffff',
+          type: '0',
+          height: 600,
+          width: 700,
+          openOnLoad: false
+        });
+      }
+      if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', initQualForm);
+      } else {
+        initQualForm();
+      }
+    })();
+  </script>
 )}
 
 {isChristina && (
