@@ -25,6 +25,22 @@ const cities = [
 <footer class="sf sf--full">
   <div class="sf-w">
 
+    {hasSiblings && (
+      <>
+        <nav class="sf-siblings" aria-label={`Weitere Kurse in ${siblingCityLabel}`}>
+          <span class="sf-col-title">Weitere Kosmetikkurse in {siblingCityLabel}</span>
+          <div class="sf-sibling-links">
+            {siblingServices!.map(s => (
+              <a href={`/${siblingCitySlug}/${s.slug}/`} class="sf-link">
+                {SERVICE_DISPLAY_NAME[s.slug] ?? s.name}
+              </a>
+            ))}
+          </div>
+        </nav>
+        <div class="sf-divider"></div>
+      </>
+    )}
+
     <div class="sf-grid">
 
       <!-- 1) Marke -->
@@ -95,19 +111,6 @@ const cities = [
       </div>
 
     </div>
-
-    {hasSiblings && (
-      <nav class="sf-siblings" aria-label={`Weitere Kurse in ${siblingCityLabel}`}>
-        <span class="sf-col-title">Weitere Kosmetikkurse in {siblingCityLabel}</span>
-        <div class="sf-sibling-links">
-          {siblingServices!.map(s => (
-            <a href={`/${siblingCitySlug}/${s.slug}/`} class="sf-link">
-              {SERVICE_DISPLAY_NAME[s.slug] ?? s.name}
-            </a>
-          ))}
-        </div>
-      </nav>
-    )}
 
     <div class="sf-divider"></div>
 
@@ -225,9 +228,7 @@ const cities = [
 .sf-link--cta:hover { color: #D4AF7A !important; text-decoration: underline; }
 
 .sf-siblings {
-  padding: 28px 0 0;
-  margin-top: 36px;
-  border-top: 1px solid rgba(255,255,255,.06);
+  padding-bottom: 28px;
 }
 .sf-siblings .sf-col-title { margin-bottom: 12px; }
 .sf-sibling-links {
