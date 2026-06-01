@@ -13,7 +13,9 @@
     "generate:city": "tsx --tsconfig scripts/tsconfig.json scripts/generate-city.ts",
     "generate:all": "tsx --tsconfig scripts/tsconfig.json scripts/generate-all.ts",
     "generate:longtail": "tsx --tsconfig scripts/tsconfig.json scripts/generate-longtail.ts",
-    "validate:sitemap": "tsx --tsconfig scripts/tsconfig.json scripts/sitemap-validator.ts"
+    "validate:sitemap": "tsx --tsconfig scripts/tsconfig.json scripts/sitemap-validator.ts",
+    "postbuild": "node scripts/link-graph.mjs",
+    "link-graph": "node scripts/link-graph.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
