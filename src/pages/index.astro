@@ -218,12 +218,52 @@ body {
   margin-top:16px;
   font-size:12px; color:#C8962E;
 }
+@media (min-width:1024px) {
+  .hero { text-align:left; }
+  .hero-inner {
+    display:grid;
+    grid-template-columns:55fr 45fr;
+    gap:4rem;
+    align-items:center;
+  }
+  .hero-h1 { margin-left:0; margin-right:0; max-width:none; }
+  .hero-sub { margin-left:0; margin-right:0; max-width:none; margin-bottom:32px; }
+  .hero-right {
+    padding-left:3rem;
+    align-self:center;
+  }
+  .hero-bullets {
+    flex-direction:column;
+    justify-content:flex-start;
+    gap:0;
+    max-width:none;
+    margin:0;
+  }
+  .hero-bullet {
+    padding-block:1rem;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    font-size:15px;
+    align-items:center;
+  }
+  .hero-bullet:first-child { border-top:1px solid rgba(255,255,255,.12); }
+  .hero-bullet-diamond { display:none; }
+  .hero-bullet::before {
+    content:'◆';
+    color:#C8962E;
+    flex-shrink:0;
+    font-size:10px;
+  }
+  .hero-note { margin-top:1rem; }
+  .hero-right .cta-white { margin-top:2rem; }
+  .hero-right-logo { display:block; max-width:120px; margin-bottom:2rem; }
+}
+.hero-right-logo { display:none; }
 
 /* ══════════════════════════════════════
    WARUM (Vergleich)
 ══════════════════════════════════════ */
 .why-section { padding:96px 0; }
-.why-header { text-align:center; max-width:720px; margin:0 auto 64px; }
+.why-header { text-align:left; max-width:900px; margin:0 0 64px; }
 .why-grid {
   display:grid; grid-template-columns:1fr 1fr;
   gap:28px; align-items:stretch;
@@ -274,17 +314,17 @@ body {
    ZWEI WEGE
 ══════════════════════════════════════ */
 .ways-section {
-  padding:96px 0;
+  padding:64px 0;
   background:var(--cream-d);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
 }
-.ways-header { text-align:center; margin-bottom:64px; }
+.ways-header { text-align:left; margin:0 0 48px; }
+.ways-header .section-title { white-space:nowrap; }
 .ways-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-bottom:48px; }
 @media(max-width:700px){ .ways-grid { grid-template-columns:1fr; } }
 .ways-card {
-  background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
+  background:#111111; border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;
+  color:#FAF8F5;
 }
 .ways-card-accent { height:3px; background:linear-gradient(90deg, var(--gold), var(--rose)); }
 .ways-card-body { padding:40px 36px; flex:1; display:flex; flex-direction:column; gap:16px; }
@@ -292,17 +332,18 @@ body {
 .ways-card-title {
   font-family:var(--serif);
   font-size:clamp(22px, 2.5vw, 30px);
-  font-weight:600; line-height:1.18; color:var(--black);
+  font-weight:600; line-height:1.18; color:#FAF8F5;
 }
-.ways-card-text { font-size:15px; line-height:1.8; color:var(--muted); }
-.ways-note { text-align:center; font-size:14px; color:var(--muted); margin-bottom:28px; }
-.ways-cta-wrap { text-align:center; }
+.ways-card-text { font-size:15px; line-height:1.8; color:#FAF8F5; }
+.ways-card-icon { font-size:2rem; font-weight:700; color:#C8962E; font-family:var(--serif); line-height:1; }
+.ways-note { text-align:left; font-size:14px; color:var(--muted); margin-bottom:28px; }
+.ways-cta-wrap { text-align:left; }
 
 /* ══════════════════════════════════════
    WIE ES FUNKTIONIERT
 ══════════════════════════════════════ */
 .how-section { padding:96px 0; }
-.how-header { text-align:center; margin-bottom:64px; }
+.how-header { text-align:left; margin-bottom:64px; }
 .how-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
 @media(max-width:860px){ .how-grid { grid-template-columns:1fr; gap:40px; } }
 .how-col-label {
@@ -347,12 +388,10 @@ body {
    DOZENTENSCHEIN
 ══════════════════════════════════════ */
 .doz-section {
-  padding:96px 0;
+  padding:64px 0;
   background:var(--cream-d);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
 }
-.doz-inner { max-width:760px; margin:0 auto; text-align:center; }
+.doz-inner { max-width:100%; margin:0; text-align:left; }
 .doz-icon { font-size:48px; margin-bottom:24px; }
 .doz-p { font-size:17px; line-height:1.85; color:var(--muted); margin-top:20px; }
 
@@ -360,8 +399,8 @@ body {
    NETZWERK-GALERIE
 ══════════════════════════════════════ */
 .net-section { padding:96px 0; }
-.net-header { text-align:center; margin-bottom:64px; }
-.net-header .section-desc { max-width:640px; margin:0 auto; }
+.net-header { text-align:left; margin-bottom:64px; }
+.net-header .section-desc { max-width:100%; margin:0; }
 
 .net-carousel-wrap { position:relative; }
 .net-track {
@@ -418,11 +457,10 @@ body {
    FAQ
 ══════════════════════════════════════ */
 .faq-section {
-  padding:96px 0;
+  padding:64px 0;
   background:var(--cream-d);
-  border-top:1px solid var(--border);
 }
-.faq-header { text-align:center; margin-bottom:56px; }
+.faq-header { text-align:left; margin-bottom:56px; }
 .faq-list { max-width:780px; margin:0 auto; }
 .faq-item { border-top:1px solid var(--border); }
 .faq-item:last-child { border-bottom:1px solid var(--border); }
@@ -430,7 +468,7 @@ body {
   list-style:none; cursor:pointer;
   padding:22px 0;
   display:flex; align-items:center; justify-content:space-between; gap:16px;
-  font-size:15px; font-weight:600; color:var(--black);
+  font-size:18px; font-weight:600; color:var(--black);
 }
 .faq-item summary::-webkit-details-marker { display:none; }
 .faq-item summary::after {
@@ -446,7 +484,7 @@ body {
 ══════════════════════════════════════ */
 .final-cta-section {
   padding:96px 0;
-  background:var(--black); text-align:center;
+  background:var(--black); text-align:left;
   position:relative; overflow:hidden;
 }
 .final-cta-section::before {
@@ -456,7 +494,7 @@ body {
     radial-gradient(ellipse at 80% 20%, rgba(232,196,184,.07) 0%, transparent 55%);
   pointer-events:none;
 }
-.final-cta-inner { position:relative; max-width:640px; margin:0 auto; }
+.final-cta-inner { position:relative; max-width:100%; margin:0; }
 .final-cta-h2 {
   font-family:var(--serif);
   font-size:clamp(32px, 4.5vw, 56px);
@@ -476,38 +514,45 @@ body {
 ══════════════════════════════════ -->
 <section class="hero">
   <div class="w">
-    <span class="section-eye">AZAV-Partnernetzwerk · bundesweit</span>
-    <h1 class="hero-h1">
-      Werde Fachdozentin oder Schulungsstandort<br />
-      in unserem <em>AZAV-Netzwerk</em>
-    </h1>
-    <p class="hero-sub">
-      Biete staatlich geförderte Perfektionstrainings an – ohne eigene AZAV-Zulassung.
-      Wir übernehmen Vermarktung, Teilnehmerinnen und Organisation,
-      du konzentrierst dich aufs Unterrichten.
-    </p>
-    <div class="hero-bullets">
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Bis zu 1.500 € Honorar pro 3-Tage-Modul
+    <div class="hero-inner">
+      <div class="hero-left">
+        <span class="section-eye">AZAV-Partnernetzwerk · bundesweit</span>
+        <h1 class="hero-h1">
+          Werde Fachdozentin oder Schulungsstandort<br />
+          in unserem <em>AZAV-Netzwerk</em>
+        </h1>
+        <p class="hero-sub">
+          Biete staatlich geförderte Perfektionstrainings an – ohne eigene AZAV-Zulassung.
+          Wir übernehmen Vermarktung, Teilnehmerinnen und Organisation,
+          du konzentrierst dich aufs Unterrichten.
+        </p>
       </div>
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Keine eigene AZAV-Zulassung nötig
-      </div>
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Mit oder ohne eigenes Studio möglich
-      </div>
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Bundesweit wachsendes Netzwerk
+      <div class="hero-right">
+        <img src="/images/logo/logo-weiss.webp" alt="BeautyBusiness360" class="hero-right-logo" width="120" height="36" />
+        <div class="hero-bullets">
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Bis zu 1.500 € Honorar pro 3-Tage-Modul
+          </div>
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Keine eigene AZAV-Zulassung nötig
+          </div>
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Mit oder ohne eigenes Studio möglich
+          </div>
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Bundesweit wachsendes Netzwerk
+          </div>
+        </div>
+        <p class="hero-note">
+          In nur 20 Minuten erklärt dir Gründer Walid Regaia das komplette Konzept – online &amp; unverbindlich.
+        </p>
+        <a href="/fachdozentin-werden" class="cta-white">Zur kostenfreien Info-Veranstaltung</a>
       </div>
     </div>
-    <a href="/fachdozentin-werden" class="cta-white">Zur kostenfreien Info-Veranstaltung</a>
-    <p class="hero-note">
-      In nur 20 Minuten erklärt dir Gründer Walid Regaia das komplette Konzept – online &amp; unverbindlich.
-    </p>
   </div>
 </section>
 
@@ -574,7 +619,7 @@ body {
     <div class="ways-header">
       <span class="section-eye">Dein Einstieg</span>
       <h2 class="section-title">
-        Zwei Wege, Teil des<br /><em>Netzwerks</em> zu werden
+        Zwei Wege, Teil des <em>Netzwerks</em> zu werden
       </h2>
     </div>
     <div class="ways-grid">
@@ -582,7 +627,7 @@ body {
       <div class="ways-card">
         <div class="ways-card-accent"></div>
         <div class="ways-card-body">
-          <span class="ways-card-icon">🎓</span>
+          <span class="ways-card-icon">1</span>
           <h3 class="ways-card-title">Als Fachdozentin</h3>
           <p class="ways-card-text">
             Du bist erfahrene Beauty-Artistin und möchtest dein Wissen weitergeben.
@@ -594,7 +639,7 @@ body {
       <div class="ways-card">
         <div class="ways-card-accent"></div>
         <div class="ways-card-body">
-          <span class="ways-card-icon">🏢</span>
+          <span class="ways-card-icon">2</span>
           <h3 class="ways-card-title">Als Schulungsstandort</h3>
           <p class="ways-card-text">
             Du hast einen eigenen Salon oder eine Akademie? Wir zertifizieren deinen Standort –
@@ -619,7 +664,7 @@ body {
   <div class="w">
     <div class="how-header">
       <span class="section-eye">So läuft es ab</span>
-      <h2 class="section-title">Du unterrichtest –<br /><em>den Rest übernehmen wir</em></h2>
+      <h2 class="section-title">Du unterrichtest – <em>den Rest übernehmen wir</em></h2>
     </div>
     <div class="how-grid">
 
@@ -656,7 +701,6 @@ body {
 <section class="doz-section">
   <div class="w">
     <div class="doz-inner">
-      <div class="doz-icon">📜</div>
       <span class="section-eye">Pädagogischer Nachweis</span>
       <h2 class="section-title">
         Pädagogischer Nachweis inklusive –<br /><em>der Dozentenschein</em>
@@ -728,7 +772,7 @@ body {
   <div class="w">
     <div class="faq-header">
       <span class="section-eye">Häufige Fragen</span>
-      <h2 class="section-title">Häufige Fragen für<br /><em>Dozentinnen &amp; Studios</em></h2>
+      <h2 class="section-title">Häufige Fragen für <em>Dozentinnen &amp; Studios</em></h2>
     </div>
     <div class="faq-list">
       {faqItems.map((item) => (
@@ -748,7 +792,7 @@ body {
 <section class="final-cta-section">
   <div class="w">
     <div class="final-cta-inner">
-      <h2 class="final-cta-h2">Werde Teil des<br /><em>Netzwerks</em></h2>
+      <h2 class="final-cta-h2">Werde Teil des <em>Netzwerks</em></h2>
       <p class="final-cta-p">
         Lerne das komplette Konzept in nur 20 Minuten kennen – kostenlos und unverbindlich.
         Danach entscheidest du in Ruhe, ob es zu dir passt.
