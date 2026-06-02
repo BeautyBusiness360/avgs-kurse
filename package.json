@@ -15,7 +15,7 @@
     "generate:all": "tsx --tsconfig scripts/tsconfig.json scripts/generate-all.ts",
     "generate:longtail": "tsx --tsconfig scripts/tsconfig.json scripts/generate-longtail.ts",
     "validate:sitemap": "tsx --tsconfig scripts/tsconfig.json scripts/sitemap-validator.ts",
-    "postbuild": "node scripts/link-graph.mjs",
+    "postbuild": "node scripts/link-graph.mjs && node scripts/coverage-report.mjs && node scripts/dashboard.mjs",
     "link-graph": "node scripts/link-graph.mjs"
   },
   "dependencies": {
