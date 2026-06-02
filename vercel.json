@@ -20,6 +20,25 @@
     { "source": "/stuttgart-skin-star-beauty",   "destination": "/",         "permanent": true },
     { "source": "/hamburg-ati-beauty",           "destination": "/hamburg/", "permanent": true },
     { "source": "/werbepartner",                 "destination": "/",         "permanent": true },
-    { "source": "/perfektionstraining",          "destination": "/",         "permanent": true }
+    { "source": "/perfektionstraining",          "destination": "/",         "permanent": true },
+
+    { "source": "/ausbildung/powderbrows-ombrebrows/berlin/",  "destination": "/berlin/powderbrows-ombrebrows-masterclass/",  "permanent": true },
+    { "source": "/ausbildung/powderbrows-ombrebrows/essen/",   "destination": "/essen/powderbrows-ombrebrows-masterclass/",   "permanent": true },
+    { "source": "/ausbildung/powderbrows-ombrebrows/hamburg/", "destination": "/hamburg/powderbrows-ombrebrows-masterclass/", "permanent": true },
+    { "source": "/ausbildung/powderbrows-ombrebrows/mainz/",   "destination": "/mainz/powderbrows-ombrebrows-masterclass/",   "permanent": true },
+    { "source": "/ausbildung/powderbrows-ombrebrows/ulm/",     "destination": "/ulm/powderbrows-ombrebrows-masterclass/",     "permanent": true },
+    { "source": "/ausbildung/velvet-lips-lipstick/berlin/",    "destination": "/berlin/velvet-lips-lipstick-masterclass/",   "permanent": true },
+    { "source": "/ausbildung/velvet-lips-lipstick/essen/",     "destination": "/essen/velvet-lips-lipstick-masterclass/",    "permanent": true },
+    { "source": "/ausbildung/velvet-lips-lipstick/hamburg/",   "destination": "/hamburg/velvet-lips-lipstick-masterclass/",  "permanent": true },
+    { "source": "/ausbildung/velvet-lips-lipstick/mainz/",     "destination": "/mainz/velvet-lips-lipstick-masterclass/",    "permanent": true },
+    { "source": "/ausbildung/velvet-lips-lipstick/ulm/",       "destination": "/ulm/velvet-lips-lipstick-masterclass/",      "permanent": true },
+    { "source": "/ausbildung/microblading/hamburg/",           "destination": "/hamburg/microblading-masterclass/",          "permanent": true },
+    { "source": "/ausbildung/wimpernverlaengerung/essen/",     "destination": "/essen/wimpernverlaengerung-masterclass/",    "permanent": true },
+    { "source": "/ausbildung/wimpernverlaengerung/hamburg/",   "destination": "/hamburg/wimpernverlaengerung-masterclass/",  "permanent": true },
+    { "source": "/ausbildung/wimpernverlaengerung/ulm/",       "destination": "/ulm/wimpernverlaengerung-masterclass/",      "permanent": true },
+    { "source": "/ausbildung/camouflage-removal/berlin/",      "destination": "/berlin/camouflage-removal-masterclass/",     "permanent": true },
+    { "source": "/ausbildung/camouflage-removal/essen/",       "destination": "/essen/camouflage-removal-masterclass/",      "permanent": true },
+    { "source": "/ausbildung/camouflage-removal/hamburg/",     "destination": "/hamburg/camouflage-removal-masterclass/",    "permanent": true },
+    { "source": "/ausbildung/camouflage-removal/ulm/",         "destination": "/ulm/camouflage-removal-masterclass/",        "permanent": true }
   ]
 }

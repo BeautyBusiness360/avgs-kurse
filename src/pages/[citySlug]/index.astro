@@ -495,6 +495,7 @@ body {
   color:var(--gold); margin-top:auto; padding-top:4px;
 }
 .mc-card:hover .mc-card-link { color:var(--gold-lt); }
+.mc-card-wrap { display:flex; flex-direction:column; gap:8px; }
 
 /* ─── DOZENTINNEN GRID ───────────────── */
 .doz-grid {
@@ -829,26 +830,28 @@ details[open] .faq-icon { transform:rotate(45deg); background:var(--gold-bg); }
       )}
       <div class="mc-grid">
         {cityServices.map(s => (
-          <a href={`/${citySlug}/${s.slug}/`} class="mc-card">
-            <div class="mc-card-img-wrap">
-              {s.imgSrc && (
-                <img
-                  src={s.imgSrc}
-                  alt={s.displayName}
-                  class="mc-card-img"
-                  loading="lazy"
-                  decoding="async"
-                  width="400" height="180"
-                />
-              )}
-            </div>
-            <div class="mc-card-top"></div>
-            <div class="mc-card-body">
-              <span class="mc-card-eye">AVGS-gefördert</span>
-              <span class="mc-card-name">{s.displayName}</span>
-              <span class="mc-card-link">Modul ansehen →</span>
-            </div>
-          </a>
+          <div class="mc-card-wrap">
+            <a href={`/${citySlug}/${s.slug}/`} class="mc-card">
+              <div class="mc-card-img-wrap">
+                {s.imgSrc && (
+                  <img
+                    src={s.imgSrc}
+                    alt={s.displayName}
+                    class="mc-card-img"
+                    loading="lazy"
+                    decoding="async"
+                    width="400" height="180"
+                  />
+                )}
+              </div>
+              <div class="mc-card-top"></div>
+              <div class="mc-card-body">
+                <span class="mc-card-eye">AVGS-gefördert</span>
+                <span class="mc-card-name">{s.displayName}</span>
+                <span class="mc-card-link">Dozentinnen ansehen →</span>
+              </div>
+            </a>
+          </div>
         ))}
       </div>
     </div>

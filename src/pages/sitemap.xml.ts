@@ -2,6 +2,17 @@ import type { APIRoute } from 'astro';
 import { supabase } from '../lib/supabase';
 import { HUB_CITY_SLUG } from '../data/location-overrides';
 
+const MODUL_TO_SERVICE: Record<string, string> = {
+  'powderbrows-ombrebrows':  'powderbrows-ombrebrows-masterclass',
+  'velvet-lips-lipstick':    'velvet-lips-lipstick-masterclass',
+  'microblading':            'microblading-masterclass',
+  'wimpernverlaengerung':    'wimpernverlaengerung-masterclass',
+  'camouflage-removal':      'camouflage-removal-masterclass',
+};
+const SERVICE_TO_MODUL: Record<string, string> = Object.fromEntries(
+  Object.entries(MODUL_TO_SERVICE).map(([m, s]) => [s, m])
+);
+
 export const prerender = true;
 
 export const GET: APIRoute = async () => {
@@ -57,6 +68,11 @@ export const GET: APIRoute = async () => {
       const service = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
       if (service?.slug) {
         urls.add(`${BASE_URL}/${effectiveCitySlug}/${service.slug}`);
+        // /ausbildung/[modul]/[stadt]/
+        const modulSlug = SERVICE_TO_MODUL[service.slug];
+        if (modulSlug) {
+          urls.add(`${BASE_URL}/ausbildung/${modulSlug}/${effectiveCitySlug}`);
+        }
       }
     }
   }
