@@ -224,16 +224,53 @@ body {
 .hero-bullet-diamond { color:var(--gold); flex-shrink:0; font-size:10px; margin-top:3px; }
 .hero-note {
   margin-top:16px;
-  font-size:12px; color:rgba(255,255,255,.28);
+  font-size:12px; color:#FAF8F5;
+}
+@media (min-width:1024px) {
+  .hero { text-align:left; }
+  .hero-inner {
+    display:grid;
+    grid-template-columns:55fr 45fr;
+    gap:4rem;
+    align-items:center;
+  }
+  .hero-h1 { margin-left:0; margin-right:0; max-width:none; }
+  .hero-sub { margin-left:0; margin-right:0; max-width:none; margin-bottom:0; }
+  .hero-right { padding-left:3rem; align-self:center; }
+  .hero-bullets {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+    max-width:none;
+    margin:0;
+  }
+  .hero-bullet {
+    padding-block:1rem;
+    border-top:none;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    font-size:15px;
+  }
+  .hero-bullet:first-child { border-top:1px solid rgba(255,255,255,.12); }
+  .hero-bullet:last-child { border-bottom:1px solid rgba(255,255,255,.12); }
+  .hero-bullet-diamond { display:none; }
+  .hero-bullet::before {
+    content:'◆';
+    color:#C8962E;
+    flex-shrink:0;
+    font-size:10px;
+  }
+  .hero-note { margin-top:1rem; }
+  .hero-right .cta-white { margin-top:2rem; display:block; }
 }
 
 /* ══════════════════════════════════════
    PROBLEM | LÖSUNG
 ══════════════════════════════════════ */
-.pl-section { padding:80px 0; }
+.pl-section { padding:48px 0; }
 .pl-grid {
   display:grid; grid-template-columns:1fr 1fr;
-  gap:28px; align-items:stretch;
+  gap:28px; align-items:start;
 }
 @media(max-width:860px){ .pl-grid { grid-template-columns:1fr; } }
 
@@ -250,7 +287,7 @@ body {
   pointer-events:none;
 }
 .problem-card-accent { height:3px; background:linear-gradient(90deg, #9A6E1E, var(--gold)); }
-.problem-card-body { padding:44px 40px; flex:1; display:flex; flex-direction:column; position:relative; }
+.problem-card-body { padding:44px 40px 24px 40px; flex:1; display:flex; flex-direction:column; position:relative; }
 .problem-card-eye { color:var(--gold); margin-bottom:20px; }
 .problem-h2 {
   font-family:var(--serif);
@@ -270,8 +307,8 @@ body {
   display:flex; align-items:center; justify-content:center;
   font-size:11px; font-weight:700; color:#ff7070;
 }
-.problem-cta-wrap { margin-top:44px; }
-.problem-note { margin-top:14px; font-size:12px; color:rgba(255,255,255,.25); }
+.problem-cta-wrap { margin-top:16px; }
+.problem-note { margin-top:14px; font-size:12px; color:rgba(255,255,255,.6); }
 
 /* Lösung (light card) */
 .solution-card {
@@ -319,19 +356,17 @@ body {
 }
 .location-callout-text { font-size:14px; line-height:1.75; color:var(--muted); }
 .solution-cta-wrap { margin-top:auto; }
-.solution-note { margin-top:14px; font-size:12px; color:rgba(85,82,80,.4); }
+.solution-note { margin-top:14px; font-size:12px; color:#111111; }
 
 /* ══════════════════════════════════════
    NETZWERK-CAROUSEL
 ══════════════════════════════════════ */
 .net-section {
-  padding:96px 0;
+  padding:48px 0;
   background:var(--cream-d);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
 }
-.net-header { text-align:center; margin-bottom:64px; }
-.net-header .section-desc { max-width:640px; margin:0 auto; }
+.net-header { text-align:left; margin-bottom:64px; }
+.net-header .section-desc { max-width:100%; margin:0; }
 
 .net-carousel-wrap { position:relative; }
 .net-track {
@@ -429,19 +464,18 @@ body {
    INFO-VERANSTALTUNG
 ══════════════════════════════════════ */
 .info-section {
-  padding:96px 0;
+  padding:64px 0;
   background:var(--cream-d);
-  border-top:1px solid var(--border);
 }
-.info-header { text-align:center; margin-bottom:64px; }
-.info-header .section-desc { max-width:640px; margin:0 auto; }
+.info-header { text-align:left; margin-bottom:64px; }
+.info-header .section-desc { max-width:100%; margin:0; }
 .info-grid {
   display:grid; grid-template-columns:repeat(2, 1fr);
   gap:24px; margin-bottom:64px;
 }
 @media(max-width:640px){ .info-grid { grid-template-columns:1fr; } }
 .info-card {
-  background:var(--white);
+  background:#111111;
   border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,.04);
 }
@@ -449,14 +483,14 @@ body {
 .info-card-content { padding:32px 28px; display:flex; flex-direction:column; gap:12px; }
 .info-card-num {
   font-family:var(--serif);
-  font-size:40px; font-weight:600; line-height:1; color:var(--gold); opacity:.28;
+  font-size:40px; font-weight:600; line-height:1; color:#C8962E; opacity:1;
 }
 .info-card-title {
   font-family:var(--serif);
-  font-size:22px; font-weight:600; line-height:1.2; color:var(--black);
+  font-size:22px; font-weight:600; line-height:1.2; color:#FAF8F5;
 }
-.info-card-text { font-size:14px; color:var(--muted); line-height:1.8; }
-.info-cta-wrap { text-align:center; }
+.info-card-text { font-size:14px; color:#FAF8F5; line-height:1.8; }
+.info-cta-wrap { text-align:left; }
 
 /* ══════════════════════════════════════
    WEBINAR MODAL
@@ -534,33 +568,41 @@ body {
 ══════════════════════════════════ -->
 <section class="hero">
   <div class="w">
-    <span class="section-eye hero-eye">Für Beauty-Profis</span>
-    <h1 class="hero-h1">
-      Mehr Umsatz mit staatlich geförderten Perfektionstrainings,
-      <em>ohne eigene AZAV-Zulassung</em>
-    </h1>
-    <p class="hero-sub">
-      In dieser kostenfreien Info-Veranstaltung erfährst du, wie du als PMU-,
-      Microblading- oder Wimpern-Artistin staatlich geförderte Perfektionstrainings
-      anbieten kannst – mit flexibler Umsetzung, freier Terminplanung und ohne
-      eigene AZAV-Zulassung.
-    </p>
-    <div class="hero-bullets">
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Bis zu 1.500 € Vergütung pro Teilnehmerin (3 Tage Unterricht)
+    <div class="hero-inner">
+      <div class="hero-left">
+        <span class="section-eye hero-eye">Für Beauty-Profis</span>
+        <h1 class="hero-h1">
+          Mehr Umsatz mit staatlich geförderten Perfektionstrainings,
+          <em>ohne eigene AZAV-Zulassung</em>
+        </h1>
+        <p class="hero-sub">
+          In dieser kostenfreien Info-Veranstaltung erfährst du, wie du als PMU-,
+          Microblading- oder Wimpern-Artistin staatlich geförderte Perfektionstrainings
+          anbieten kannst – mit flexibler Umsetzung, freier Terminplanung und ohne
+          eigene AZAV-Zulassung.
+        </p>
       </div>
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Keine eigene AZAV-Zulassung notwendig
-      </div>
-      <div class="hero-bullet">
-        <span class="hero-bullet-diamond">◆</span>
-        Staatlich geförderte Perfektionstrainings – auch ohne eigenes Studio
+      <div class="hero-right">
+        <div class="hero-bullets">
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Bis zu 1.500 € Vergütung pro Teilnehmerin (3 Tage Unterricht)
+          </div>
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Keine eigene AZAV-Zulassung notwendig
+          </div>
+          <div class="hero-bullet">
+            <span class="hero-bullet-diamond">◆</span>
+            Staatlich geförderte Perfektionstrainings – auch ohne eigenes Studio
+          </div>
+        </div>
+        <button class="cta-white js-webinar-cta">
+          Zur kostenfreien Info-Veranstaltung anmelden
+          <small style="display:block; font-size:0.7em; font-weight:400; opacity:0.8; margin-top:4px;">ca. 25 Minuten · 4× täglich verfügbar</small>
+        </button>
       </div>
     </div>
-    <button class="cta-white js-webinar-cta">Zur kostenfreien Info-Veranstaltung anmelden</button>
-    <p class="hero-note">Kostenfreie Online Info-Veranstaltung · 4× täglich verfügbar</p>
   </div>
 </section>
 
@@ -616,18 +658,6 @@ body {
               </li>
             ))}
           </ul>
-
-          <div class="location-callout">
-            <div class="location-callout-label">
-              <span aria-hidden="true">📍</span>
-              Wo wird unterrichtet?
-            </div>
-            <p class="location-callout-text">
-              Ohne eigenen Salon unterrichtest du an einem unserer zertifizierten
-              Schulungsstandorte. Mit eigenem Salon kann dieser als Schulungsstandort
-              zertifiziert werden – dann unterrichtest du direkt bei dir vor Ort.
-            </p>
-          </div>
 
           <div class="solution-cta-wrap">
             <button class="cta-gold js-webinar-cta">Jetzt kostenfrei Platz sichern</button>
