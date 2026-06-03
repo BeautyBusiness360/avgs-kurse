@@ -118,13 +118,14 @@ const faqItems = [
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
+html { scroll-behavior:smooth; scrollbar-gutter:stable; }
 body {
   background:var(--cream);
   color:var(--black);
   font-family:var(--sans);
   font-size:16px; font-weight:400; line-height:1.75;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
 
 /* ─── LAYOUT ─────────────────────────── */
