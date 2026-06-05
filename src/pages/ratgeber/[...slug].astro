@@ -46,8 +46,11 @@ export async function getStaticPaths() {
 }
 
 const { entry, allArticles, gridDozentinnen } = Astro.props;
-const { Content } = await render(entry);
-const { title, description, modul, stadt, stadtSlug, serviceSlug, relatedDozentinSlug, relatedDozentinName, publishDate, faq } = entry.data;
+const { Content, headings } = await render(entry);
+const {
+  title, description, modul, stadt, stadtSlug, serviceSlug,
+  relatedDozentinSlug, relatedDozentinName, publishDate, faq,
+} = entry.data;
 
 const canonical = `https://dein-beauty-kurs.de/ratgeber/${entry.id}/`;
 
@@ -55,13 +58,22 @@ const MODUL_LABELS: Record<string, string> = {
   microblading:         'Microblading',
   powderbrows:          'Powder Brows',
   wimpernverlaengerung: 'Wimpernverlängerung',
-  'camouflage-removal': 'Camouflage Removal',
+  'camouflage-removal': 'Camouflage & Removal',
   'velvet-lips':        'Velvet Lips',
   fachkosmetikerin:     'Fachkosmetikerin',
 };
-
 const modulLabel = MODUL_LABELS[modul] ?? modul;
 
+// Reading time (≈ 200 words/min)
+const rawBody = entry.body ?? '';
+const wordCount = rawBody.split(/\s+/).filter(Boolean).length;
+const readMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
+// TOC: only H2 headings, min 3 to show
+const tocHeadings = headings.filter((h: { depth: number; slug: string; text: string }) => h.depth === 2);
+const showToc = tocHeadings.length >= 3;
+
+// JSON-LD schemas
 const schemas: object[] = [
   {
     '@context': 'https://schema.org',
@@ -93,6 +105,11 @@ const querlinks = allArticles
 ---
 
 <SEOLayout {title} {description} {canonical} schema={schemas}>
+  <!-- Reading progress bar -->
+  <div class="rg-progress" id="rg-progress" aria-hidden="true">
+    <div class="rg-progress-bar" id="rg-progress-bar"></div>
+  </div>
+
   <SiteHeader />
   <Breadcrumbs trail={[
     { label: 'Startseite', href: '/' },
@@ -101,116 +118,255 @@ const querlinks = allArticles
   ]} />
 
   <main class="rg-wrap">
-    <article class="rg-article">
-      <header class="rg-header">
-        <div class="rg-meta">
-          <span class="rg-tag">{modulLabel}</span>
-          <span class="rg-sep">·</span>
-          <span class="rg-city">{stadt}</span>
-          <span class="rg-sep">·</span>
-          <time datetime={publishDate.toISOString().split('T')[0]}>
-            {publishDate.toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </time>
+    <div class="rg-outer">
+
+      <!-- ── Article column ───────────────────────────────────── -->
+      <article class="rg-article" id="rg-article">
+
+        <!-- Header -->
+        <header class="rg-header">
+          <div class="rg-meta">
+            <span class="rg-tag">{modulLabel}</span>
+            <span class="rg-sep">·</span>
+            <span class="rg-city">{stadt}</span>
+            <span class="rg-sep">·</span>
+            <time datetime={publishDate.toISOString().split('T')[0]}>
+              {publishDate.toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+            <span class="rg-sep">·</span>
+            <span class="rg-readtime">{readMinutes} Min. Lesezeit</span>
+          </div>
+          <h1 class="rg-h1">{title}</h1>
+          <p class="rg-lead">{description}</p>
+        </header>
+
+        <!-- Inline TOC (mobile only — sidebar TOC hidden on mobile) -->
+        {showToc && (
+          <nav class="rg-toc-inline" aria-label="Inhaltsverzeichnis">
+            <button class="rg-toc-toggle" aria-expanded="false" aria-controls="rg-toc-inline-list">
+              <span class="rg-toc-toggle-label">Inhaltsverzeichnis</span>
+              <svg class="rg-toc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <ol class="rg-toc-list" id="rg-toc-inline-list" hidden>
+              {tocHeadings.map((h: { slug: string; text: string }) => (
+                <li><a href={`#${h.slug}`}>{h.text}</a></li>
+              ))}
+            </ol>
+          </nav>
+        )}
+
+        <!-- Article body -->
+        <div class="rg-body">
+          <Content />
         </div>
-        <h1 class="rg-h1">{title}</h1>
-        <p class="rg-lead">{description}</p>
-      </header>
 
-      <div class="rg-body">
-        <Content />
-      </div>
+        <!-- Gallery -->
+        <GalerieGrid module={serviceSlug} />
 
-      <GalerieGrid module={serviceSlug} />
+        <!-- FAQ accordion -->
+        {faq && faq.length > 0 && (
+          <section class="rg-faq">
+            <h2 class="rg-faq-title">Häufige Fragen</h2>
+            <div class="rg-faq-list">
+              {faq.map(item => (
+                <details class="rg-faq-item">
+                  <summary class="rg-faq-q">
+                    <span>{item.question}</span>
+                    <svg class="rg-faq-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                      <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </summary>
+                  <div class="rg-faq-a">{item.answer}</div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {faq && faq.length > 0 && (
-        <section class="rg-faq">
-          <h2 class="rg-faq-title">Häufige Fragen</h2>
-          <dl class="rg-faq-list">
-            {faq.map(item => (
-              <div class="rg-faq-item">
-                <dt class="rg-faq-q">{item.question}</dt>
-                <dd class="rg-faq-a">{item.answer}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )}
-
-      {relatedDozentinSlug && (
-        <section class="rg-cta">
-          <div class="rg-cta-inner">
-            <p class="rg-cta-label">Deine Dozentin in {stadt}</p>
-            <h2 class="rg-cta-title">
-              {relatedDozentinName ?? 'Jetzt Termin anfragen'}
-            </h2>
+        <!-- CTA box -->
+        {relatedDozentinSlug && (
+          <section class="rg-cta">
+            <div class="rg-cta-eyebrow">Deine Dozentin in {stadt}</div>
+            <h2 class="rg-cta-title">{relatedDozentinName ?? 'Jetzt Termin anfragen'}</h2>
             <p class="rg-cta-text">
-              Sieh dir aktuelle Termine, Bewertungen und das Anmeldeformular direkt auf dem Profil an.
+              Profil, aktuelle Termine und Anmeldeformular direkt auf der Profilseite.
             </p>
             <div class="rg-cta-links">
-              <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--primary">
-                Zum Dozentinnen-Profil
+              <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--gold">
+                Profil & Termine ansehen
               </a>
-              <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--secondary">
+              <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
                 Alle Kurse in {stadt}
               </a>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        <!-- Dozentinnen grid -->
+        {gridDozentinnen.length > 0 && (
+          <section class="rg-grid-section">
+            <p class="rg-section-eyebrow">Netzwerk</p>
+            <h2 class="rg-grid-title">Dozentinnen für dieses Training in {stadt}</h2>
+            <DozentinnenGrid dozentinnen={gridDozentinnen} moduleFilter={serviceSlug} />
+          </section>
+        )}
+
+        <!-- Cross-links -->
+        {querlinks.length > 0 && (
+          <nav class="rg-querlinks" aria-label="Weitere Ratgeber">
+            <p class="rg-ql-label">Weitere {modulLabel}-Ratgeber</p>
+            <ul class="rg-ql-list">
+              {querlinks.map(a => (
+                <li>
+                  <a href={`/ratgeber/${a.id}/`} class="rg-ql-link">
+                    <span class="rg-ql-city">{a.data.stadt}</span>
+                    <span class="rg-ql-text">{a.data.title}</span>
+                    <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </article>
+
+      <!-- ── Sidebar TOC (desktop only) ──────────────────────── -->
+      {showToc && (
+        <aside class="rg-toc-col" aria-label="Inhaltsverzeichnis">
+          <nav class="rg-toc">
+            <p class="rg-toc-heading">Inhalt</p>
+            <ol class="rg-toc-nav">
+              {tocHeadings.map((h: { slug: string; text: string }) => (
+                <li>
+                  <a href={`#${h.slug}`} class="rg-toc-link">{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </aside>
       )}
 
-      {gridDozentinnen.length > 0 && (
-        <section class="rg-grid-section">
-          <h2 class="rg-grid-title">Dozentinnen für dieses Training in {stadt}</h2>
-          <DozentinnenGrid dozentinnen={gridDozentinnen} moduleFilter={serviceSlug} />
-        </section>
-      )}
-
-      {querlinks.length > 0 && (
-        <nav class="rg-querlinks" aria-label="Weitere Ratgeber">
-          <h2 class="rg-ql-title">Weitere {modulLabel}-Trainings</h2>
-          <ul class="rg-ql-list">
-            {querlinks.map(a => (
-              <li>
-                <a href={`/ratgeber/${a.id}/`} class="rg-ql-link">
-                  <span class="rg-ql-city">{a.data.stadt}</span>
-                  <span class="rg-ql-text">{a.data.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-    </article>
+    </div><!-- /.rg-outer -->
   </main>
 
   <SiteFooter />
 </SEOLayout>
 
+<!-- Progress bar + TOC collapse toggle -->
+<script>
+  // Reading progress bar
+  const bar    = document.getElementById('rg-progress-bar');
+  const art    = document.getElementById('rg-article');
+  if (bar && art) {
+    const update = () => {
+      const rect  = art.getBoundingClientRect();
+      const total = art.scrollHeight;
+      const done  = Math.max(0, -rect.top);
+      bar.style.width = Math.min(100, (done / total) * 100) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
+  // Inline TOC toggle
+  const btn = document.querySelector<HTMLButtonElement>('.rg-toc-toggle');
+  const lst = document.getElementById('rg-toc-inline-list');
+  if (btn && lst) {
+    btn.addEventListener('click', () => {
+      const open = lst.hasAttribute('hidden');
+      if (open) lst.removeAttribute('hidden'); else lst.setAttribute('hidden', '');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('is-open', open);
+    });
+  }
+
+  // Highlight active TOC link (sidebar) on scroll
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.rg-toc-link'));
+  if (links.length) {
+    const headings = links.map(l => document.getElementById(l.hash.slice(1)));
+    const activate = () => {
+      let active = 0;
+      for (let i = 0; i < headings.length; i++) {
+        if (headings[i] && headings[i]!.getBoundingClientRect().top <= 120) active = i;
+      }
+      links.forEach((l, i) => l.classList.toggle('is-active', i === active));
+    };
+    window.addEventListener('scroll', activate, { passive: true });
+    activate();
+  }
+</script>
+
 <style>
+/* ── Design tokens (local, mirrors site :root) ─────────────── */
 :root {
-  --rg-max: 760px;
-  --gold: #C8962E;
-  --gold-light: #D4AF7A;
-  --black: #111111;
-  --cream: #F0EAE0;
-  --muted: #888;
-  --sans: 'Inter', system-ui, sans-serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --gold:       #C8962E;
+  --gold-lt:    #D4AF7A;
+  --gold-dim:   rgba(200,150,46,.12);
+  --gold-ring:  rgba(200,150,46,.28);
+  --black:      #111111;
+  --cream:      #F0EAE0;
+  --cream-faint: rgba(240,234,224,.70);
+  --muted:      #888;
+  --muted-mid:  rgba(240,234,224,.55);
+  --border:     rgba(255,255,255,.07);
+  --border-md:  rgba(255,255,255,.12);
+  --sans:       'Inter', system-ui, sans-serif;
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --col:        700px;   /* article text column */
+  --side:       230px;   /* TOC sidebar */
+  --gap:        56px;    /* col ↔ sidebar */
+  --wrap-pad:   clamp(20px, 4vw, 60px);
 }
 
+/* ── Progress bar ───────────────────────────────────────────── */
+.rg-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 1000;
+  background: rgba(255,255,255,.05);
+}
+.rg-progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+  transition: width .1s linear;
+}
+
+/* ── Outer layout (article + optional sidebar) ─────────────── */
 .rg-wrap {
   background: var(--black);
   min-height: 60vh;
-  padding: 48px 24px 80px;
+  padding: clamp(36px, 5vw, 64px) var(--wrap-pad) 100px;
 }
-
-.rg-article {
-  max-width: var(--rg-max);
+.rg-outer {
+  max-width: calc(var(--col) + var(--side) + var(--gap));
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, var(--col)) var(--side);
+  gap: var(--gap);
+  align-items: start;
 }
 
-/* Header */
-.rg-header { margin-bottom: 40px; }
+/* Collapse to single column when sidebar doesn't fit */
+@media (max-width: 1060px) {
+  .rg-outer {
+    grid-template-columns: minmax(0, var(--col));
+    max-width: var(--col);
+    gap: 0;
+  }
+  .rg-toc-col { display: none; }
+}
+
+/* ── Article ────────────────────────────────────────────────── */
+.rg-article { min-width: 0; }
+
+/* ── Header ─────────────────────────────────────────────────── */
+.rg-header { margin-bottom: 44px; }
 
 .rg-meta {
   font-family: var(--sans);
@@ -218,57 +374,128 @@ const querlinks = allArticles
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-
-.rg-tag {
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.rg-sep { color: rgba(255,255,255,.15); }
+.rg-tag    { color: var(--gold); font-weight: 600; }
+.rg-sep    { color: rgba(255,255,255,.15); }
+.rg-city   { color: var(--cream-faint); }
+.rg-readtime { color: var(--muted); }
 
 .rg-h1 {
   font-family: var(--serif);
-  font-size: clamp(28px, 5vw, 44px);
+  font-size: clamp(28px, 5vw, 46px);
   font-weight: 600;
   color: var(--cream);
-  line-height: 1.18;
-  margin: 0 0 16px;
+  line-height: 1.15;
+  margin: 0 0 18px;
+  letter-spacing: -.01em;
 }
-
 .rg-lead {
   font-family: var(--sans);
   font-size: 17px;
-  line-height: 1.6;
-  color: rgba(240,234,224,.7);
+  line-height: 1.65;
+  color: var(--cream-faint);
   margin: 0;
 }
 
-/* Article body */
+/* ── Inline TOC (mobile) ────────────────────────────────────── */
+.rg-toc-inline {
+  border: 1px solid var(--border-md);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+@media (min-width: 1061px) { .rg-toc-inline { display: none; } }
+
+.rg-toc-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(255,255,255,.04);
+  border: none;
+  cursor: pointer;
+  color: var(--cream);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.rg-toc-toggle-label { flex: 1; text-align: left; }
+.rg-toc-icon {
+  flex-shrink: 0;
+  color: var(--gold);
+  transition: transform .25s;
+}
+.rg-toc-toggle.is-open .rg-toc-icon { transform: rotate(180deg); }
+
+.rg-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0 16px;
+  background: rgba(255,255,255,.02);
+  counter-reset: toc;
+}
+.rg-toc-list li {
+  counter-increment: toc;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 18px;
+}
+.rg-toc-list li::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.rg-toc-list a {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--cream-faint);
+  text-decoration: none;
+  line-height: 1.4;
+  padding: 5px 0;
+  display: block;
+}
+.rg-toc-list a:hover { color: var(--gold-lt); }
+
+/* ── Article body ───────────────────────────────────────────── */
 .rg-body {
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.75;
-  color: rgba(240,234,224,.85);
-  border-top: 1px solid rgba(255,255,255,.07);
-  padding-top: 36px;
-  margin-bottom: 56px;
+  line-height: 1.78;
+  color: rgba(240,234,224,.82);
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
+  margin-bottom: 64px;
 }
-
 .rg-body :global(h2) {
   font-family: var(--serif);
-  font-size: 26px;
+  font-size: clamp(22px, 3vw, 28px);
   font-weight: 600;
   color: var(--cream);
-  margin: 2.4em 0 .7em;
-  line-height: 1.25;
+  margin: 2.6em 0 .65em;
+  line-height: 1.22;
+  letter-spacing: -.01em;
 }
-
+.rg-body :global(h2::before) {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--gold);
+  margin-bottom: 10px;
+  opacity: .7;
+}
 .rg-body :global(h3) {
   font-family: var(--serif);
   font-size: 20px;
@@ -276,38 +503,50 @@ const querlinks = allArticles
   color: var(--cream);
   margin: 1.8em 0 .5em;
 }
-
-.rg-body :global(p) {
-  margin: 0 0 1.4em;
+.rg-body :global(p) { margin: 0 0 1.5em; }
+.rg-body :global(ul),
+.rg-body :global(ol) {
+  padding-left: 1.5em;
+  margin: 0 0 1.5em;
 }
-
-.rg-body :global(ul), .rg-body :global(ol) {
-  padding-left: 1.4em;
-  margin: 0 0 1.4em;
-}
-
-.rg-body :global(li) {
-  margin-bottom: .5em;
-}
-
-.rg-body :global(strong) {
-  color: var(--cream);
-  font-weight: 600;
-}
-
+.rg-body :global(li) { margin-bottom: .55em; }
+.rg-body :global(strong) { color: var(--cream); font-weight: 600; }
+.rg-body :global(em) { font-style: italic; color: var(--gold-lt); }
 .rg-body :global(a) {
-  color: var(--gold-light);
+  color: var(--gold-lt);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-
-/* FAQ */
-.rg-faq {
-  border-top: 1px solid rgba(255,255,255,.07);
-  padding-top: 36px;
-  margin-bottom: 56px;
+.rg-body :global(a:hover) { color: var(--gold); }
+.rg-body :global(blockquote) {
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px;
+  margin: 1.8em 0;
+  background: var(--gold-dim);
+  border-radius: 0 8px 8px 0;
+  color: var(--cream);
+  font-style: italic;
+}
+.rg-body :global(blockquote p:last-child) { margin-bottom: 0; }
+.rg-body :global(code) {
+  font-size: .875em;
+  background: rgba(255,255,255,.07);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+}
+.rg-body :global(hr) {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5em 0;
 }
 
+/* ── FAQ accordion ──────────────────────────────────────────── */
+.rg-faq {
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
+  margin-bottom: 64px;
+}
 .rg-faq-title {
   font-family: var(--serif);
   font-size: 28px;
@@ -315,68 +554,95 @@ const querlinks = allArticles
   color: var(--cream);
   margin: 0 0 28px;
 }
-
-.rg-faq-list { margin: 0; }
+.rg-faq-list { display: flex; flex-direction: column; gap: 4px; }
 
 .rg-faq-item {
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  padding: 20px 0;
+  border: 1px solid var(--border-md);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255,255,255,.025);
+  transition: border-color .2s;
+}
+.rg-faq-item[open] {
+  border-color: var(--gold-ring);
+  background: rgba(200,150,46,.04);
 }
 
-.rg-faq-item:first-child { padding-top: 0; }
-
 .rg-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
   font-family: var(--sans);
   font-size: 15px;
   font-weight: 600;
   color: var(--cream);
-  margin: 0 0 10px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
   line-height: 1.4;
 }
+.rg-faq-q::-webkit-details-marker { display: none; }
+.rg-faq-q span { flex: 1; }
+
+.rg-faq-icon {
+  flex-shrink: 0;
+  color: var(--gold);
+  transition: transform .25s;
+}
+.rg-faq-item[open] .rg-faq-icon { transform: rotate(180deg); }
 
 .rg-faq-a {
   font-family: var(--sans);
   font-size: 14px;
-  line-height: 1.7;
-  color: rgba(240,234,224,.75);
-  margin: 0;
+  line-height: 1.72;
+  color: var(--cream-faint);
+  padding: 0 20px 18px;
 }
 
-/* CTA Box */
+/* ── CTA box ────────────────────────────────────────────────── */
 .rg-cta {
-  background: rgba(200,150,46,.08);
-  border: 1px solid rgba(200,150,46,.25);
-  border-radius: 12px;
-  padding: 32px 36px;
-  margin-bottom: 56px;
+  position: relative;
+  background: linear-gradient(135deg, rgba(200,150,46,.10) 0%, rgba(200,150,46,.04) 100%);
+  border: 1px solid var(--gold-ring);
+  border-radius: 16px;
+  padding: clamp(24px, 4vw, 40px);
+  margin-bottom: 64px;
+  overflow: hidden;
+}
+.rg-cta::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-lt) 100%);
 }
 
-.rg-cta-label {
+.rg-cta-eyebrow {
   font-family: var(--sans);
   font-size: 11px;
-  letter-spacing: .12em;
+  font-weight: 600;
+  letter-spacing: .13em;
   text-transform: uppercase;
   color: var(--gold);
-  margin: 0 0 8px;
+  margin-bottom: 10px;
 }
-
 .rg-cta-title {
   font-family: var(--serif);
-  font-size: 28px;
+  font-size: clamp(24px, 4vw, 32px);
   font-weight: 600;
   color: var(--cream);
   margin: 0 0 12px;
   line-height: 1.2;
 }
-
 .rg-cta-text {
   font-family: var(--sans);
   font-size: 14px;
-  color: rgba(240,234,224,.7);
-  margin: 0 0 24px;
+  color: var(--cream-faint);
+  margin: 0 0 28px;
   line-height: 1.6;
 }
-
 .rg-cta-links {
   display: flex;
   gap: 12px;
@@ -385,106 +651,181 @@ const querlinks = allArticles
 
 .rg-btn {
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 12px 24px;
+  padding: 13px 26px;
   border-radius: 6px;
   display: inline-block;
-  transition: opacity .2s;
+  transition: opacity .2s, transform .2s;
+  white-space: nowrap;
 }
+.rg-btn:hover { opacity: .85; transform: translateY(-1px); }
 
-.rg-btn:hover { opacity: .85; }
-
-.rg-btn--primary {
+.rg-btn--gold {
   background: var(--gold);
   color: #fff;
 }
-
-.rg-btn--secondary {
-  background: rgba(255,255,255,.07);
-  color: rgba(240,234,224,.8);
-  border: 1px solid rgba(255,255,255,.12);
+.rg-btn--ghost {
+  background: rgba(255,255,255,.06);
+  color: rgba(240,234,224,.75);
+  border: 1px solid var(--border-md);
 }
 
-/* Dozentinnen Grid section */
+/* ── Grid section ───────────────────────────────────────────── */
+.rg-section-eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 8px;
+}
 .rg-grid-section {
-  margin-bottom: 56px;
+  margin-bottom: 64px;
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
 }
-
 .rg-grid-title {
   font-family: var(--serif);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--cream);
-  margin: 0 0 20px;
+  margin: 0 0 24px;
 }
 
-/* Querlinks */
+/* ── Querlinks ──────────────────────────────────────────────── */
 .rg-querlinks {
-  border-top: 1px solid rgba(255,255,255,.07);
-  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 36px;
 }
-
-.rg-ql-title {
+.rg-ql-label {
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--muted);
-  margin: 0 0 18px;
+  margin: 0 0 16px;
 }
-
 .rg-ql-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
-
 .rg-ql-link {
-  display: flex;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
   gap: 10px;
   text-decoration: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.07);
+  padding: 13px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
   transition: border-color .2s, background .2s;
 }
-
 .rg-ql-link:hover {
-  border-color: rgba(200,150,46,.35);
-  background: rgba(200,150,46,.05);
+  border-color: var(--gold-ring);
+  background: var(--gold-dim);
 }
-
 .rg-ql-city {
   font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   color: var(--gold);
-  letter-spacing: .08em;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  flex-shrink: 0;
+  background: var(--gold-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
-
 .rg-ql-text {
   font-family: var(--sans);
   font-size: 14px;
-  color: rgba(240,234,224,.8);
+  color: rgba(240,234,224,.75);
   line-height: 1.3;
 }
+.rg-ql-arrow { color: var(--muted); flex-shrink: 0; }
+.rg-ql-link:hover .rg-ql-arrow { color: var(--gold); }
 
+/* ── Sidebar TOC ────────────────────────────────────────────── */
+.rg-toc-col {
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-md) transparent;
+}
+.rg-toc {
+  border: 1px solid var(--border-md);
+  border-radius: 12px;
+  padding: 20px 20px 16px;
+  background: rgba(255,255,255,.02);
+}
+.rg-toc-heading {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 14px;
+}
+.rg-toc-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: toc-side;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rg-toc-nav li { counter-increment: toc-side; display: flex; align-items: baseline; gap: 8px; }
+.rg-toc-nav li::before {
+  content: counter(toc-side, decimal-leading-zero);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.rg-toc-link {
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 0;
+  display: block;
+  transition: color .15s;
+  border-left: 2px solid transparent;
+  padding-left: 0;
+}
+.rg-toc-link:hover,
+.rg-toc-link.is-active {
+  color: var(--gold-lt);
+}
+.rg-toc-link.is-active {
+  color: var(--gold);
+}
+
+/* ── Mobile tweaks ──────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .rg-wrap { padding: 32px 20px 64px; }
-  .rg-cta { padding: 24px 20px; }
+  .rg-cta { padding: 22px 18px; }
   .rg-cta-links { flex-direction: column; }
   .rg-btn { text-align: center; }
+  .rg-h1 { font-size: 26px; }
+  .rg-lead { font-size: 15px; }
+  .rg-body { font-size: 15px; }
+  .rg-body :global(h2) { font-size: 21px; }
 }
 </style>
