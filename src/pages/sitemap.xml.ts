@@ -10,6 +10,11 @@ export const GET: APIRoute = async () => {
 
   const urls = new Set<string>();
 
+  // Static pages
+  urls.add(`${BASE_URL}/`);
+  urls.add(`${BASE_URL}/fachdozentin-werden/`);
+  urls.add(`${BASE_URL}/essen/fachkosmetikerin-ausbildung/`);
+
   // Dozentin pages + city/service combinations
   const { data: dozentinnen } = await supabase
     .from('dozentinnen')
@@ -39,12 +44,12 @@ export const GET: APIRoute = async () => {
 
   for (const city of cities ?? []) {
     if (city?.slug && !satelliteCities.has(city.slug)) {
-      urls.add(`${BASE_URL}/${city.slug}`);
+      urls.add(`${BASE_URL}/${city.slug}/`);
     }
   }
 
   for (const d of dozentinnen ?? []) {
-    if (d?.slug) urls.add(`${BASE_URL}/dozentinnen/${d.slug}`);
+    if (d?.slug) urls.add(`${BASE_URL}/dozentinnen/${d.slug}/`);
 
     const city = Array.isArray(d.cities) ? d.cities[0] : d.cities;
     if (!city?.slug) continue;
@@ -57,7 +62,7 @@ export const GET: APIRoute = async () => {
       const service = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
       // Only include avgs_eligible services — those are the only pages actually built
       if (service?.slug && service?.avgs_eligible) {
-        urls.add(`${BASE_URL}/${effectiveCitySlug}/${service.slug}`);
+        urls.add(`${BASE_URL}/${effectiveCitySlug}/${service.slug}/`);
       }
     }
   }
