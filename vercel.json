@@ -39,6 +39,10 @@
     { "source": "/ausbildung/camouflage-removal/berlin/",      "destination": "/berlin/camouflage-removal-masterclass/",     "permanent": true },
     { "source": "/ausbildung/camouflage-removal/essen/",       "destination": "/essen/camouflage-removal-masterclass/",      "permanent": true },
     { "source": "/ausbildung/camouflage-removal/hamburg/",     "destination": "/hamburg/camouflage-removal-masterclass/",    "permanent": true },
-    { "source": "/ausbildung/camouflage-removal/ulm/",         "destination": "/ulm/camouflage-removal-masterclass/",        "permanent": true }
+    { "source": "/ausbildung/camouflage-removal/ulm/",         "destination": "/ulm/camouflage-removal-masterclass/",        "permanent": true },
+
+    { "source": "/hamburg-luxbeauty-academy",               "destination": "/hamburg/",                                  "permanent": true },
+    { "source": "/train-the-trainer",                       "destination": "/fachdozentin-werden/",                      "permanent": true },
+    { "source": "/kontakt",                                 "destination": "/",                                          "permanent": true }
   ]
 }
