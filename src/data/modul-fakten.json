@@ -1,0 +1,106 @@
+{
+  "avgs": {
+    "bezeichnung": "Aktivierungs- und Vermittlungsgutschein",
+    "rechtsgrundlage": "§ 45 SGB III",
+    "zweck": "Fördert Aktivierungs- und Eingliederungsmaßnahmen",
+    "finanzierung": "Bei bewilligtem AVGS + Durchführung bei einem AZAV-zugelassenen Träger übernimmt die Agentur für Arbeit bzw. das Jobcenter die kompletten Maßnahmekosten – für die Teilnehmerin entstehen keine Kosten",
+    "rechtsanspruch": "Kein Rechtsanspruch. Immer Ermessensentscheidung der zuständigen Ansprechperson bei der Behörde",
+    "voraussetzung": "Muss VOR Maßnahmenbeginn beantragt und schriftlich bewilligt sein",
+    "zielgruppe": [
+      "Arbeitssuchende",
+      "von Arbeitslosigkeit Bedrohte",
+      "ALG-I-Beziehende (i.d.R. nach ca. 6 Wochen Bezug)",
+      "Bürgergeld-Beziehende über das Jobcenter (SGB II)",
+      "Angestellte (Einzelfallprüfung erforderlich)",
+      "Selbstständige (Einzelfallprüfung erforderlich)"
+    ],
+    "unterschied_bildungsgutschein": "Der Bildungsgutschein (§ 81 SGB III) fördert längere Weiterbildungen und Anfänger-Gruppenkurse. Der AVGS (§ 45 SGB III) ist das richtige Instrument für unsere kompakten Perfektionstrainings für bereits ausgebildete Fachkräfte.",
+    "usp": "Unser AZAV-Kooperationspartner ist der einzige Anbieter in Deutschland, der Perfektionstrainings speziell für bereits erfahrene Teilnehmerinnen über den AVGS anbietet",
+    "format": {
+      "gesamt_ue": 40,
+      "praxistage": 3,
+      "std_pro_praxistag": "ca. 8 Stunden (freie Zeiteinteilung, individuelle Absprache mit der Dozentin)",
+      "online_ue": 10,
+      "online_inhalt": "Marketing & Vertrieb für Beauty-Selbstständige",
+      "praesenz_inhalte": [
+        "Matrizenübung (gezieltes Üben auf Übungshaut)",
+        "Arbeit am Kundenmodell unter direkter Aufsicht der Fachdozentin"
+      ],
+      "theorie": "Keine Theoriestunden – Theorie wird als vorhanden vorausgesetzt",
+      "abschluss": "Teilnahme-Zertifikat (einsetzbar bei Kundinnen und im eigenen Marketingmaterial)"
+    },
+    "netzwerk": "Zertifizierte Schulungsstandorte in ganz Deutschland, über 13 Fachdozentinnen, persönlicher Kleingruppen-Unterricht",
+    "cta_ziel": "Dozentinnen-Profil mit Jotform-Qualifizierungsformular (Vorerfahrung etc.)"
+  },
+  "microblading": {
+    "bezeichnung": "Microblading",
+    "technik": "Semi-permanente Augenbrauen-Pigmentierung mit feinem Handwerkzeug (Blade); haarfeine Striche werden manuell in die obere Hautschicht eingearbeitet",
+    "look": "Sehr natürlicher 'echte Härchen'-Look; ideal bei lückenhaften oder asymmetrischen Brauen",
+    "haltbarkeit": "Ca. 12–18 Monate, danach ist eine Auffrischungsbehandlung empfehlenswert",
+    "schwaeche": "Auf sehr fettiger oder großporiger Haut können die feinen Linien mit der Zeit verschwimmen; bei dieser Hautbeschaffenheit oft schlechtere Ergebnisse",
+    "perfektions_schwerpunkte": [
+      "Strichführung und Strichmuster",
+      "Symmetrie und Brauen-Mapping",
+      "Einstichtiefe (zu flach: schlechte Retention; zu tief: Narbenbildung)",
+      "Farb- und Pigmentlehre (Oxidation, Hauttöne, Langzeitverhalten)",
+      "Heilungsprozess und Nachsorgeprotokoll",
+      "Diagnose und Korrektur häufiger Fehler"
+    ]
+  },
+  "powderbrows": {
+    "bezeichnung": "Powder Brows & Ombré Brows",
+    "technik": "Schattierungs-Pigmentierung mit PMU-Maschine; erzeugt einen weichen, gepuderten Effekt ähnlich dezent aufgetragenem Brauen-Make-up",
+    "vorteil_gegenueber_microblading": "Hält auf fettiger oder großporiger Haut deutlich besser als Microblading; wirkt definierter und gleichmäßiger",
+    "ombre_variante": "Ombré-Variante: heller Brauenkopf geht in dunkleren Brauenschwanz über – sehr weicher, natürlicher Verlauf",
+    "haltbarkeit": "Ca. 1–2 Jahre, abhängig von Hauttyp und Pflege",
+    "perfektions_schwerpunkte": [
+      "Gleichmäßige Pixelierung und Schattierungstiefe",
+      "Weicher Farbverlauf (Ombré-Effekt)",
+      "Präzise Maschinenführung (Tempo, Druck, Tiefe)",
+      "Stufenweiser Farbaufbau ohne Überarbeitung",
+      "Hauttyp-Anpassung (fettig, trocken, reif, sensitiv)",
+      "Symmetrie und individuelles Brauen-Mapping"
+    ]
+  },
+  "velvet-lips": {
+    "bezeichnung": "Velvet Lips & LipStick-Effekt (Lippenpigmentierung)",
+    "technik": "Semi-permanente Lippenpigmentierung mit PMU-Maschine; betont natürliche Lippenfarbe und Kontur für einen dauerhaften Velvet- oder Lippenstift-Look",
+    "haltbarkeit": "Ca. 1–3 Jahre je nach Hauttyp, Pflege und eingesetzten Pigmenten",
+    "besonderheit": "Eignet sich auch zur Neutralisierung dunkler oder kühler Lippentöne vor einer Farbpigmentierung",
+    "perfektions_schwerpunkte": [
+      "Farbauswahl nach Hauttyp, Lippenfarbe und Kundenwunsch",
+      "Neutralisieren dunkler, kühler oder ungleichmäßiger Lippentöne",
+      "Gleichmäßige Pigmentsättigung ohne Flecken",
+      "Weiche, präzise Lippenkontur ohne harte Kanten",
+      "Schmerz- und Blutungsmanagement (sensible Region)",
+      "Heilungsphase und Peeling-Prozess korrekt begleiten"
+    ]
+  },
+  "camouflage-removal": {
+    "bezeichnung": "Camouflage & Tattoo-/PMU-Removal",
+    "camouflage_technik": "Hautfarbene Pigmentierung zum gezielten Überdecken von Narben, Dehnungsstreifen, Vitiligo-Flecken oder unerwünschten Tätowierungen",
+    "removal_technik": "Entfernen unerwünschter PMU oder Tattoos mithilfe spezieller Removal-Lösungen, die das Pigment aus der Haut lösen",
+    "anspruch": "Besonders anspruchsvolle und sensible Technik – Sicherheitsprotokoll und Kenntnis der Kontraindikationen sind unverzichtbar",
+    "perfektions_schwerpunkte": [
+      "Präzises Hautton-Matching (Farbtheorie für Camouflage)",
+      "Gleichmäßiger Farbaufbau in mehreren Schichten (kein Einmal-Auftrag)",
+      "Removal-Technik (Timing, Tiefe, Heilungsbegleitung)",
+      "Kontraindikationen sicher erkennen und einhalten",
+      "Realistische Sitzungsplanung und Ergebniskommunikation mit der Kundin",
+      "Dokumentation und rechtssichere Aufklärung"
+    ]
+  },
+  "wimpernverlaengerung": {
+    "bezeichnung": "Wimpernverlängerung",
+    "technik": "Applikation künstlicher Wimpernextensions auf die natürlichen Wimpern; Techniken: 1:1 Classic (eine Extension pro Naturwimper) und Volumen / Russian Volume (mehrere feine Extensions pro Naturwimper als Fächer)",
+    "haltbarkeit": "Ca. 3–4 Wochen, dann Infill empfohlen (je nach Wachstumsphase der Naturwimpern)",
+    "perfektions_schwerpunkte": [
+      "Exakte Isolation (eine Naturwimper isolieren, keine Verklebungen)",
+      "Saubere, gleichmäßige Volumenfächer (Russian Volume)",
+      "Haltbarkeit / Retention optimieren (Kleber-Handling, Luftfeuchtigkeit, Vorreinigung)",
+      "Individuelles Lash-Mapping und Stilberatung",
+      "Sicherer Umgang mit Kleber und Allergierisiken",
+      "Arbeitstempo steigern ohne Qualitätsverlust"
+    ]
+  }
+}

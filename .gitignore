@@ -27,3 +27,6 @@ pnpm-debug.log*
 
 # supabase temp files
 supabase/.temp/
+
+# Ratgeber pipeline
+logs/dedupe-report.json
