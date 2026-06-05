@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import { supabase } from '../lib/supabase';
 import { HUB_CITY_SLUG } from '../data/location-overrides';
 
@@ -14,6 +15,13 @@ export const GET: APIRoute = async () => {
   urls.add(`${BASE_URL}/`);
   urls.add(`${BASE_URL}/fachdozentin-werden/`);
   urls.add(`${BASE_URL}/essen/fachkosmetikerin-ausbildung/`);
+  urls.add(`${BASE_URL}/ratgeber/`);
+
+  // Ratgeber articles (content collection)
+  const ratgeberArticles = await getCollection('ratgeber');
+  for (const entry of ratgeberArticles) {
+    urls.add(`${BASE_URL}/ratgeber/${entry.id}/`);
+  }
 
   // Dozentin pages + city/service combinations
   const { data: dozentinnen } = await supabase
