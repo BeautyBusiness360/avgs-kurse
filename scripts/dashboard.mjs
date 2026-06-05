@@ -78,9 +78,13 @@ async function run() {
   // 5. Roadmap (optional)
   const roadmap = getRoadmap();
 
+  // 5b. Ratgeber register (soll/ist)
+  const ratPages2 = pages.filter(p => p.type === 'ratgeber');
+  const ratgeberRegister = getRatgeberRegister(ratPages2);
+
   // 6. Generate + write HTML
   const ts  = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
-  const html = generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ts });
+  const html = generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts });
 
   let written = 0;
   for (const dir of OUTPUTS) {
@@ -320,6 +324,47 @@ function getRoadmap() {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
 }
 
+// ── Ratgeber-Plan + Soll/Ist-Register ────────────────────────────────────────
+
+function getRatgeberRegister(ratPages) {
+  const planPath = path.resolve('src/data/ratgeber-plan.json');
+  if (!fs.existsSync(planPath)) return null;
+
+  let plan;
+  try { plan = JSON.parse(fs.readFileSync(planPath, 'utf8')); }
+  catch { return null; }
+
+  const builtSlugs = new Set(
+    ratPages
+      .filter(p => p.slug && p.slug !== 'index')
+      .map(p => p.slug)
+  );
+
+  const planSlugs = new Set(plan.map(e => e.slug));
+
+  const entries = plan.map(entry => {
+    const contentExists = fs.existsSync(
+      path.resolve(`src/content/ratgeber/${entry.slug}.md`)
+    );
+    const isLive = builtSlugs.has(entry.slug);
+
+    let status;
+    if (isLive)           status = 'live';
+    else if (contentExists) status = 'erstellt';
+    else                  status = 'geplant';
+
+    return { ...entry, contentExists, isLive, status };
+  });
+
+  const orphans = [...builtSlugs].filter(slug => !planSlugs.has(slug));
+
+  const live     = entries.filter(e => e.status === 'live').length;
+  const erstellt = entries.filter(e => e.status === 'erstellt').length;
+  const geplant  = entries.filter(e => e.status === 'geplant').length;
+
+  return { entries, orphans, live, erstellt, geplant, total: plan.length };
+}
+
 // ── GSC status helpers ────────────────────────────────────────────────────────
 
 function gscBadge(gscResult, gscConnected) {
@@ -345,7 +390,7 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 
 // ── HTML Generator ────────────────────────────────────────────────────────────
 
-function generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ts }) {
+function generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts }) {
   const gscConnected = Object.keys(gscData).length > 0;
 
   const svcPages  = pages.filter(p => p.type === 'svc');
@@ -455,6 +500,7 @@ tr:hover{background:rgba(255,255,255,.02)}
   <div class="kpi${gaps.length > 0 ? ' kpi-warn' : ''}"><div class="kpi-v${gaps.length > 0 ? ' warn' : ' good'}">${gaps.length}</div><div class="kpi-l">Lücken / To-Do</div></div>
   <div class="kpi"><div class="kpi-v">${svcPages.length}</div><div class="kpi-l">SVC-Seiten</div></div>
   <div class="kpi"><div class="kpi-v">${dozPages.length}</div><div class="kpi-l">Dozentinnen</div></div>
+  ${ratgeberRegister ? `<div class="kpi"><div class="kpi-v" style="color:#22c55e">${ratgeberRegister.live}</div><div class="kpi-l">Ratgeber live / ${ratgeberRegister.total}</div></div>` : ''}
 </div>
 
 ${gscNote}
@@ -481,13 +527,66 @@ ${gscNote}
   </div>
 </section>
 
-<!-- 3. Ratgeber -->
+<!-- 3. Ratgeber Content-Register -->
 <section>
-  <h2>3. Ratgeber <span>${ratPages.length} Seiten</span></h2>
-  ${ratPages.length > 0
-    ? `<div class="tbl-wrap"><table><thead><tr><th>URL</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead><tbody>${ratPages.map(pageRow).join('')}</tbody></table></div>`
-    : '<div class="empty">Noch keine Ratgeber-Seiten gebaut.</div>'
-  }
+  <h2>3. Ratgeber Content-Register <span>${ratPages.length} live · ${ratgeberRegister ? ratgeberRegister.total : '–'} geplant</span></h2>
+
+  ${ratgeberRegister ? (() => {
+    const { entries, orphans, live, erstellt, geplant } = ratgeberRegister;
+    const MODUL_LABEL = {
+      microblading: 'Microblading', powderbrows: 'Powder Brows',
+      wimpernverlaengerung: 'Wimpernverlängerung', 'camouflage-removal': 'Camouflage Removal',
+      'velvet-lips': 'Velvet Lips', fachkosmetikerin: 'Fachkosmetikerin',
+    };
+    const progressPct = Math.round(live / (entries.length || 1) * 100);
+    const progressBar = `<div style="margin-bottom:16px">
+      <div style="display:flex;gap:16px;font-size:12px;margin-bottom:8px">
+        <span style="color:#22c55e">● Live: ${live}</span>
+        <span style="color:#C8962E">● Erstellt: ${erstellt}</span>
+        <span style="color:#555">● Geplant: ${geplant}</span>
+        <span style="color:#666;margin-left:auto">${progressPct}% abgeschlossen</span>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;overflow:hidden">
+        <div style="background:#22c55e;height:100%;width:${progressPct}%;transition:width .3s"></div>
+      </div>
+    </div>`;
+
+    const rows = entries.map(e => {
+      const statusBadge = e.status === 'live'
+        ? '<span class="badge badge-ok">Live</span>'
+        : e.status === 'erstellt'
+          ? '<span class="badge badge-warn">Erstellt</span>'
+          : '<span class="badge badge-off">Geplant</span>';
+      const gscBadgeHtml = e.isLive
+        ? gscBadge(gscData[`${BASE_URL}${e.url}`], Object.keys(gscData).length > 0)
+        : '<span class="badge badge-off">–</span>';
+      const urlCell = e.isLive
+        ? `<a href="${esc(e.url)}" target="_blank" rel="noopener" class="url-link">${esc(e.url)}</a>`
+        : `<span style="color:#444">${esc(e.url)}</span>`;
+      return `<tr>
+        <td>${urlCell}</td>
+        <td>${esc(MODUL_LABEL[e.modul] ?? e.modul)}</td>
+        <td>${esc(e.stadt)}</td>
+        <td class="c">${statusBadge}</td>
+        <td class="c">${gscBadgeHtml}</td>
+      </tr>`;
+    }).join('');
+
+    const orphanHtml = orphans.length > 0
+      ? `<div style="margin-top:16px"><h3 style="font-size:11px;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Verwaiste Ratgeber (${orphans.length}) – live aber nicht im Plan</h3>
+         ${orphans.map(s => `<div style="font-family:monospace;font-size:11px;color:#ef4444;padding:3px 0">/ratgeber/${esc(s)}/</div>`).join('')}</div>`
+      : '';
+
+    return progressBar +
+      `<div class="tbl-wrap"><table>
+        <thead><tr><th>URL</th><th>Modul</th><th>Stadt</th><th class="c">Status</th><th class="c">Indexiert</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>` + orphanHtml;
+  })() : (() => {
+    return ratPages.length > 0
+      ? `<div class="tbl-wrap"><table><thead><tr><th>URL</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead><tbody>${ratPages.map(pageRow).join('')}</tbody></table></div>`
+      : '<div class="empty">Noch keine Ratgeber-Seiten gebaut.</div>';
+  })()}
 </section>
 
 <!-- 4. Sonstige Seiten -->
