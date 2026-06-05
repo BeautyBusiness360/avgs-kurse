@@ -5,8 +5,8 @@ modul: microblading
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: microblading-masterclass
-relatedDozentinSlug: dunya-said-hamburg
-relatedDozentinName: Dunya Said
+relatedDozentinSlug: carina-ambrosia-hamburg
+relatedDozentinName: Carina Ambrosia
 publishDate: 2026-06-06
 faq:
   - question: "Was ist ein AVGS und kann ich damit das Microblading Perfektionstraining finanzieren?"
@@ -14,7 +14,7 @@ faq:
   - question: "Welche Vorkenntnisse brauche ich für das Perfektionstraining?"
     answer: "Du solltest Grundkenntnisse im Bereich Permanent Make-up oder Microblading mitbringen. Das Perfektionstraining richtet sich an Fachkräfte, die ihre Technik professionell vertiefen möchten, nicht an absolute Einsteiger."
   - question: "Wie lange dauert das Training und wo findet es statt?"
-    answer: "Das Microblading Perfektionstraining dauert in der Regel ein bis zwei Tage und findet an einem zertifizierten Schulungsstandort in Hamburg statt. Aktuelle Termine und den genauen Ort erfährst du direkt auf dem Profil der Dozentin."
+    answer: "Das Microblading Perfektionstraining umfasst 3 Praxistage à ca. 8 Stunden (plus 10 UE online) – insgesamt 40 UE. Die Praxistage finden an einem zertifizierten Schulungsstandort in Hamburg statt, die Zeiteinteilung erfolgt flexibel in Absprache mit der Dozentin."
 ---
 
 Du bist ausgebildete Kosmetikerin oder PMU-Artist und willst deine Microblading-Technik auf das nächste Level bringen? Im **Microblading Perfektionstraining Hamburg** trainierst du intensiv unter Anleitung einer AZAV-akkreditierten Fachdozentin – und das vollständig gefördert über deinen AVGS-Gutschein.
@@ -60,23 +60,20 @@ Auch wenn du bereits selbstständig als Kosmetikerin arbeitest, kann je nach Sit
 
 Hamburg ist einer der stärksten Märkte für Beauty-Dienstleistungen in Deutschland. Die Nachfrage nach professionellen PMU-Behandlungen ist hoch, das Preisniveau überdurchschnittlich. Gleichzeitig wächst die Zahl der Anbieterinnen – wer sich mit einem nachgewiesenen Perfektionstraining abheben kann, hat einen klaren Wettbewerbsvorteil.
 
-Die Schulungsstandorte im BeautyBusiness360-Netzwerk in Hamburg liegen zentral, sind gut mit öffentlichen Verkehrsmitteln erreichbar und verfügen über professionell ausgestattete Trainingsräume mit Liegen, geeigneter Beleuchtung und Fachmaterial.
+Die Schulungsstandorte im BeautyBusiness360-Netzwerk in Hamburg liegen zentral, sind gut mit öffentlichen Verkehrsmitteln erreichbar und verfügen über professionell ausgestattete Trainingsräume.
 
-## Ablauf eines typischen Trainingstages
+## Wie läuft das Perfektionstraining ab?
 
-Der genaue Ablauf richtet sich nach der Dozentin und dem aktuellen Erfahrungsstand der Teilnehmerinnen. Typisch für ein eintägiges Perfektionstraining:
+Das Microblading Perfektionstraining ist **rein praktisch** – ohne Theorieblöcke. Es umfasst **3 Praxistage à ca. 8 Stunden** und **10 UE online** (Marketing & Vertrieb), insgesamt **40 UE**. Die Zeiteinteilung ist flexibel und wird individuell mit der Dozentin abgestimmt.
 
-**Vormittag**
-- Theoretische Auffrischung: Anatomie der Augenbraue, Pigmenteigenschaften, Kontraindikationen
-- Fallbeispielanalyse – was lief schief, wie korrigieren?
-- Demo durch die Dozentin am Modell
+**Praxisinhalte:**
 
-**Nachmittag**
-- Praxiseinheit am eigenen Modell (du bringst eine geeignete Person mit oder es wird eines vermittelt)
-- Direktes Feedback der Dozentin in Echtzeit
-- Abschlussbesprechung: individuelle Stärken und nächste Entwicklungsschritte
+- **Matrizenübung** – gezieltes Üben der Führung und Tiefe auf Übungshaut (Matrize)
+- **Arbeit am Kundenmodell** – du arbeitest unter direkter Aufsicht der Fachdozentin an echten Kundinnen
 
-Du erhältst ein Teilnahme-Zertifikat, das du bei Kundinnen und auf deiner Website präsentieren kannst.
+Der Fokus liegt ausschließlich auf deiner handwerklichen Weiterentwicklung. Theorie setzt du als Teilnehmerin bereits voraus – das Training baut auf bestehender Praxiserfahrung auf.
+
+Nach Abschluss erhältst du ein **Teilnahme-Zertifikat**, das du bei Kundinnen und auf deiner Website einsetzen kannst.
 
 ## Dein nächster Schritt
 

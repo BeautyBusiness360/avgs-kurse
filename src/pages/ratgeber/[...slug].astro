@@ -5,6 +5,7 @@ import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import DozentinnenGrid from '../../components/DozentinnenGrid.astro';
+import GalerieGrid from '../../components/GalerieGrid.astro';
 import { supabase } from '../../lib/supabase';
 import { HUB_CITY_SLUG } from '../../data/location-overrides';
 
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
   const { data: allDoz } = await supabase
     .from('dozentinnen')
     .select(`
-      slug, first_name, last_name, image_url, studio_city,
+      slug, first_name, last_name,
       cities(slug, name),
       dozentin_services(services(slug, name, avgs_eligible))
     `)
@@ -118,6 +119,8 @@ const querlinks = allArticles
       <div class="rg-body">
         <Content />
       </div>
+
+      <GalerieGrid module={serviceSlug} />
 
       {faq && faq.length > 0 && (
         <section class="rg-faq">

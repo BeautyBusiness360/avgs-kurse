@@ -1,0 +1,129 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+  module: string;  // service slug, e.g. "microblading-masterclass"
+  limit?: number;
+}
+
+const { module: serviceSlug, limit = 6 } = Astro.props;
+
+const GALLERY_FOLDERS: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': 'powderbrows-ombrebrows',
+  'velvet-lips-lipstick-masterclass':   'velvet-lips-lipstick',
+  'microblading-masterclass':           'microblading',
+  'wimpernverlaengerung-masterclass':   'wimpernverlaengerung',
+  'camouflage-removal-masterclass':     'camouflage-removal',
+};
+
+const GALLERY_DESC: Record<string, string> = {
+  'powderbrows-ombrebrows-masterclass': 'PowderBrows & OmbreBrows – pudrig-weiche, definierte Augenbrauen. Ergebnisse aus unseren Trainings.',
+  'velvet-lips-lipstick-masterclass':   'Velvet Lips & LipStick Effekt – natürlich-definierte Lippen mit gleichmäßiger Farbe. Ergebnisse aus unseren Trainings.',
+  'microblading-masterclass':           'Microblading – haarfeine Striche für natürlich wirkende, dicht definierte Augenbrauen. Ergebnisse aus unseren Trainings.',
+  'wimpernverlaengerung-masterclass':   'Wimpernverlängerung (1:1 & Volumen) – längere, dichtere Wimpern. Ergebnisse aus unseren Trainings.',
+  'camouflage-removal-masterclass':     'Camouflage & Tattoo Removal – gezieltes Überdecken oder Entfernen unerwünschter Pigmentierungen. Ergebnisse aus unseren Trainings.',
+};
+
+const folder = GALLERY_FOLDERS[serviceSlug];
+const desc   = GALLERY_DESC[serviceSlug] ?? null;
+
+let images: string[] = [];
+
+if (folder) {
+  const folderAbs = path.join(process.cwd(), 'public', 'images', 'Modul-Bilder', folder);
+  if (fs.existsSync(folderAbs)) {
+    images = fs.readdirSync(folderAbs)
+      .filter(f => /\.webp$/i.test(f) && f !== 'hero.webp')
+      .sort((a, b) => {
+        const na = parseInt(a.match(/\d+/)?.[0] ?? '0');
+        const nb = parseInt(b.match(/\d+/)?.[0] ?? '0');
+        return na - nb;
+      })
+      .slice(0, limit)
+      .map(f => `/images/Modul-Bilder/${folder}/${f}`);
+  }
+}
+---
+
+{images.length > 0 && (
+  <section class="gg-section">
+    <h2 class="gg-title">Beispiel-Ergebnisse</h2>
+    {desc && <p class="gg-desc">{desc}</p>}
+    <div class="gg-grid">
+      {images.map((src, i) => (
+        <div class="gg-item">
+          <img
+            src={src}
+            alt={`Beispielergebnis ${i + 1}`}
+            class="gg-img"
+            loading="lazy"
+            decoding="async"
+            width="400"
+            height="400"
+          />
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+.gg-section {
+  margin-bottom: 56px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: 36px;
+}
+
+.gg-title {
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: #F0EAE0;
+  margin: 0 0 10px;
+}
+
+.gg-desc {
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+  font-size: 13px;
+  color: rgba(240,234,224,.55);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.gg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.gg-item {
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: rgba(255,255,255,.04);
+}
+
+.gg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+
+.gg-item:hover .gg-img {
+  transform: scale(1.04);
+}
+
+@media (max-width: 640px) {
+  .gg-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  /* Show only first 4 on mobile for cleaner layout */
+  .gg-item:nth-child(n+5) {
+    display: none;
+  }
+}
+</style>

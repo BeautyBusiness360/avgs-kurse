@@ -1,4 +1,6 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 import { SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../data/location-overrides';
 
 interface DozentinService {
@@ -14,8 +16,6 @@ export interface GridDozentin {
   slug: string;
   first_name: string;
   last_name: string;
-  image_url?: string | null;
-  studio_city?: string | null;
   cities?: DozentinCity | DozentinCity[] | null;
   dozentin_services?: DozentinService[] | null;
 }
@@ -28,26 +28,30 @@ interface Props {
 
 const { dozentinnen, limit, moduleFilter } = Astro.props;
 
-// Filter by service slug if moduleFilter provided
-const filtered = moduleFilter
-  ? dozentinnen.filter(d => {
-      const rows = d.dozentin_services ?? [];
-      return rows.some(ds => {
-        const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
-        return svc?.slug === moduleFilter;
-      });
-    })
-  : dozentinnen;
-
-const visible = limit ? filtered.slice(0, limit) : filtered;
-
-function getCity(d: GridDozentin): DozentinCity | null {
+function getOriginalCity(d: GridDozentin): DozentinCity | null {
   const raw = Array.isArray(d.cities) ? d.cities[0] : d.cities;
   return raw ?? null;
 }
 
 function getEffectiveCitySlug(d: GridDozentin): string {
-  return HUB_CITY_SLUG[d.slug] ?? getCity(d)?.slug ?? '';
+  return HUB_CITY_SLUG[d.slug] ?? getOriginalCity(d)?.slug ?? '';
+}
+
+function getLocalSlug(d: GridDozentin): string {
+  const origCitySlug = getOriginalCity(d)?.slug ?? '';
+  // Strip city suffix from slug, e.g. "carina-ambrosia-hamburg" → "carina-ambrosia"
+  if (origCitySlug) {
+    return d.slug.replace(new RegExp(`-${origCitySlug}$`), '');
+  }
+  // Fallback: strip last hyphen-segment
+  return d.slug.replace(/-[^-]+$/, '');
+}
+
+function getProfileImg(d: GridDozentin): string | null {
+  const localSlug = getLocalSlug(d);
+  const rel = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
+  const abs = path.join(process.cwd(), 'public', rel);
+  return fs.existsSync(abs) ? rel : null;
 }
 
 function getSubjects(d: GridDozentin): string[] {
@@ -61,45 +65,63 @@ function getSubjects(d: GridDozentin): string[] {
   return names;
 }
 
-function initials(d: GridDozentin): string {
-  return `${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase();
-}
+// Filter by module if requested
+const filtered = moduleFilter
+  ? dozentinnen.filter(d => {
+      const rows = d.dozentin_services ?? [];
+      return rows.some(ds => {
+        const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+        return svc?.slug === moduleFilter;
+      });
+    })
+  : dozentinnen;
+
+const visible = limit ? filtered.slice(0, limit) : filtered;
+
+// Pre-compute profile images (uses fs at build time)
+const visibleWithImgs = visible.map(d => ({
+  ...d,
+  profileImg:   getProfileImg(d),
+  fullName:     `${d.first_name} ${d.last_name}`.trim(),
+  effectiveCity: getEffectiveCitySlug(d),
+  cityName:     getOriginalCity(d)?.name ?? null,
+  subjects:     getSubjects(d),
+}));
 ---
 
-{visible.length > 0 && (
+{visibleWithImgs.length > 0 && (
   <ul class="dg-grid">
-    {visible.map(d => {
-      const city = getCity(d);
-      const citySlug = getEffectiveCitySlug(d);
-      const subjects = getSubjects(d);
+    {visibleWithImgs.map(d => {
       const profileUrl = `/dozentinnen/${d.slug}/`;
-      const serviceUrl = moduleFilter && citySlug ? `/${citySlug}/${moduleFilter}/` : null;
+      const serviceUrl = moduleFilter && d.effectiveCity
+        ? `/${d.effectiveCity}/${moduleFilter}/`
+        : null;
 
       return (
         <li class="dg-card">
           <a href={profileUrl} class="dg-photo-wrap" tabindex="-1" aria-hidden="true">
-            {d.image_url ? (
+            {d.profileImg ? (
               <img
-                src={d.image_url}
-                alt={`${d.first_name} ${d.last_name}`}
+                src={d.profileImg}
+                alt={d.fullName}
                 class="dg-photo"
                 width="80"
                 height="80"
                 loading="lazy"
               />
             ) : (
-              <div class="dg-initials" aria-hidden="true">{initials(d)}</div>
+              <div class="dg-initials" aria-hidden="true">
+                {`${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase()}
+              </div>
             )}
           </a>
           <div class="dg-info">
-            <a href={profileUrl} class="dg-name">
-              {d.first_name} {d.last_name}
-            </a>
-            {city && (
-              <span class="dg-city">{city.name}</span>
+            <a href={profileUrl} class="dg-name">{d.fullName}</a>
+            {d.cityName && (
+              <span class="dg-city">{d.cityName}</span>
             )}
-            {subjects.length > 0 && (
-              <p class="dg-subjects">{subjects.join(' · ')}</p>
+            {d.subjects.length > 0 && (
+              <p class="dg-subjects">{d.subjects.join(' · ')}</p>
             )}
             <div class="dg-actions">
               <a href={profileUrl} class="dg-btn dg-btn--primary">Profil & Termine</a>
