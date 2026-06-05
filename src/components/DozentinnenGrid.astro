@@ -1,0 +1,246 @@
+---
+import { SERVICE_DISPLAY_NAME, HUB_CITY_SLUG } from '../data/location-overrides';
+
+interface DozentinService {
+  services?: { slug: string; name: string; avgs_eligible?: boolean } | { slug: string; name: string; avgs_eligible?: boolean }[] | null;
+}
+
+interface DozentinCity {
+  slug: string;
+  name: string;
+}
+
+export interface GridDozentin {
+  slug: string;
+  first_name: string;
+  last_name: string;
+  image_url?: string | null;
+  studio_city?: string | null;
+  cities?: DozentinCity | DozentinCity[] | null;
+  dozentin_services?: DozentinService[] | null;
+}
+
+interface Props {
+  dozentinnen: GridDozentin[];
+  limit?: number;
+  moduleFilter?: string;
+}
+
+const { dozentinnen, limit, moduleFilter } = Astro.props;
+
+// Filter by service slug if moduleFilter provided
+const filtered = moduleFilter
+  ? dozentinnen.filter(d => {
+      const rows = d.dozentin_services ?? [];
+      return rows.some(ds => {
+        const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+        return svc?.slug === moduleFilter;
+      });
+    })
+  : dozentinnen;
+
+const visible = limit ? filtered.slice(0, limit) : filtered;
+
+function getCity(d: GridDozentin): DozentinCity | null {
+  const raw = Array.isArray(d.cities) ? d.cities[0] : d.cities;
+  return raw ?? null;
+}
+
+function getEffectiveCitySlug(d: GridDozentin): string {
+  return HUB_CITY_SLUG[d.slug] ?? getCity(d)?.slug ?? '';
+}
+
+function getSubjects(d: GridDozentin): string[] {
+  const rows = d.dozentin_services ?? [];
+  const names: string[] = [];
+  for (const ds of rows) {
+    const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;
+    if (!svc?.slug) continue;
+    names.push(SERVICE_DISPLAY_NAME[svc.slug] ?? svc.name);
+  }
+  return names;
+}
+
+function initials(d: GridDozentin): string {
+  return `${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase();
+}
+---
+
+{visible.length > 0 && (
+  <ul class="dg-grid">
+    {visible.map(d => {
+      const city = getCity(d);
+      const citySlug = getEffectiveCitySlug(d);
+      const subjects = getSubjects(d);
+      const profileUrl = `/dozentinnen/${d.slug}/`;
+      const serviceUrl = moduleFilter && citySlug ? `/${citySlug}/${moduleFilter}/` : null;
+
+      return (
+        <li class="dg-card">
+          <a href={profileUrl} class="dg-photo-wrap" tabindex="-1" aria-hidden="true">
+            {d.image_url ? (
+              <img
+                src={d.image_url}
+                alt={`${d.first_name} ${d.last_name}`}
+                class="dg-photo"
+                width="80"
+                height="80"
+                loading="lazy"
+              />
+            ) : (
+              <div class="dg-initials" aria-hidden="true">{initials(d)}</div>
+            )}
+          </a>
+          <div class="dg-info">
+            <a href={profileUrl} class="dg-name">
+              {d.first_name} {d.last_name}
+            </a>
+            {city && (
+              <span class="dg-city">{city.name}</span>
+            )}
+            {subjects.length > 0 && (
+              <p class="dg-subjects">{subjects.join(' · ')}</p>
+            )}
+            <div class="dg-actions">
+              <a href={profileUrl} class="dg-btn dg-btn--primary">Profil & Termine</a>
+              {serviceUrl && (
+                <a href={serviceUrl} class="dg-btn dg-btn--ghost">Alle Kurse</a>
+              )}
+            </div>
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+)}
+
+<style>
+.dg-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.dg-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color .2s;
+}
+
+.dg-card:hover {
+  border-color: rgba(200,150,46,.3);
+}
+
+.dg-photo-wrap {
+  flex-shrink: 0;
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.dg-photo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.dg-initials {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(200,150,46,.15);
+  border: 1px solid rgba(200,150,46,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: #C8962E;
+}
+
+.dg-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dg-name {
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: #F0EAE0;
+  text-decoration: none;
+  line-height: 1.25;
+}
+
+.dg-name:hover { color: #C8962E; }
+
+.dg-city {
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #C8962E;
+}
+
+.dg-subjects {
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+  font-size: 12px;
+  color: rgba(240,234,224,.55);
+  margin: 2px 0 8px;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dg-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.dg-btn {
+  font-family: var(--sans, 'Inter', system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: 5px;
+  display: inline-block;
+  transition: opacity .2s;
+}
+
+.dg-btn:hover { opacity: .8; }
+
+.dg-btn--primary {
+  background: #C8962E;
+  color: #fff;
+}
+
+.dg-btn--ghost {
+  background: transparent;
+  color: rgba(240,234,224,.65);
+  border: 1px solid rgba(255,255,255,.12);
+}
+</style>
