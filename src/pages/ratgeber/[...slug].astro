@@ -641,10 +641,10 @@ const querlinks = allArticles
   min-width: 280px;
   scroll-snap-align: start;
   flex-shrink: 0;
-  background: #fff;
+  background: #111111;
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid rgba(0,0,0,.08);
+  border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
   text-decoration: none;
   display: flex;
@@ -653,17 +653,17 @@ const querlinks = allArticles
   transition: box-shadow .2s, transform .2s;
 }
 .rg-ql-card:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   transform: translateY(-2px);
 }
 .rg-ql-city {
   font-family: var(--sans);
   font-size: 10px;
   font-weight: 700;
-  color: var(--gold);
+  color: #111111;
   letter-spacing: .1em;
   text-transform: uppercase;
-  background: var(--gold-dim);
+  background: #C8962E;
   padding: 3px 8px;
   border-radius: 4px;
   white-space: nowrap;
@@ -673,11 +673,11 @@ const querlinks = allArticles
   font-family: var(--serif);
   font-size: 16px;
   font-weight: 600;
-  color: var(--black);
+  color: #FAF8F5;
   line-height: 1.3;
   flex: 1;
 }
-.rg-ql-arrow { color: var(--muted); flex-shrink: 0; align-self: flex-end; }
+.rg-ql-arrow { color: #C8962E; flex-shrink: 0; align-self: flex-end; }
 .rg-ql-card:hover .rg-ql-arrow { color: var(--gold); }
 
 /* ── Sidebar TOC ────────────────────────────────────────────── */
