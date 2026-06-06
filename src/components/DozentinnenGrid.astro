@@ -108,7 +108,6 @@ const visibleWithImgs = visible.map(d => ({
                   {`${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase()}
                 </div>
               )}
-              <span class="dg-name-overlay">{d.fullName}</span>
             </div>
           </a>
           <div class="dg-info">
@@ -179,18 +178,6 @@ const visibleWithImgs = visible.map(d => ({
   color: #C8962E;
 }
 
-.dg-name-overlay {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  color: white;
-  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 18px;
-  font-weight: 600;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-  line-height: 1.2;
-  pointer-events: none;
-}
 
 .dg-info {
   padding: 20px;
