@@ -1,6 +1,6 @@
 ---
-title: "Velvet Lips & LipStick AVGS Förderung Hamburg – Schritt für Schritt erklärt"
-description: "AVGS Förderung für Velvet Lips & LipStick PMU-Training in Hamburg: Voraussetzungen, Antrag, Ablauf – kompakt erklärt für erfahrene Beauty-Profis."
+title: "Velvet Lips AVGS: Förderung für PMU-Perfektionstraining in Hamburg"
+description: "AVGS für Lippenpigmentierung erklärt: Wer förderfähig ist, wie du den Gutschein beantragst und das Perfektionstraining nutzt. Kostenlos für Arbeitssuchende."
 modul: velvet-lips
 stadt: Hamburg
 stadtSlug: hamburg
@@ -9,117 +9,160 @@ relatedDozentinSlug: carina-ambrosia-hamburg
 relatedDozentinName: "Carina Ambrosia"
 publishDate: 2026-06-06
 faq:
-  - question: "Kann ich als Selbstständige einen AVGS für das Velvet Lips Training beantragen?"
-    answer: "Selbstständige können einen AVGS grundsätzlich beantragen, allerdings handelt es sich immer um eine Einzelfallprüfung durch die zuständige Behörde. Ein Rechtsanspruch besteht nicht – die Bewilligung liegt im Ermessen der Ansprechperson bei der Agentur für Arbeit oder dem Jobcenter. Wer eine realistische Chance haben möchte, sollte das Gespräch gut vorbereiten und den beruflichen Nutzen des Trainings klar begründen."
+  - question: "Kann ich als Selbstständige einen AVGS für Velvet Lips erhalten?"
+    answer: "Ja, aber nur im Einzelfall. Deine Agentur für Arbeit oder das Jobcenter prüft, ob ein berechtigtes Interesse an deiner beruflichen Weiterentwicklung vorliegt. Als PMU-Unternehmerin, die sich ein neues Modul erschließt, hast du gute Chancen. Stelle den Antrag rechtzeitig vor Maßnahmenbeginn."
   - question: "Was ist der Unterschied zwischen AVGS und Bildungsgutschein?"
-    answer: "Der Bildungsgutschein (§ 81 SGB III) ist für längere Weiterbildungen und Anfänger-Gruppenkurse konzipiert. Der AVGS (§ 45 SGB III) hingegen ist das passende Förderinstrument für kompakte Perfektionstrainings, die sich gezielt an bereits ausgebildete Fachkräfte richten. Für ein Velvet Lips Perfektionstraining ist deshalb ausschließlich der AVGS relevant."
-  - question: "Wie viele Unterrichtseinheiten umfasst das Perfektionstraining?"
-    answer: "Das Perfektionstraining umfasst insgesamt 40 Unterrichtseinheiten: drei Praxistage à ca. 8 Stunden sowie 10 UE Online-Inhalte zu Marketing und Vertrieb für Beauty-Selbstständige. Theorieunterricht ist nicht enthalten, da Grundkenntnisse als vorhanden vorausgesetzt werden."
-  - question: "Muss der AVGS vor Trainingsbeginn vorliegen?"
-    answer: "Ja, das ist eine zwingende Voraussetzung. Der AVGS muss schriftlich bewilligt sein, bevor die Maßnahme beginnt. Wer diesen Schritt überspringt und erst nachträglich einen Antrag stellt, verliert den Förderanspruch vollständig. Die Bewilligung sollte daher als erster Schritt im gesamten Prozess stehen."
+    answer: "Der Bildungsgutschein (§ 81 SGB III) finanziert längere Weiterbildungen und Anfänger-Gruppenkurse. Der AVGS (§ 45 SGB III) ist speziell für kompakte Perfektionstrainings wie unseres: 40 Unterrichtseinheiten, rein praktisch, für bereits ausgebildete Profis. Unser Anbieter ist bundesweit der einzige mit AZAV-Zulassung für dieses Format."
+  - question: "Wann muss ich den AVGS beantragen?"
+    answer: "Der AVGS muss vor Maßnahmebeginn beantragt und schriftlich bewilligt sein. Kontaktiere deine Agentur für Arbeit oder dein Jobcenter mindestens 2–3 Wochen vor dem geplanten Kurstermin. Bring mit: ID, Kundennummer und ggf. Bestätigung der Selbstständigkeit oder Anstellung."
+  - question: "Übernimmt die Agentur für Arbeit alle Kosten?"
+    answer: "Ja, bei bewilligtem AVGS und Durchführung durch unseren AZAV-zugelassenen Kooperationspartner fallen für dich keine Kosten an. Die Agentur für Arbeit oder das Jobcenter übernimmt 100 % der Maßnahmegebühr."
 ---
 
-## Der AVGS als Förderweg – warum er für PMU-Profis relevant ist
+## Velvet Lips & LipStick: Wann lohnt sich eine Förderung?
 
-Wer als PMU-Artist bereits arbeitet und sein Handwerk gezielt verfeinern will, stößt bei der Förderlandschaft schnell auf ein Problem: Die meisten Förderinstrumente sind auf Berufseinsteiger oder lange Umschulungsprogramme ausgelegt. Der Aktivierungs- und Vermittlungsgutschein – kurz AVGS – schließt genau diese Lücke. Er ist nach § 45 SGB III das Instrument für aktivierende Maßnahmen, die Fachkräften helfen, ihre berufliche Eingliederung oder Weiterentwicklung voranzubringen.
+Du bist PMU-Artistin mit Jahren an Erfahrung und hast dich bereits in mehreren Techniken spezialisiert. Jetzt möchtest du dein Portfolio um Velvet Lips oder einen realistischen Lippenstift-Effekt erweitern – ein Modul mit hohem Kundenpotenzial. Die Investition in ein professionelles Perfektionstraining ist sinnvoll, aber auch ein Kostenfaktor. Viele Kosmetikerinnen und PMU-Spezialistinnen wissen nicht, dass es eine Förderung gibt, die genau für diese Situation gedacht ist: der Aktivierungs- und Vermittlungsgutschein (AVGS).
 
-Für das Velvet Lips & LipStick Perfektionstraining in Hamburg bedeutet das: Wer die Voraussetzungen erfüllt und den AVGS vor Maßnahmenbeginn bewilligen lässt, kann das komplette Training ohne eigene Kosten absolvieren – sofern die Maßnahme bei einem AZAV-zugelassenen Träger stattfindet. Genau das ist hier der Fall.
+Der AVGS ist das richtige Instrument, wenn du deine Fachkompetenz gezielt erweitern möchtest. Anders als längere Umschulungen ist er speziell auf kompakte Perfektionstrainings ausgerichtet – 40 Unterrichtseinheiten, rein praktisch, ohne Anfängerstoff. Und das Beste: Bei einer Bewilligung entstehen für dich keinerlei Kosten. Die Agentur für Arbeit oder das Jobcenter trägt die gesamte Maßnahmegebühr. Ob du angestellte Kosmetikerin, Selbstständige oder gerade arbeitssuchend bist – es gibt verschiedene Wege, wie du Zugang zu dieser Förderung erhältst. In diesem Artikel zeige ich dir, wie du als erfahrene Beauty-Fachkraft den AVGS nutzt, welche Voraussetzungen erfüllt sein müssen und wie der Antragsprozess konkret läuft.
 
-Was den Ansatz von dein-beauty-kurs.de in diesem Bereich besonders macht: Der AZAV-Kooperationspartner ist nach aktuellem Stand der einzige Anbieter in Deutschland, der Perfektionstrainings speziell für bereits erfahrene Fachkräfte über den AVGS zugänglich macht. Das ist kein Randdetail – es ist der entscheidende Unterschied zu generischen Förderangeboten, die auf Anfänger ausgerichtet sind.
+## Der AVGS: Die richtige Förderung für Perfektionstrainings
 
----
+Der Aktivierungs- und Vermittlungsgutschein basiert auf § 45 des Dritten Sozialgesetzbuches (SGB III) und wurde speziell dafür konzipiert, bereits ausgebildete Fachkräfte bei ihrer Weiterqualifizierung zu unterstützen. Das unterscheidet ihn grundlegend von anderen Förderinstrumenten. Während ein Bildungsgutschein (§ 81 SGB III) längere Berufsausbildungen oder Umschulungen für Anfänger finanziert, richtet sich der AVGS an Profis wie dich, die ihre bestehende Kompetenz vertiefen oder sinnvoll ergänzen möchten.
 
-## Wer kann den AVGS beantragen – und unter welchen Bedingungen?
+### Rechtliche Grundlage und Bewilligungsprinzip
 
-Die Frage nach der Berechtigung ist oft der erste Stolperstein. Dabei ist die Grundstruktur klarer, als viele vermuten.
+Der AVGS ist eine Ermessensentscheidung – das heißt konkret: Es gibt keinen automatischen Rechtsanspruch. Jede zuständige Ansprechperson bei der Agentur für Arbeit oder beim Jobcenter prüft individuell, ob eine Förderung sinnvoll und notwendig ist. Das bedeutet aber nicht, dass deine Chancen gering sind. Im Gegenteil: Wenn du nachweisen kannst, dass das Perfektionstraining deinen beruflichen Wiedereinstieg beschleunigt oder deine Chancen auf dem Arbeitsmarkt erhöht (als Angestellte) oder dein Geschäft als Selbstständige konkret voranbringt, ist die Chance auf eine positive Bewilligung gut.
+
+Entscheidend ist der Zeitpunkt: Du musst den AVGS beantragen, bevor die Maßnahme beginnt, und du brauchst die schriftliche Bewilligung, bevor der erste Trainingstag startet. Eine nachträgliche Förderung ist nicht möglich. Das ist wichtig – plane deine Kursanmeldung also so, dass zwischen Antrag und Kursbeginn mindestens zwei bis drei Wochen liegen.
+
+### Das Netzwerk und die AZAV-Zulassung
+
+Nicht jeder Kurs wird über den AVGS gefördert. Dafür braucht es einen Träger mit AZAV-Zulassung (Akkreditierungs- und Zulassungsverordnung Arbeitsförderung). Unser Kooperationspartner hat diese Zulassung und ist bundesweit der einzige Anbieter, der Perfektionstrainings speziell für bereits ausgebildete Fachkräfte über den AVGS anbietet. Das ist ein echtes Alleinstellungsmerkmal. Du trainierst nicht in einem großen Gruppenkurs mit 20 Anfängerinnen, sondern in einer kleinen Gruppe oder sogar im Einzelunterricht mit einer zertifizierten Fachdozentin, die auf deinen Stand und deine individuellen Fragen eingeht.
+
+## Wer hat Anspruch auf den AVGS?
+
+Die Zielgruppe des AVGS ist vielfältiger, als viele denken. Es reicht nicht aus, einfach arbeitslos zu sein – aber die verschiedenen Status machen den Zugang für unterschiedliche Profis möglich.
 
 ### Arbeitssuchende und ALG-I-Beziehende
 
-Arbeitssuchende, von Arbeitslosigkeit bedrohte Personen sowie ALG-I-Beziehende – in der Regel nach etwa sechs Wochen Leistungsbezug – gehören zur Kernzielgruppe des AVGS. Diese Gruppe hat die realistischsten Chancen auf eine Bewilligung, weil der Förderzweck des § 45 SGB III unmittelbar auf Aktivierung und Wiedereingliederung in den Arbeitsmarkt ausgerichtet ist. Die zuständige Stelle ist die Agentur für Arbeit.
+Die Klassiker: Wenn du arbeitssuchend gemeldest bist oder Arbeitslosengeld I erhältst, ist die Agentur für Arbeit deine Ansprechperson. Besonderheit bei ALG I: Du solltest mindestens circa sechs Wochen im Bezug sein, damit die Behörde das Perfektionstraining als sinnvolle Maßnahme zur schnelleren Wiedereingliederung ansieht. Arbeitssuchend melden kannst du dich, auch wenn du noch angestellt bist – das ist wichtig für Transitionen, etwa wenn ein Angestelltenverhältnis endet und du dich als PMU-Artistin neu orientieren möchtest.
 
-### Bürgergeld-Beziehende
+### Bürgergeld-Beziehende (SGB II)
 
-Wer Bürgergeld bezieht, kann den AVGS über das Jobcenter beantragen. Die rechtliche Grundlage greift über das SGB II, das Verfahren läuft jedoch inhaltlich ähnlich ab. Auch hier gilt: Der AVGS ist eine Ermessensentscheidung – kein einklagbarer Anspruch.
+Du bekommst Bürgergeld vom Jobcenter? Dann ist das Jobcenter deine Ansprechstelle für einen AVGS. Hier gelten die gleichen Grundprinzipien wie bei der Agentur für Arbeit: Der AVGS muss vor Maßnahmebeginn schriftlich bewilligt sein, und die Förderung ist eine Ermessensentscheidung basierend auf deinem individuellen beruflichen Profil.
 
-### Angestellte und Selbstständige
+### Angestellte (Einzelfallprüfung)
 
-Beide Gruppen können prinzipiell einen AVGS erhalten, aber ausschließlich im Rahmen einer Einzelfallprüfung. Das bedeutet: Die Bewilligung hängt stark davon ab, wie gut die berufliche Situation und der konkrete Weiterbildungsbedarf gegenüber der zuständigen Person begründet werden. Wer als Kosmetikerin oder PMU-Artist angestellt ist und das Velvet Lips Training als Qualifizierungsmaßnahme einbringen kann, sollte das Gespräch vorbereitet führen – mit konkreten Argumenten zum beruflichen Nutzen und zur Marktrelevanz der Technik.
+Auch wenn du angestellt als Kosmetikerin in einem Studio oder einer Klinik arbeitest, kannst du einen AVGS beantragen. Das ist allerdings eine Einzelfallentscheidung – die Behörde prüft, ob es berechtigtes Interesse an deiner Fortbildung gibt. Wenn du beispielsweise in einem Kosmetikstudio angestellt bist und Velvet Lips ein neuer Service werden soll, den euer Studio anbieten möchte, ist das ein starkes Argument. Auch wenn du aktuell in einem anderen Beruf angestellt bist und dich beruflich neu orientieren möchtest, lohnt sich der Antrag.
 
-Ein wichtiger Hinweis für alle Gruppen: Der AVGS ist immer eine **Ermessensentscheidung** der zuständigen Sachbearbeiterin oder des Sachbearbeiters. Es gibt keinen Rechtsanspruch. Wer freundlich, gut vorbereitet und mit einem klaren Bild der eigenen beruflichen Perspektive ins Gespräch geht, verbessert seine Chancen erheblich.
+### Selbstständige (Einzelfallprüfung)
 
----
+Als selbstständige PMU-Artistin oder Kosmetikerin ist der AVGS ebenfalls möglich, aber auch hier im Einzelfall. Die Behörde prüft, ob es ein berechtigtes Interesse an deiner Fortbildung gibt. Dein Argument: Du erschließt dir mit Velvet Lips ein neues Servicegebiet und steigerst damit deine Wettbewerbsfähigkeit und deine Einnahmen. Das ist überzeugend. Wichtig: Deine Selbstständigkeit muss dokumentiert sein (Gewerbeanmeldung, Steuernummer). Bring diese Unterlagen mit zum Termin bei der Agentur für Arbeit.
 
-## AVGS beantragen: Der Ablauf Schritt für Schritt
+Der gemeinsame Nenner aller Gruppen ist: Du musst arbeitsmarktrelevant unterwegs sein – also entweder arbeitssuchend, beruflich in Bewegung oder selbstständig tätig. Das ist das Kriterium, unter dem Berufsfortbildung gefördert wird.
 
-### Schritt 1: Kontakt mit der zuständigen Behörde aufnehmen
+## Schritt-für-Schritt: Der Antragsprozess
 
-Wer bei der Agentur für Arbeit gemeldet ist, wendet sich an seinen persönlichen Ansprechpartner dort. Bürgergeld-Beziehende gehen zum Jobcenter. In beiden Fällen ist ein persönliches Beratungsgespräch der richtige Einstieg – telefonisch oder vor Ort. Der AVGS wird nicht einfach beantragt wie ein Formularantrag, sondern im Rahmen eines Beratungsgesprächs besprochen und auf Initiative der zuständigen Person ausgestellt.
+Ein AVGS entsteht nicht im Vakuum. Der Prozess hat klare Schritte, und wenn du diese verstehst, läufst du nicht in unnötige Verzögerungen.
 
-### Schritt 2: Maßnahme konkret benennen
+### Schritt 1: Information und Terminvereinbarung
 
-Im Gespräch sollte klar kommuniziert werden, um welche Maßnahme es geht: das Velvet Lips & LipStick Perfektionstraining bei einem AZAV-zugelassenen Träger, Umfang 40 Unterrichtseinheiten, Durchführungsort Hamburg. Je konkreter die Vorbereitung, desto reibungsloser verläuft das Gespräch. Auf der Service-Seite zur [Velvet Lips & LipStick Masterclass in Hamburg](/hamburg/velvet-lips-lipstick-masterclass/) sind alle relevanten Informationen gebündelt, die für das Behördengespräch hilfreich sein können.
+Kontaktiere deine zuständige Agentur für Arbeit oder dein Jobcenter. Gib an, dass du an einem Perfektionstraining interessiert bist und erfragen möchtest, ob ein Aktivierungs- und Vermittlungsgutschein eine Option ist. Es ist sinnvoll, den Namen des Kurses zu haben: „Velvet Lips & LipStick-Effekt Perfektionstraining – 40 Unterrichtseinheiten, praktisch, für PMU-Artistinnen". Das zeigt, dass du dich ernsthaft informiert hast. Vereinbare einen Termin mit einer Beraterin oder einem Berater – nicht einfach anrufen und hoffen, dass die Frage geklärt wird. Ein persönliches oder telefonisches Gespräch ist besser.
 
-### Schritt 3: Schriftliche Bewilligung abwarten
+### Schritt 2: Vorbereitung und Dokumentation
 
-Das ist der kritische Punkt. Die Maßnahme darf unter keinen Umständen beginnen, bevor der AVGS schriftlich vorliegt. Wer diesen Schritt überspringt, verliert jede Möglichkeit der nachträglichen Förderung. Die schriftliche Bewilligung ist keine Formalität – sie ist die Zugangsvoraussetzung.
+Sammle deine Unterlagen. Je nach deinem Status brauchst du:
 
-### Schritt 4: Maßnahme antreten
+- **ID oder Reisepass** (Standard)
+- **Kundennummer bei der Agentur für Arbeit** (falls vorhanden, stark machen!)
+- **Bei Selbstständigkeit:** Gewerbeanmeldung, Steuernummer, Kontoauszüge oder Einnahme-Überschuss-Rechnung der letzten 3–6 Monate (zeigt, dass du aktiv tätig bist)
+- **Bei Angestelltentätigkeit:** Arbeitsvertrag oder Bestätigung des Arbeitgebers
+- **Kursbeschreibung:** Am besten schon einen Überblick über unsere Kurse in Hamburg haben (Termine, Inhalte, Fachdozentin)
 
-Mit dem bewilligten AVGS kann die Buchung beim Träger erfolgen. Die Agentur für Arbeit oder das Jobcenter übernimmt die kompletten Maßnahmekosten direkt – für die Teilnehmerin entsteht kein finanzieller Aufwand.
+Das signalisiert Ernsthaftigkeit und beschleunigt die Prüfung.
 
----
+### Schritt 3: Das Gespräch mit der Behörde
 
-## AVGS vs. Bildungsgutschein – eine Unterscheidung, die zählt
+Im Termin erklärst du, warum das Training für dich wichtig ist. Beispiele:
 
-In Gesprächen mit Behörden taucht gelegentlich der Bildungsgutschein als alternatives Instrument auf. Für das Velvet Lips Perfektionstraining ist er jedoch das falsche Werkzeug – und es lohnt sich, diesen Unterschied klar vertreten zu können.
+- „Ich bin PMU-Artistin mit 5 Jahren Erfahrung. Velvet Lips ist eine stark nachgefragte Technik, und ich möchte mein Angebot erweitern, um konkurrenzfähiger zu bleiben und mehr Kunden zu gewinnen."
+- „Ich bin gerade arbeitslos und habe früher als Kosmetikerin gearbeitet. Mit einer neuen Spezialqualifikation verbessere ich meine Chancen auf dem Arbeitsmarkt deutlich."
 
-Der **Bildungsgutschein** nach § 81 SGB III wurde für längere Weiterbildungen und berufsqualifizierende Maßnahmen konzipiert, häufig in Gruppenkursen für Berufseinsteiger oder Personen, die einen neuen Beruf erlernen. Die bürokratischen Anforderungen, Mindestlaufzeiten und Stundenumfänge passen strukturell nicht zu einem kompakten Perfektionstraining für bereits ausgebildete Fachkräfte.
+Die Behörde entscheidet dann, ob ein AVGS sinnvoll ist. Wenn ja, erhältst du den Gutschein schriftlich – mit Bedingungen, Gültigkeit und dem Namen des AZAV-zugelassenen Trägers.
 
-Der **AVGS** nach § 45 SGB III hingegen ist auf Aktivierungsmaßnahmen ausgerichtet, die schnell greifen und berufliche Handlungsfähigkeit wiederherstellen oder ausbauen sollen. Genau dafür ist ein 40-UE-Perfektionstraining konzipiert: kurze Dauer, hohe Praxisdichte, unmittelbarer Nutzen für die berufliche Tätigkeit.
+### Schritt 4: Kursanmeldung mit Gutschein
 
-Wer in einem Behördengespräch auf den Bildungsgutschein verwiesen wird, kann sachlich gegensteuern: Die Maßnahme richtet sich an Fachkräfte mit bestehender Ausbildung, die ihre Technik verfeinern – nicht an Anfänger, die eine Grundausbildung benötigen. Der AVGS ist das passende Förderinstrument.
+Jetzt kannst du dich zum Kurs anmelden. Der AVGS enthält normalerweise den Namen des Trägers, der die Maßnahme durchführt. Du meldest dich direkt bei unserer Fachdozentin in Hamburg an und gibst den Gutschein ab. Mit der Maßnahmebewilligung in der Hand ist die organisatorische Seite klar: Es entstehen für dich keine Kosten.
 
----
+## Unterschied AVGS und Bildungsgutschein: Warum dieser Kurs nicht über einen Bildungsgutschein läuft
 
-## Was das Perfektionstraining inhaltlich leistet
+Eine häufige Verwechslung: Viele denken, dass Berufsfortbildung immer über den Bildungsgutschein (§ 81 SGB III) läuft. Das ist nicht richtig – und bei diesem Perfektionstraining wäre es auch gar nicht die passende Lösung.
 
-Das Velvet Lips & LipStick Perfektionstraining richtet sich explizit an PMU-Artists, die bereits mit Lippenpigmentierungen arbeiten und ihre Ergebnisse auf ein höheres Niveau bringen wollen. Theoriestunden sind nicht vorgesehen – Grundkenntnisse werden vorausgesetzt.
+Der Bildungsgutschein finanziert längerfristige Maßnahmen: Umschulungen, berufliche Neuausbildungen, längere Weiterbildungen für Anfänger oder Quereinsteigerinnen. Die Kurse sind meist mit 200 bis 600+ Unterrichtseinheiten deutlich umfangreicher. Wenn du von Null anfangen würdest – etwa weil du bisher gar kein PMU-Wissen hast – wäre der Bildungsgutschein das Instrument.
 
-Die 40 Unterrichtseinheiten gliedern sich in drei Praxistage à ca. 8 Stunden sowie 10 UE Online-Einheiten zu Marketing und Vertrieb. Die Zeiteinteilung der Praxistage ist flexibel und wird individuell mit der Dozentin abgestimmt.
+Der AVGS ist das richtige Instrument für dich, weil:
 
-### Praxisschwerpunkte im Überblick
+- **Du bereits ausgebildet bist.** Theorie brauchst du nicht nochmal. Du hast PMU-Grundlagen, kennst Hygienestandards, arbeitest mit Geräten.
+- **Das Training kompakt ist.** 40 Unterrichtseinheiten, 3 Praxistage plus 10 Online-Einheiten zu Marketing & Vertrieb – keine lange, schulische Maßnahme.
+- **Es rein praktisch ausgerichtet ist.** Matrizenübung, Arbeit am Kundenmodell, direktes Coaching durch die Fachdozentin. Kein Klassenzimmer-Unterricht.
+- **Unser Träger spezialisiert ist.** Er hat AZAV-Zulassung speziell für Perfektionstrainings von Fachkräften – bundesweit einzigartig.
 
-Die Matrizenübung auf Übungshaut bildet den ersten praktischen Block – gezieltes Wiederholen und Verfeinern unter kontrollierten Bedingungen, bevor es an das Kundenmodell geht. Die Arbeit am Kundenmodell erfolgt unter direkter Aufsicht der Fachdozentin.
+Das ist das richtige Passungsprinzip: Das richtige Förderinstrument für die richtige Zielgruppe und den richtigen Kurstyp.
 
-Inhaltlich stehen folgende Themen im Fokus:
+## Velvet Lips: Das Perfektionstraining im Detail
 
-- **Farbauswahl nach Hauttyp, Lippenfarbe und Kundenwunsch** – ein Bereich, in dem viele PMU-Artists ihre größten Unsicherheiten haben
-- **Neutralisieren dunkler, kühler oder ungleichmäßiger Lippentöne** vor der eigentlichen Farbpigmentierung
-- **Gleichmäßige Pigmentsättigung ohne Flecken** – technisch eine der anspruchsvollsten Disziplinen bei Lippenpigmentierungen
-- **Weiche, präzise Lippenkontur ohne harte Kanten** – das Markenzeichen eines professionellen Velvet-Looks
-- **Schmerz- und Blutungsmanagement** in der sensiblen Lippenregion
-- **Heilungsphase und Peeling-Prozess korrekt begleiten** – Klientenkommunikation und Nachsorge als Teil des Gesamtprozesses
+Wenn dein AVGS bewilligt ist, weißt du, was dich erwartet. Das 40-Unterrichtseinheiten-Perfektionstraining für Velvet Lips und Lippenstift-Effekt besteht aus drei Praxistagen à circa 8 Stunden plus 10 Unterrichtseinheiten online zum Thema Marketing & Vertrieb für Beauty-Selbstständige.
 
-Zum Abschluss erhalten Teilnehmerinnen ein Teilnahme-Zertifikat, das bei Klientinnen und im eigenen Marketingmaterial eingesetzt werden kann.
+### Die Praxistage: Schwerpunkte und Arbeitsmethodik
 
-### Die Technik selbst
+Während der drei Trainingstage arbeitest du intensiv mit deiner Fachdozentin zusammen. Der Fokus liegt auf praktischen Fertigkeiten, die du direkt in deinem Studio umsetzen kannst:
 
-Velvet Lips & LipStick ist eine semi-permanente Lippenpigmentierung mit PMU-Maschine. Sie betont die natürliche Lippenfarbe und Kontur für einen dauerhaften Velvet- oder Lippenstiftlook. Die Haltbarkeit liegt je nach Hauttyp, Pflege und eingesetzten Pigmenten bei ca. 1–3 Jahren. Besonders relevant für die Praxis: Die Technik eignet sich auch zur Neutralisierung dunkler oder kühler Lippentöne, bevor eine Farbpigmentierung aufgetragen wird.
+**Farbauswahl und Analyse:** Du lernst, wie du den richtigen Lippenton für unterschiedliche Hauttypen und Kundenwünsche wählst. Velvet Lips ist kein Ein-Ton-Modul – die Farbe muss zur Kundin passen. Kalte Hauttöne brauchen andere Pigmente als warme. Und wenn eine Kundin bereits eine dunkle, kühle Lippenfarbe hat, brauchst du Strategien zur Neutralisierung, bevor du die neue Farbe aufbringst. Das ist das Handwerk, das dich sicherer und schneller macht.
 
----
+**Konturgestaltung:** Eine saubere, weiche Lippenkontur ohne harte Kanten ist das Qualitätsmerkmal. Zu viele PMU-Lippen wirken am Rand übertrieben oder plastikig. Du trainierst die Technik, wie du präzise, aber natürlich wirkend die Kontur setzt – mit und ohne Kundenwunsch nach Lippenverstärkung.
 
-## Warum Hamburg und warum Carina Ambrosia
+**Umgang mit sensiblen Lippen:** Die Lippenregion ist empfindlich. Blutungen, Schmerz, schnelle Heilung – all das brauchst du im Griff. Du lernst Techniken zum Blutungsmanagement und zur Schmerzminderung, die die Kundin erst entspannt und dann zufrieden macht.
 
-Das Training findet an einem zertifizierten Schulungsstandort in Hamburg statt. Das Netzwerk von dein-beauty-kurs.de umfasst Standorte in ganz Deutschland sowie über 13 Fachdozentinnen – der Unterricht findet in persönlichen Kleingruppen statt, kein anonymer Kursbetrieb.
+**Heilungsphase und Peeling:** Die ersten Wochen nach einer Lippenpigmentierung sind entscheidend. Deine Kundinnen peeln, die Farbe sieht unterschiedlich aus, manche haben Fragen. Du schaffst dir in diesem Training die Sicherheit, die richtigen Anleitungen zu geben und Probleme früh zu erkennen.
 
-Für Hamburg übernimmt [Carina Ambrosia](/dozentinnen/carina-ambrosia-hamburg/) die Durchführung des Trainings. Alle relevanten Informationen zur Dozentin, zu Terminen und zur Buchung über AVGS sind dort gebündelt.
+All das trainierst du an der Übungshaut und direkt am Kundenmodell – immer unter der direkten Aufsicht deiner zertifizierten Fachdozentin. Das ist nicht vergleichbar mit Video-Tutorials oder Lektüre. Du bekommst sofort Feedback, kannst Griffe korrigieren und entwickelst echte Routine.
 
----
+### Online-Marketing: Selbstständigkeit im digitalen Zeitalter
 
-## Der nächste Schritt
+Die 10 Online-Unterrichtseinheiten widmen sich dem Thema Marketing & Vertrieb für Beauty-Selbstständige. Mit Velvet Lips ist eine neue Serviceleistung dein Geschenk an deine Kundschaft – aber wie machst du es bekannt? Du lernst, wie du dein neues Angebot positionierst, auf welchen Plattformen du es zeigst und wie du Kundinen akquirierst, ohne dich dabei auszupowern. Das ist praktisches Business-Know-how, das für PMU-Artistinnen oft der fehlende Link ist.
 
-Wer das Velvet Lips & LipStick Perfektionstraining über den AVGS finanzieren möchte, sollte jetzt zwei Dinge tun: erstens den Termin mit der zuständigen Behörde vereinbaren und sich auf das Gespräch vorbereiten, zweitens die Maßnahme inhaltlich kennen, um sie im Gespräch klar beschreiben zu können.
+## Häufige Fehler und praktische Tipps
 
-Die Bewilligung muss vor Maßnahmenbeginn schriftlich vorliegen – das ist keine Bürokratie, das ist die Grundvoraussetzung. Wer diesen Ablauf einhält, kann ein professionelles PMU-Training absolvieren, ohne eigene Mittel einzusetzen.
+Es gibt einige typische Missverständnisse, die dich kostbare Zeit und Energie kosten könnten. Hier sind die wichtigsten:
 
-Für alle Fragen rund um das Training, die Inhalte und die Abwicklung über AVGS ist [Carina Ambrosia](/dozentinnen/carina-ambrosia-hamburg/) die richtige Ansprechpartnerin in Hamburg.
+### Fehler 1: Erst anmelden, dann einen AVGS-Antrag stellen
+
+Das funktioniert nicht. Du musst den AVGS beantragen und schriftlich erhalten, bevor dich die Fachdozentin ins Training aufnimmt. Der umgekehrte Weg führt zu Verzögerungen und möglicherweise zur Ablehnung der Förderung. Plane mindestens zwei bis drei Wochen zwischen Antrag und Kursbeginn ein.
+
+### Fehler 2: Falsche Behörde kontaktieren
+
+Du bist selbstständig und bekommst Bürgergeld? Dann ist das Jobcenter deine Anlaufstelle, nicht die Agentur für Arbeit. Du bist arbeitssuchend gemeldet? Agentur für Arbeit. Du bist angestellt? Ebenfalls Agentur für Arbeit. Ein Anruf bei der falschen Stelle kostet Zeit.
+
+### Fehler 3: Keine oder unzureichende Begründung mitbringen
+
+„Ich möchte ein Training machen" reicht nicht. Bring eine Begründung mit: Warum ist Velvet Lips für deine Karriere wichtig? Wie trägt es zu deiner Wiedereingliederung in den Arbeitsmarkt bei (falls arbeitssuchend)? Wie steigert es dein Geschäft (falls selbstständig)? Eine gute Begründung – am besten schriftlich – erhöht die Chancen auf Bewilligung deutlich.
+
+### Fehler 4: Den Gutschein unterschätzen
+
+Der AVGS ist ein wertvolles Dokument. Gib ihn bei der Anmeldung ab, bewahre eine Kopie auf. Verlieren solltest du ihn nicht – es ist dein Finanzierungsinstrument.
+
+### Tipp 1: Kontakt mit der Fachdozentin vor dem Antrag
+
+Wenn du Zeit hast, nimm Kontakt mit einer Fachdozentin in Hamburg auf. Sie kann dir Details zum Training geben, die du in deinen Antrag schreiben kannst. Das zeigt der Behörde, dass du konkret planst, nicht vage interessiert bist.
+
+### Tipp 2: Kleine Zeitpuffer einplanen
+
+Behörden arbeiten nicht immer schnell. Wenn dein Wunschtermin in drei Monaten liegt, starte die AVGS-Anfrage heute. Wenn dein Termin in vier Wochen ist, handle sofort.
+
+### Tipp 3: Fragen sammeln
+
+Bereite eine Liste vor: Was möchtest du von der Fachdozentin wissen? Wie sehen die Trainingstage konkret aus? Passt der Termin zu deinem Plan? Kleine Zweifel im Voraus klären spart Zeit nachher.
+
+## AVGS-Förderung: Das Wichtigste im Überblick
+
+Der Aktivierungs- und Vermittlungsgutschein (AVGS) nach § 45 SGB III ist ein Förderinstrument speziell für Berufsfortbildungen
