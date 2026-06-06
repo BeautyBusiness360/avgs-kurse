@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
@@ -105,6 +107,13 @@ if (faq?.length) {
 const querlinks = allArticles
   .filter(a => a.data.modul === modul && a.id !== entry.id)
   .slice(0, 4);
+
+const profilbildSrc = relatedDozentinSlug
+  ? `/images/dozentinnen/${relatedDozentinSlug}/${relatedDozentinSlug}-profilbild.webp`
+  : null;
+const hasProfilbild = profilbildSrc
+  ? fs.existsSync(path.join(process.cwd(), 'public', profilbildSrc))
+  : false;
 ---
 
 <SEOLayout {title} {description} {canonical} schema={schemas}>
@@ -190,22 +199,37 @@ const querlinks = allArticles
         <!-- CTA box -->
         {relatedDozentinSlug && (
           <section class="rg-cta">
-            <div class="rg-cta-eyebrow">
-              {isPillar ? 'Beispiel-Dozentin im Netzwerk' : `Deine Dozentin in ${stadt}`}
-            </div>
-            <h2 class="rg-cta-title">{relatedDozentinName ?? 'Jetzt Termin anfragen'}</h2>
-            <p class="rg-cta-text">
-              Profil, aktuelle Termine und Anmeldeformular direkt auf der Profilseite.
-            </p>
-            <div class="rg-cta-links">
-              <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--gold">
-                Profil & Termine ansehen
-              </a>
-              {stadtSlug && (
-                <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
-                  Alle Kurse in {stadt}
-                </a>
+            <div class="rg-cta-inner">
+              {hasProfilbild && (
+                <img
+                  src={profilbildSrc!}
+                  alt={relatedDozentinName ?? 'Dozentin'}
+                  class="rg-cta-avatar"
+                  width="120"
+                  height="120"
+                  loading="lazy"
+                  decoding="async"
+                />
               )}
+              <div class="rg-cta-content">
+                <div class="rg-cta-eyebrow">
+                  {isPillar ? 'Beispiel-Dozentin im Netzwerk' : `Deine Dozentin in ${stadt}`}
+                </div>
+                <h2 class="rg-cta-title">{relatedDozentinName ?? 'Jetzt Termin anfragen'}</h2>
+                <p class="rg-cta-text">
+                  Profil, aktuelle Termine und Anmeldeformular direkt auf der Profilseite.
+                </p>
+                <div class="rg-cta-links">
+                  <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--gold">
+                    Profil & Termine ansehen
+                  </a>
+                  {stadtSlug && (
+                    <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
+                      Alle Kurse in {stadt}
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
           </section>
         )}
@@ -221,23 +245,21 @@ const querlinks = allArticles
           </section>
         )}
 
-        <!-- Cross-links -->
+        <!-- Cross-links slider -->
         {querlinks.length > 0 && (
           <nav class="rg-querlinks" aria-label="Weitere Ratgeber">
             <p class="rg-ql-label">Weitere {modulLabel}-Ratgeber</p>
-            <ul class="rg-ql-list">
+            <div class="rg-ql-slider">
               {querlinks.map(a => (
-                <li>
-                  <a href={`/ratgeber/${a.id}/`} class="rg-ql-link">
-                    <span class="rg-ql-city">{a.data.stadt ?? 'DE'}</span>
-                    <span class="rg-ql-text">{a.data.title}</span>
-                    <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                  </a>
-                </li>
+                <a href={`/ratgeber/${a.id}/`} class="rg-ql-card">
+                  <span class="rg-ql-city">{a.data.stadt ?? 'DE'}</span>
+                  <span class="rg-ql-text">{a.data.title}</span>
+                  <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </a>
               ))}
-            </ul>
+            </div>
           </nav>
         )}
       </article>
@@ -309,7 +331,7 @@ const querlinks = allArticles
 </script>
 
 <style>
-/* ── Design tokens (local, mirrors site :root) ─────────────── */
+/* ── Design tokens ──────────────────────────────────────────── */
 :root {
   --gold:       #C8962E;
   --gold-lt:    #D4AF7A;
@@ -317,16 +339,14 @@ const querlinks = allArticles
   --gold-ring:  rgba(200,150,46,.28);
   --black:      #111111;
   --cream:      #F0EAE0;
-  --cream-faint: rgba(240,234,224,.70);
   --muted:      #888;
-  --muted-mid:  rgba(240,234,224,.55);
-  --border:     rgba(255,255,255,.07);
-  --border-md:  rgba(255,255,255,.12);
+  --border:     rgba(0,0,0,.08);
+  --border-md:  rgba(0,0,0,.13);
   --sans:       'Inter', system-ui, sans-serif;
   --serif:      'Cormorant Garamond', Georgia, serif;
-  --col:        700px;   /* article text column */
-  --side:       230px;   /* TOC sidebar */
-  --gap:        56px;    /* col ↔ sidebar */
+  --col:        700px;
+  --side:       230px;
+  --gap:        56px;
   --wrap-pad:   clamp(20px, 4vw, 60px);
 }
 
@@ -336,7 +356,7 @@ const querlinks = allArticles
   top: 0; left: 0; right: 0;
   height: 3px;
   z-index: 1000;
-  background: rgba(255,255,255,.05);
+  background: rgba(0,0,0,.06);
 }
 .rg-progress-bar {
   height: 100%;
@@ -345,9 +365,9 @@ const querlinks = allArticles
   transition: width .1s linear;
 }
 
-/* ── Outer layout (article + optional sidebar) ─────────────── */
+/* ── Outer layout ──────────────────────────────────────────── */
 .rg-wrap {
-  background: var(--black);
+  background: var(--cream);
   min-height: 60vh;
   padding: clamp(36px, 5vw, 64px) var(--wrap-pad) 100px;
 }
@@ -359,8 +379,6 @@ const querlinks = allArticles
   gap: var(--gap);
   align-items: start;
 }
-
-/* Collapse to single column when sidebar doesn't fit */
 @media (max-width: 1060px) {
   .rg-outer {
     grid-template-columns: minmax(0, var(--col));
@@ -375,7 +393,6 @@ const querlinks = allArticles
 
 /* ── Header ─────────────────────────────────────────────────── */
 .rg-header { margin-bottom: 44px; }
-
 .rg-meta {
   font-family: var(--sans);
   font-size: 11px;
@@ -388,16 +405,16 @@ const querlinks = allArticles
   gap: 8px;
   flex-wrap: wrap;
 }
-.rg-tag    { color: var(--gold); font-weight: 600; }
-.rg-sep    { color: rgba(255,255,255,.15); }
-.rg-city   { color: var(--cream-faint); }
+.rg-tag     { color: var(--gold); font-weight: 600; }
+.rg-sep     { color: rgba(0,0,0,.2); }
+.rg-city    { color: rgba(17,17,17,.6); }
 .rg-readtime { color: var(--muted); }
 
 .rg-h1 {
   font-family: var(--serif);
   font-size: clamp(28px, 5vw, 46px);
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   line-height: 1.15;
   margin: 0 0 18px;
   letter-spacing: -.01em;
@@ -406,7 +423,7 @@ const querlinks = allArticles
   font-family: var(--sans);
   font-size: 17px;
   line-height: 1.65;
-  color: var(--cream-faint);
+  color: rgba(17,17,17,.62);
   margin: 0;
 }
 
@@ -425,10 +442,10 @@ const querlinks = allArticles
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  background: rgba(255,255,255,.04);
+  background: rgba(0,0,0,.03);
   border: none;
   cursor: pointer;
-  color: var(--cream);
+  color: var(--black);
   font-family: var(--sans);
   font-size: 13px;
   font-weight: 600;
@@ -447,7 +464,7 @@ const querlinks = allArticles
   list-style: none;
   margin: 0;
   padding: 12px 0 16px;
-  background: rgba(255,255,255,.02);
+  background: rgba(0,0,0,.015);
   counter-reset: toc;
 }
 .rg-toc-list li {
@@ -468,20 +485,20 @@ const querlinks = allArticles
 .rg-toc-list a {
   font-family: var(--sans);
   font-size: 13px;
-  color: var(--cream-faint);
+  color: rgba(17,17,17,.7);
   text-decoration: none;
   line-height: 1.4;
   padding: 5px 0;
   display: block;
 }
-.rg-toc-list a:hover { color: var(--gold-lt); }
+.rg-toc-list a:hover { color: var(--gold); }
 
 /* ── Article body ───────────────────────────────────────────── */
 .rg-body {
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.78;
-  color: rgba(240,234,224,.82);
+  color: rgba(17,17,17,.82);
   border-top: 1px solid var(--border);
   padding-top: 40px;
   margin-bottom: 64px;
@@ -490,7 +507,7 @@ const querlinks = allArticles
   font-family: var(--serif);
   font-size: clamp(22px, 3vw, 28px);
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   margin: 2.6em 0 .65em;
   line-height: 1.22;
   letter-spacing: -.01em;
@@ -508,7 +525,7 @@ const querlinks = allArticles
   font-family: var(--serif);
   font-size: 20px;
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   margin: 1.8em 0 .5em;
 }
 .rg-body :global(p) { margin: 0 0 1.5em; }
@@ -518,27 +535,27 @@ const querlinks = allArticles
   margin: 0 0 1.5em;
 }
 .rg-body :global(li) { margin-bottom: .55em; }
-.rg-body :global(strong) { color: var(--cream); font-weight: 600; }
-.rg-body :global(em) { font-style: italic; color: var(--gold-lt); }
+.rg-body :global(strong) { color: var(--black); font-weight: 600; }
+.rg-body :global(em) { font-style: italic; color: var(--gold); }
 .rg-body :global(a) {
-  color: var(--gold-lt);
+  color: var(--gold);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.rg-body :global(a:hover) { color: var(--gold); }
+.rg-body :global(a:hover) { color: #9a7020; }
 .rg-body :global(blockquote) {
   border-left: 3px solid var(--gold);
   padding: 16px 20px;
   margin: 1.8em 0;
   background: var(--gold-dim);
   border-radius: 0 8px 8px 0;
-  color: var(--cream);
+  color: var(--black);
   font-style: italic;
 }
 .rg-body :global(blockquote p:last-child) { margin-bottom: 0; }
 .rg-body :global(code) {
   font-size: .875em;
-  background: rgba(255,255,255,.07);
+  background: rgba(0,0,0,.06);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: ui-monospace, monospace;
@@ -559,23 +576,21 @@ const querlinks = allArticles
   font-family: var(--serif);
   font-size: 28px;
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   margin: 0 0 28px;
 }
 .rg-faq-list { display: flex; flex-direction: column; gap: 4px; }
-
 .rg-faq-item {
   border: 1px solid var(--border-md);
   border-radius: 10px;
   overflow: hidden;
-  background: rgba(255,255,255,.025);
+  background: #fff;
   transition: border-color .2s;
 }
 .rg-faq-item[open] {
   border-color: var(--gold-ring);
-  background: rgba(200,150,46,.04);
+  background: rgba(200,150,46,.03);
 }
-
 .rg-faq-q {
   display: flex;
   align-items: center;
@@ -585,7 +600,7 @@ const querlinks = allArticles
   font-family: var(--sans);
   font-size: 15px;
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   cursor: pointer;
   list-style: none;
   user-select: none;
@@ -593,61 +608,63 @@ const querlinks = allArticles
 }
 .rg-faq-q::-webkit-details-marker { display: none; }
 .rg-faq-q span { flex: 1; }
-
 .rg-faq-icon {
   flex-shrink: 0;
   color: var(--gold);
   transition: transform .25s;
 }
 .rg-faq-item[open] .rg-faq-icon { transform: rotate(180deg); }
-
 .rg-faq-a {
   font-family: var(--sans);
   font-size: 14px;
   line-height: 1.72;
-  color: var(--cream-faint);
+  color: rgba(17,17,17,.65);
   padding: 0 20px 18px;
 }
 
-/* ── CTA box ────────────────────────────────────────────────── */
+/* ── CTA box – dark card mit Foto ───────────────────────────── */
 .rg-cta {
-  position: relative;
-  background: linear-gradient(135deg, rgba(200,150,46,.10) 0%, rgba(200,150,46,.04) 100%);
-  border: 1px solid var(--gold-ring);
+  background: #111111;
+  border-top: 3px solid #C8962E;
   border-radius: 16px;
   padding: clamp(24px, 4vw, 40px);
   margin-bottom: 64px;
-  overflow: hidden;
 }
-.rg-cta::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-lt) 100%);
+.rg-cta-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
 }
-
+.rg-cta-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #C8962E;
+  flex-shrink: 0;
+}
+.rg-cta-content { flex: 1; min-width: 0; }
 .rg-cta-eyebrow {
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .13em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: #C8962E;
   margin-bottom: 10px;
 }
 .rg-cta-title {
   font-family: var(--serif);
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(28px, 4vw, 42px);
   font-weight: 600;
-  color: var(--cream);
+  color: #fff;
   margin: 0 0 12px;
   line-height: 1.2;
 }
 .rg-cta-text {
   font-family: var(--sans);
   font-size: 14px;
-  color: var(--cream-faint);
+  color: rgba(255,255,255,.6);
   margin: 0 0 28px;
   line-height: 1.6;
 }
@@ -656,7 +673,6 @@ const querlinks = allArticles
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .rg-btn {
   font-family: var(--sans);
   font-size: 12px;
@@ -671,15 +687,18 @@ const querlinks = allArticles
   white-space: nowrap;
 }
 .rg-btn:hover { opacity: .85; transform: translateY(-1px); }
-
 .rg-btn--gold {
-  background: var(--gold);
+  background: #C8962E;
   color: #fff;
 }
 .rg-btn--ghost {
-  background: rgba(255,255,255,.06);
-  color: rgba(240,234,224,.75);
-  border: 1px solid var(--border-md);
+  background: transparent;
+  color: rgba(255,255,255,.85);
+  border: 1px solid rgba(255,255,255,.3);
+}
+@media (max-width: 560px) {
+  .rg-cta-inner { flex-direction: column; align-items: center; text-align: center; }
+  .rg-cta-links { justify-content: center; }
 }
 
 /* ── Grid section ───────────────────────────────────────────── */
@@ -701,11 +720,11 @@ const querlinks = allArticles
   font-family: var(--serif);
   font-size: 26px;
   font-weight: 600;
-  color: var(--cream);
+  color: var(--black);
   margin: 0 0 24px;
 }
 
-/* ── Querlinks ──────────────────────────────────────────────── */
+/* ── Querlinks Karten-Slider ────────────────────────────────── */
 .rg-querlinks {
   border-top: 1px solid var(--border);
   padding-top: 36px;
@@ -719,29 +738,33 @@ const querlinks = allArticles
   color: var(--muted);
   margin: 0 0 16px;
 }
-.rg-ql-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.rg-ql-slider {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 16px;
+  scrollbar-width: none;
+}
+.rg-ql-slider::-webkit-scrollbar { display: none; }
+.rg-ql-card {
+  min-width: 280px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  text-decoration: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  transition: box-shadow .2s, transform .2s;
 }
-.rg-ql-link {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  padding: 13px 16px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--border);
-  transition: border-color .2s, background .2s;
-}
-.rg-ql-link:hover {
-  border-color: var(--gold-ring);
-  background: var(--gold-dim);
+.rg-ql-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,.10);
+  transform: translateY(-2px);
 }
 .rg-ql-city {
   font-family: var(--sans);
@@ -754,15 +777,18 @@ const querlinks = allArticles
   padding: 3px 8px;
   border-radius: 4px;
   white-space: nowrap;
+  align-self: flex-start;
 }
 .rg-ql-text {
-  font-family: var(--sans);
-  font-size: 14px;
-  color: rgba(240,234,224,.75);
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
   line-height: 1.3;
+  flex: 1;
 }
-.rg-ql-arrow { color: var(--muted); flex-shrink: 0; }
-.rg-ql-link:hover .rg-ql-arrow { color: var(--gold); }
+.rg-ql-arrow { color: var(--muted); flex-shrink: 0; align-self: flex-end; }
+.rg-ql-card:hover .rg-ql-arrow { color: var(--gold); }
 
 /* ── Sidebar TOC ────────────────────────────────────────────── */
 .rg-toc-col {
@@ -771,13 +797,12 @@ const querlinks = allArticles
   max-height: calc(100vh - 140px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--border-md) transparent;
+  scrollbar-color: rgba(200,150,46,.3) transparent;
 }
 .rg-toc {
-  border: 1px solid var(--border-md);
+  background: #111111;
   border-radius: 12px;
-  padding: 20px 20px 16px;
-  background: rgba(255,255,255,.02);
+  padding: 24px;
 }
 .rg-toc-heading {
   font-family: var(--sans);
@@ -803,27 +828,26 @@ const querlinks = allArticles
   font-family: var(--sans);
   font-size: 9px;
   font-weight: 600;
-  color: var(--muted);
+  color: rgba(200,150,46,.45);
   flex-shrink: 0;
 }
 .rg-toc-link {
   font-family: var(--sans);
   font-size: 12px;
   line-height: 1.4;
-  color: var(--muted);
+  color: rgba(240,234,224,.62);
   text-decoration: none;
   padding: 5px 0;
-  display: block;
-  transition: color .15s;
-  border-left: 2px solid transparent;
   padding-left: 0;
+  display: block;
+  transition: color .15s, border-color .15s, padding-left .15s;
+  border-left: 2px solid transparent;
 }
-.rg-toc-link:hover,
-.rg-toc-link.is-active {
-  color: var(--gold-lt);
-}
+.rg-toc-link:hover { color: rgba(240,234,224,.9); }
 .rg-toc-link.is-active {
   color: var(--gold);
+  border-left: 3px solid #C8962E;
+  padding-left: 8px;
 }
 
 /* ── Mobile tweaks ──────────────────────────────────────────── */
