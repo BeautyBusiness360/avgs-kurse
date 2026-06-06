@@ -132,7 +132,7 @@ const visibleWithImgs = visible.map(d => ({
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 28px;
 }
 
@@ -151,7 +151,7 @@ const visibleWithImgs = visible.map(d => ({
 }
 
 .dg-photo-inner {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1;
   overflow: hidden;
   position: relative;
 }
@@ -238,7 +238,7 @@ const visibleWithImgs = visible.map(d => ({
 
 .dg-btn:hover { opacity: .85; }
 
-@media (max-width: 640px) {
-  .dg-grid { grid-template-columns: repeat(1, 1fr); }
+@media (max-width: 767px) {
+  .dg-grid { grid-template-columns: 1fr; }
 }
 </style>
