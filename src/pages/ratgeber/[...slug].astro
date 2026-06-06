@@ -298,8 +298,9 @@ const querlinks = allArticles
   --black:      #111111;
   --cream:      #F0EAE0;
   --muted:      #888;
-  --border:     rgba(0,0,0,.08);
-  --border-md:  rgba(0,0,0,.13);
+  --border:     #E8E2D9;
+  --rg-border:     rgba(0,0,0,.08);
+  --rg-border-md:  rgba(0,0,0,.13);
   --sans:       'Inter', system-ui, sans-serif;
   --serif:      'Cormorant Garamond', Georgia, serif;
   --col:        700px;
@@ -325,7 +326,6 @@ const querlinks = allArticles
 
 /* ── Outer layout ──────────────────────────────────────────── */
 .rg-wrap {
-  --border: rgba(0,0,0,0.1);
   background: #ffffff;
   min-height: 60vh;
   padding: clamp(36px, 5vw, 64px) var(--wrap-pad) 100px;
@@ -388,7 +388,7 @@ const querlinks = allArticles
 
 /* ── Inline TOC (mobile) ────────────────────────────────────── */
 .rg-toc-inline {
-  border: 1px solid var(--border-md);
+  border: 1px solid var(--rg-border-md);
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 40px;
@@ -458,7 +458,7 @@ const querlinks = allArticles
   font-size: 16px;
   line-height: 1.78;
   color: rgba(17,17,17,.82);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--rg-border);
   padding-top: 40px;
   margin-bottom: 64px;
 }
@@ -521,13 +521,13 @@ const querlinks = allArticles
 }
 .rg-body :global(hr) {
   border: none;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--rg-border);
   margin: 2.5em 0;
 }
 
 /* ── FAQ accordion ──────────────────────────────────────────── */
 .rg-faq {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--rg-border);
   padding-top: 40px;
   margin-bottom: 64px;
 }
@@ -540,7 +540,7 @@ const querlinks = allArticles
 }
 .rg-faq-list { display: flex; flex-direction: column; gap: 4px; }
 .rg-faq-item {
-  border: 1px solid var(--border-md);
+  border: 1px solid var(--rg-border-md);
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -603,7 +603,7 @@ const querlinks = allArticles
 }
 .rg-grid-section {
   margin-bottom: 64px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--rg-border);
   padding-top: 40px;
 }
 .rg-grid-title {
@@ -616,7 +616,7 @@ const querlinks = allArticles
 
 /* ── Querlinks Karten-Slider ────────────────────────────────── */
 .rg-querlinks {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--rg-border);
   padding-top: 36px;
 }
 .rg-ql-label {
