@@ -44,46 +44,70 @@ if (folder) {
       .map(f => `/images/Modul-Bilder/${folder}/${f}`);
   }
 }
+
+const trackId = `gg-track-${serviceSlug}`;
+const dotsId  = `gg-dots-${serviceSlug}`;
 ---
 
 {images.length > 0 && (
   <section class="gg-section">
     <h2 class="gg-title">Beispiel-Ergebnisse</h2>
     {desc && <p class="gg-desc">{desc}</p>}
-    <div class="gg-gallery">
-      {images[0] && (
-        <div class="gg-item gg-item--hero">
-          <img
-            src={images[0]}
-            alt="Beispielergebnis 1"
-            class="gg-img"
-            loading="lazy"
-            decoding="async"
-            width="700"
-            height="394"
-          />
-        </div>
-      )}
-      {images.length > 1 && (
-        <div class="gg-grid">
-          {images.slice(1).map((src, i) => (
-            <div class="gg-item">
-              <img
-                src={src}
-                alt={`Beispielergebnis ${i + 2}`}
-                class="gg-img"
-                loading="lazy"
-                decoding="async"
-                width="400"
-                height="400"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+    <div class="gg-carousel-wrap">
+      <button class="gg-btn gg-prev" aria-label="Zurück">&#8592;</button>
+      <div class="gg-track" id={trackId}>
+        {images.map((src, i) => (
+          <div class="gg-slide">
+            <img
+              src={src}
+              alt={`Beispielergebnis ${i + 1}`}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              width="400"
+              height="400"
+            />
+          </div>
+        ))}
+      </div>
+      <button class="gg-btn gg-next" aria-label="Weiter">&#8594;</button>
+      <div class="gg-dots" id={dotsId} aria-hidden="true"></div>
     </div>
   </section>
 )}
+
+<script define:vars={{ trackId, dotsId }} is:inline>
+  (function () {
+    const track    = document.getElementById(trackId);
+    const dotsWrap = document.getElementById(dotsId);
+    if (!track) return;
+
+    const prev   = track.closest('.gg-carousel-wrap')?.querySelector('.gg-prev');
+    const next   = track.closest('.gg-carousel-wrap')?.querySelector('.gg-next');
+    const slides = Array.from(track.querySelectorAll('.gg-slide'));
+    const step   = () => (slides[0]?.offsetWidth ?? 0) + 12;
+
+    // Build dots
+    const dots = slides.map((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'gg-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Bild ' + (i + 1));
+      d.addEventListener('click', () =>
+        track.scrollTo({ left: step() * i, behavior: 'smooth' })
+      );
+      dotsWrap?.appendChild(d);
+      return d;
+    });
+
+    const updateDots = () => {
+      const idx = Math.round(track.scrollLeft / (step() || 1));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    };
+
+    track.addEventListener('scroll', updateDots, { passive: true });
+    prev?.addEventListener('click', () => track.scrollBy({ left: -step() * 3, behavior: 'smooth' }));
+    next?.addEventListener('click', () => track.scrollBy({ left:  step() * 3, behavior: 'smooth' }));
+  })();
+</script>
 
 <style>
 .gg-section {
@@ -105,65 +129,74 @@ if (folder) {
   margin: 0 0 24px;
   line-height: 1.6;
 }
-.gg-gallery {
+.gg-carousel-wrap {
+  position: relative;
+}
+.gg-track {
   display: flex;
-  flex-direction: column;
   gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
 }
-.gg-item--hero {
+.gg-track::-webkit-scrollbar { display: none; }
+.gg-slide {
+  flex: 0 0 calc((100% - 24px) / 3);
+  scroll-snap-align: start;
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: rgba(0,0,0,.04);
-  position: relative;
 }
-.gg-item--hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(200,150,46,.15);
-  opacity: 0;
-  transition: opacity .3s ease;
-  pointer-events: none;
-}
-.gg-item--hero:hover::after { opacity: 1; }
-.gg-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-.gg-item {
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 1;
-  background: rgba(0,0,0,.04);
-  position: relative;
-}
-.gg-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(200,150,46,.15);
-  opacity: 0;
-  transition: opacity .3s ease;
-  pointer-events: none;
-}
-.gg-item:hover::after { opacity: 1; }
-.gg-img {
+.gg-slide img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
   display: block;
-  transition: transform .4s ease;
+  transition: transform .5s ease;
 }
-.gg-item--hero:hover .gg-img,
-.gg-item:hover .gg-img { transform: scale(1.04); }
-
+.gg-slide:hover img { transform: scale(1.04); }
+.gg-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid rgba(0,0,0,.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,.10);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow .2s;
+}
+.gg-btn:hover { box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+.gg-prev { left: -20px; }
+.gg-next { right: -20px; }
+.gg-dots {
+  display: none;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.gg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #C8962E;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background .2s;
+}
+.gg-dot.active { background: #C8962E; }
 @media (max-width: 640px) {
-  .gg-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .gg-item:nth-child(n+4) { display: none; }
+  .gg-slide { flex: 0 0 100%; }
+  .gg-btn   { display: none; }
+  .gg-dots  { display: flex; }
 }
 </style>
