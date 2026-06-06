@@ -47,7 +47,7 @@ function getLocalSlug(d: GridDozentin): string {
 
 function getProfileImg(d: GridDozentin): string | null {
   const localSlug = getLocalSlug(d);
-  const rel = `/images/dozentinnen/${localSlug}/${localSlug}-profilbild.webp`;
+  const rel = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
   const abs = path.join(process.cwd(), 'public', rel);
   return fs.existsSync(abs) ? rel : null;
 }
