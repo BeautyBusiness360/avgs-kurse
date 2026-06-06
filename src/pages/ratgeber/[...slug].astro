@@ -165,9 +165,6 @@ const querlinks = allArticles
           <Content />
         </div>
 
-        <!-- Gallery -->
-        <GalerieGrid module={serviceSlug} />
-
         <!-- FAQ accordion -->
         {faq && faq.length > 0 && (
           <section class="rg-faq">
@@ -186,35 +183,6 @@ const querlinks = allArticles
               ))}
             </div>
           </section>
-        )}
-
-        <!-- Dozentinnen grid -->
-        {gridDozentinnen.length > 0 && (
-          <section class="rg-grid-section">
-            <p class="rg-section-eyebrow">Netzwerk</p>
-            <h2 class="rg-grid-title">
-              {stadt ? `Dozentinnen für dieses Training in ${stadt}` : 'Dozentinnen für dieses Training'}
-            </h2>
-            <DozentinnenGrid dozentinnen={gridDozentinnen} moduleFilter={serviceSlug} />
-          </section>
-        )}
-
-        <!-- Cross-links slider -->
-        {querlinks.length > 0 && (
-          <nav class="rg-querlinks" aria-label="Weitere Ratgeber">
-            <p class="rg-ql-label">Weitere {modulLabel}-Ratgeber</p>
-            <div class="rg-ql-slider">
-              {querlinks.map(a => (
-                <a href={`/ratgeber/${a.id}/`} class="rg-ql-card">
-                  <span class="rg-ql-city">{a.data.stadt ?? 'DE'}</span>
-                  <span class="rg-ql-text">{a.data.title}</span>
-                  <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
-                </a>
-              ))}
-            </div>
-          </nav>
         )}
       </article>
 
@@ -235,6 +203,42 @@ const querlinks = allArticles
       )}
 
     </div><!-- /.rg-outer -->
+
+    <!-- ── Full-width sections ────────────────────────────────── -->
+    <div class="rg-full-width">
+      <GalerieGrid module={serviceSlug} />
+    </div>
+
+    {gridDozentinnen.length > 0 && (
+      <div class="rg-full-width">
+        <section class="rg-grid-section">
+          <p class="rg-section-eyebrow">Netzwerk</p>
+          <h2 class="rg-grid-title">
+            {stadt ? `Dozentinnen für dieses Training in ${stadt}` : 'Dozentinnen für dieses Training'}
+          </h2>
+          <DozentinnenGrid dozentinnen={gridDozentinnen} moduleFilter={serviceSlug} />
+        </section>
+      </div>
+    )}
+
+    {querlinks.length > 0 && (
+      <div class="rg-full-width">
+        <nav class="rg-querlinks" aria-label="Weitere Ratgeber">
+          <p class="rg-ql-label">Weitere {modulLabel}-Ratgeber</p>
+          <div class="rg-ql-slider">
+            {querlinks.map(a => (
+              <a href={`/ratgeber/${a.id}/`} class="rg-ql-card">
+                <span class="rg-ql-city">{a.data.stadt ?? 'DE'}</span>
+                <span class="rg-ql-text">{a.data.title}</span>
+                <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </a>
+            ))}
+          </div>
+        </nav>
+      </div>
+    )}
   </main>
 
   <SiteFooter />
@@ -574,6 +578,16 @@ const querlinks = allArticles
   line-height: 1.72;
   color: rgba(17,17,17,.65);
   padding: 0 20px 18px;
+}
+
+/* ── Full-width container ───────────────────────────────────── */
+.rg-full-width {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 40px 0;
+}
+@media (max-width: 860px) {
+  .rg-full-width { padding: 32px 20px 0; }
 }
 
 /* ── Grid section ───────────────────────────────────────────── */
