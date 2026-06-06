@@ -1,7 +1,5 @@
 ---
 import { getCollection, render } from 'astro:content';
-import fs from 'node:fs';
-import path from 'node:path';
 import SEOLayout from '../../layouts/SEOLayout.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
@@ -51,7 +49,7 @@ const { entry, allArticles, gridDozentinnen } = Astro.props;
 const { Content, headings } = await render(entry);
 const {
   title, description, modul, serviceSlug,
-  relatedDozentinSlug, relatedDozentinName, publishDate, faq,
+  publishDate, faq,
 } = entry.data;
 const stadt     = entry.data.stadt;
 const stadtSlug = entry.data.stadtSlug;
@@ -108,12 +106,6 @@ const querlinks = allArticles
   .filter(a => a.data.modul === modul && a.id !== entry.id)
   .slice(0, 4);
 
-const profilbildSrc = relatedDozentinSlug
-  ? `/images/dozentinnen/${relatedDozentinSlug}/${relatedDozentinSlug}-profilbild.webp`
-  : null;
-const hasProfilbild = profilbildSrc
-  ? fs.existsSync(path.join(process.cwd(), 'public', profilbildSrc))
-  : false;
 ---
 
 <SEOLayout {title} {description} {canonical} schema={schemas}>
@@ -192,44 +184,6 @@ const hasProfilbild = profilbildSrc
                   <div class="rg-faq-a">{item.answer}</div>
                 </details>
               ))}
-            </div>
-          </section>
-        )}
-
-        <!-- CTA box -->
-        {relatedDozentinSlug && (
-          <section class="rg-cta">
-            <div class="rg-cta-inner">
-              {hasProfilbild && (
-                <img
-                  src={profilbildSrc!}
-                  alt={relatedDozentinName ?? 'Dozentin'}
-                  class="rg-cta-avatar"
-                  width="120"
-                  height="120"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-              <div class="rg-cta-content">
-                <div class="rg-cta-eyebrow">
-                  {isPillar ? 'Beispiel-Dozentin im Netzwerk' : `Deine Dozentin in ${stadt}`}
-                </div>
-                <h2 class="rg-cta-title">{relatedDozentinName ?? 'Jetzt Termin anfragen'}</h2>
-                <p class="rg-cta-text">
-                  Profil, aktuelle Termine und Anmeldeformular direkt auf der Profilseite.
-                </p>
-                <div class="rg-cta-links">
-                  <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--gold">
-                    Profil & Termine ansehen
-                  </a>
-                  {stadtSlug && (
-                    <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
-                      Alle Kurse in {stadt}
-                    </a>
-                  )}
-                </div>
-              </div>
             </div>
           </section>
         )}
@@ -622,85 +576,6 @@ const hasProfilbild = profilbildSrc
   padding: 0 20px 18px;
 }
 
-/* ── CTA box – dark card mit Foto ───────────────────────────── */
-.rg-cta {
-  background: #111111;
-  border-top: 3px solid #C8962E;
-  border-radius: 16px;
-  padding: clamp(24px, 4vw, 40px);
-  margin-bottom: 64px;
-}
-.rg-cta-inner {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-}
-.rg-cta-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #C8962E;
-  flex-shrink: 0;
-}
-.rg-cta-content { flex: 1; min-width: 0; }
-.rg-cta-eyebrow {
-  font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  color: #C8962E;
-  margin-bottom: 10px;
-}
-.rg-cta-title {
-  font-family: var(--serif);
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 12px;
-  line-height: 1.2;
-}
-.rg-cta-text {
-  font-family: var(--sans);
-  font-size: 14px;
-  color: rgba(255,255,255,.6);
-  margin: 0 0 28px;
-  line-height: 1.6;
-}
-.rg-cta-links {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.rg-btn {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 13px 26px;
-  border-radius: 6px;
-  display: inline-block;
-  transition: opacity .2s, transform .2s;
-  white-space: nowrap;
-}
-.rg-btn:hover { opacity: .85; transform: translateY(-1px); }
-.rg-btn--gold {
-  background: #C8962E;
-  color: #fff;
-}
-.rg-btn--ghost {
-  background: transparent;
-  color: rgba(255,255,255,.85);
-  border: 1px solid rgba(255,255,255,.3);
-}
-@media (max-width: 560px) {
-  .rg-cta-inner { flex-direction: column; align-items: center; text-align: center; }
-  .rg-cta-links { justify-content: center; }
-}
-
 /* ── Grid section ───────────────────────────────────────────── */
 .rg-section-eyebrow {
   font-family: var(--sans);
@@ -852,9 +727,6 @@ const hasProfilbild = profilbildSrc
 
 /* ── Mobile tweaks ──────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .rg-cta { padding: 22px 18px; }
-  .rg-cta-links { flex-direction: column; }
-  .rg-btn { text-align: center; }
   .rg-h1 { font-size: 26px; }
   .rg-lead { font-size: 15px; }
   .rg-body { font-size: 15px; }

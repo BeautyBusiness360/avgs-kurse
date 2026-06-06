@@ -39,17 +39,15 @@ function getEffectiveCitySlug(d: GridDozentin): string {
 
 function getLocalSlug(d: GridDozentin): string {
   const origCitySlug = getOriginalCity(d)?.slug ?? '';
-  // Strip city suffix from slug, e.g. "carina-ambrosia-hamburg" → "carina-ambrosia"
   if (origCitySlug) {
     return d.slug.replace(new RegExp(`-${origCitySlug}$`), '');
   }
-  // Fallback: strip last hyphen-segment
   return d.slug.replace(/-[^-]+$/, '');
 }
 
 function getProfileImg(d: GridDozentin): string | null {
   const localSlug = getLocalSlug(d);
-  const rel = `/images/dozentinnen/${localSlug}/${localSlug}.webp`;
+  const rel = `/images/dozentinnen/${localSlug}/${localSlug}-profilbild.webp`;
   const abs = path.join(process.cwd(), 'public', rel);
   return fs.existsSync(abs) ? rel : null;
 }
@@ -65,7 +63,6 @@ function getSubjects(d: GridDozentin): string[] {
   return names;
 }
 
-// Filter by module if requested
 const filtered = moduleFilter
   ? dozentinnen.filter(d => {
       const rows = d.dozentin_services ?? [];
@@ -78,14 +75,13 @@ const filtered = moduleFilter
 
 const visible = limit ? filtered.slice(0, limit) : filtered;
 
-// Pre-compute profile images (uses fs at build time)
 const visibleWithImgs = visible.map(d => ({
   ...d,
-  profileImg:   getProfileImg(d),
-  fullName:     `${d.first_name} ${d.last_name}`.trim(),
+  profileImg:    getProfileImg(d),
+  fullName:      `${d.first_name} ${d.last_name}`.trim(),
   effectiveCity: getEffectiveCitySlug(d),
-  cityName:     getOriginalCity(d)?.name ?? null,
-  subjects:     getSubjects(d),
+  cityName:      getOriginalCity(d)?.name ?? null,
+  subjects:      getSubjects(d),
 }));
 ---
 
@@ -93,42 +89,36 @@ const visibleWithImgs = visible.map(d => ({
   <ul class="dg-grid">
     {visibleWithImgs.map(d => {
       const profileUrl = `/dozentinnen/${d.slug}/`;
-      const serviceUrl = moduleFilter && d.effectiveCity
-        ? `/${d.effectiveCity}/${moduleFilter}/`
-        : null;
-
       return (
         <li class="dg-card">
           <a href={profileUrl} class="dg-photo-wrap" tabindex="-1" aria-hidden="true">
-            {d.profileImg ? (
-              <img
-                src={d.profileImg}
-                alt={d.fullName}
-                class="dg-photo"
-                width="80"
-                height="80"
-                loading="lazy"
-              />
-            ) : (
-              <div class="dg-initials" aria-hidden="true">
-                {`${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase()}
-              </div>
-            )}
+            <div class="dg-photo-inner">
+              {d.profileImg ? (
+                <img
+                  src={d.profileImg}
+                  alt={d.fullName}
+                  class="dg-photo"
+                  width="400"
+                  height="533"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="dg-initials" aria-hidden="true">
+                  {`${d.first_name?.[0] ?? ''}${d.last_name?.[0] ?? ''}`.toUpperCase()}
+                </div>
+              )}
+              <span class="dg-name-overlay">{d.fullName}</span>
+            </div>
           </a>
           <div class="dg-info">
-            <a href={profileUrl} class="dg-name">{d.fullName}</a>
             {d.cityName && (
               <span class="dg-city">{d.cityName}</span>
             )}
             {d.subjects.length > 0 && (
               <p class="dg-subjects">{d.subjects.join(' · ')}</p>
             )}
-            <div class="dg-actions">
-              <a href={profileUrl} class="dg-btn dg-btn--primary">Profil & Termine</a>
-              {serviceUrl && (
-                <a href={serviceUrl} class="dg-btn dg-btn--ghost">Alle Kurse</a>
-              )}
-            </div>
+            <a href={profileUrl} class="dg-btn">Profil &amp; Termine</a>
           </div>
         </li>
       );
@@ -142,127 +132,113 @@ const visibleWithImgs = visible.map(d => ({
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
 
 .dg-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 12px;
-  padding: 20px;
-  transition: border-color .2s;
-}
-
-.dg-card:hover {
-  border-color: rgba(200,150,46,.3);
+  flex-direction: column;
 }
 
 .dg-photo-wrap {
-  flex-shrink: 0;
   display: block;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
   text-decoration: none;
 }
 
-.dg-photo {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
+.dg-photo-inner {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  position: relative;
 }
 
+.dg-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s ease;
+}
+
+.dg-card:hover .dg-photo { transform: scale(1.04); }
+
 .dg-initials {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(200,150,46,.15);
-  border: 1px solid rgba(200,150,46,.25);
+  width: 100%;
+  height: 100%;
+  background: rgba(200,150,46,.12);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 20px;
+  font-size: 48px;
   font-weight: 600;
   color: #C8962E;
 }
 
+.dg-name-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  color: white;
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  line-height: 1.2;
+  pointer-events: none;
+}
+
 .dg-info {
-  flex: 1;
-  min-width: 0;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
-
-.dg-name {
-  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 17px;
-  font-weight: 600;
-  color: #F0EAE0;
-  text-decoration: none;
-  line-height: 1.25;
-}
-
-.dg-name:hover { color: #C8962E; }
 
 .dg-city {
   font-family: var(--sans, 'Inter', system-ui, sans-serif);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #C8962E;
 }
 
 .dg-subjects {
   font-family: var(--sans, 'Inter', system-ui, sans-serif);
-  font-size: 12px;
-  color: rgba(240,234,224,.55);
-  margin: 2px 0 8px;
+  font-size: 13px;
+  color: rgba(17,17,17,0.6);
+  margin: 8px 0 0;
   line-height: 1.5;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dg-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .dg-btn {
   font-family: var(--sans, 'Inter', system-ui, sans-serif);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: .07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 7px 14px;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: #C8962E;
+  color: white;
   display: inline-block;
+  margin-top: 16px;
+  align-self: flex-start;
   transition: opacity .2s;
 }
 
-.dg-btn:hover { opacity: .8; }
+.dg-btn:hover { opacity: .85; }
 
-.dg-btn--primary {
-  background: #C8962E;
-  color: #fff;
-}
-
-.dg-btn--ghost {
-  background: transparent;
-  color: rgba(240,234,224,.65);
-  border: 1px solid rgba(255,255,255,.12);
+@media (max-width: 640px) {
+  .dg-grid { grid-template-columns: repeat(1, 1fr); }
 }
 </style>
