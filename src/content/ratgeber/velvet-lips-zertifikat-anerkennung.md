@@ -5,8 +5,6 @@ modul: velvet-lips
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: velvet-lips-lipstick-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Ist ein Online-Kurs-Zertifikat für Velvet Lips ausreichend?"

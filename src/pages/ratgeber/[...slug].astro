@@ -29,8 +29,11 @@ export async function getStaticPaths() {
     const { stadtSlug, serviceSlug } = entry.data;
 
     const gridDozentinnen = dozentinnen.filter(d => {
-      const effCity = HUB_CITY_SLUG[d.slug] ?? (Array.isArray(d.cities) ? d.cities[0]?.slug : d.cities?.slug);
-      if (effCity !== stadtSlug) return false;
+      // Pillar articles have no stadtSlug → show all dozentinnen for the module
+      if (stadtSlug) {
+        const effCity = HUB_CITY_SLUG[d.slug] ?? (Array.isArray(d.cities) ? d.cities[0]?.slug : d.cities?.slug);
+        if (effCity !== stadtSlug) return false;
+      }
       const rows = Array.isArray(d.dozentin_services) ? d.dozentin_services : [];
       return rows.some(ds => {
         const svc = Array.isArray(ds?.services) ? ds.services[0] : ds?.services;

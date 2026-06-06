@@ -84,7 +84,8 @@ async function run() {
 
   // 6. Generate + write HTML
   const ts  = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
-  const html = generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts });
+  const linkCount = countInternalLinks();
+  const html = generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts, linkCount });
 
   let written = 0;
   for (const dir of OUTPUTS) {
@@ -113,6 +114,35 @@ async function run() {
     const g = gscData[p.absUrl];
     console.log(`  ${p.urlPath.padEnd(52)} ${g ? (g.verdict + ' – ' + g.coverageState) : 'GSC n/a'}`);
   }
+}
+
+// ── Internal link counter ─────────────────────────────────────────────────────
+
+function countInternalLinks() {
+  try {
+    const htmlFiles = [];
+    function scanDir(dir) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory() && !['link-graph','uebersicht','coverage','404'].includes(entry.name)) {
+          scanDir(full);
+        } else if (entry.isFile() && entry.name === 'index.html') {
+          htmlFiles.push(full);
+        }
+      }
+    }
+    scanDir(DIST);
+    let edges = 0;
+    for (const f of htmlFiles) {
+      const html = fs.readFileSync(f, 'utf8');
+      const seen = new Set();
+      for (const m of html.matchAll(/href="(\/[^"#?][^"]*?)"/g)) {
+        const href = m[1].replace(/\/$/, '') || '/';
+        if (!seen.has(href)) { seen.add(href); edges++; }
+      }
+    }
+    return edges;
+  } catch { return null; }
 }
 
 // ── dist/ scanner ─────────────────────────────────────────────────────────────
@@ -368,14 +398,14 @@ function getRatgeberRegister(ratPages) {
 // ── GSC status helpers ────────────────────────────────────────────────────────
 
 function gscBadge(gscResult, gscConnected) {
-  if (!gscConnected) return '<span class="badge badge-off">GSC nicht verbunden</span>';
-  if (!gscResult)    return '<span class="badge badge-unk">–</span>';
+  if (!gscConnected) return '<span class="badge muted">–</span>';
+  if (!gscResult)    return '<span class="badge muted">–</span>';
   const { verdict, coverageState } = gscResult;
-  if (verdict === 'PASS')        return `<span class="badge badge-ok" title="${esc(coverageState)}">✓ Indexiert</span>`;
-  if (verdict === 'ERROR')       return `<span class="badge badge-err" title="${esc(coverageState)}">API-Fehler</span>`;
-  if (verdict === 'FAIL')        return `<span class="badge badge-err" title="${esc(coverageState)}">✗ ${esc(coverageState)}</span>`;
-  if (verdict === 'NEUTRAL')     return `<span class="badge badge-warn" title="${esc(coverageState)}">⚠ ${esc(shortState(coverageState))}</span>`;
-  return `<span class="badge badge-unk" title="${esc(coverageState)}">Unbekannt</span>`;
+  if (verdict === 'PASS')    return `<span class="badge ok"    title="${esc(coverageState)}">✓ Indexiert</span>`;
+  if (verdict === 'ERROR')   return `<span class="badge err"   title="${esc(coverageState)}">Fehler</span>`;
+  if (verdict === 'FAIL')    return `<span class="badge err"   title="${esc(coverageState)}">✗ ${esc(shortState(coverageState))}</span>`;
+  if (verdict === 'NEUTRAL') return `<span class="badge muted" title="${esc(coverageState)}">${esc(shortState(coverageState))}</span>`;
+  return `<span class="badge muted" title="${esc(coverageState)}">–</span>`;
 }
 
 function shortState(s) {
@@ -390,58 +420,120 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 
 // ── HTML Generator ────────────────────────────────────────────────────────────
 
-function generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts }) {
+function generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadmap, ratgeberRegister, ts, linkCount }) {
   const gscConnected = Object.keys(gscData).length > 0;
 
-  const svcPages  = pages.filter(p => p.type === 'svc');
-  const dozPages  = pages.filter(p => p.type === 'dozentinnen');
-  const ratPages  = pages.filter(p => p.type === 'ratgeber');
-  const stadtPages= pages.filter(p => p.type === 'stadt');
-  const sonst     = pages.filter(p => p.type === 'sonstige');
-
+  const svcPages   = pages.filter(p => p.type === 'svc');
+  const dozPages   = pages.filter(p => p.type === 'dozentinnen');
+  const ratPages   = pages.filter(p => p.type === 'ratgeber');
+  const stadtPages = pages.filter(p => p.type === 'stadt');
+  const sonst      = pages.filter(p => p.type === 'sonstige');
   const publicPages = pages.filter(p => !p.noindex);
-  const indexed     = publicPages.filter(p => gscData[p.absUrl]?.verdict === 'PASS').length;
-  const notIndexed  = publicPages.filter(p => gscData[p.absUrl]?.verdict === 'NEUTRAL').length;
 
-  // Helper: sitemap check cell
   function inSitemap(page) {
-    const normalised = page.absUrl.replace(/\/$/, '');
-    return sitemapUrls.has(normalised)
-      ? '<span class="badge badge-ok">✓</span>'
-      : '<span class="badge badge-warn">–</span>';
+    const n = page.absUrl.replace(/\/$/, '');
+    return sitemapUrls.has(n)
+      ? '<span class="badge ok">✓</span>'
+      : '<span class="badge muted">–</span>';
   }
 
-  // Table row builder for most sections
+  const gscTh = gscConnected ? '<th class="c">Indexiert</th>' : '';
+
   function pageRow(p) {
+    const gscTd = gscConnected ? `<td class="c">${gscBadge(gscData[p.absUrl], true)}</td>` : '';
     return `<tr>
-      <td><a href="${esc(p.urlPath)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
-      <td class="c">${inSitemap(p)}</td>
-      <td class="c">${gscBadge(gscData[p.absUrl], gscConnected)}</td>
+      <td><a href="${esc(p.absUrl)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
+      <td class="c">${inSitemap(p)}</td>${gscTd}
     </tr>`;
   }
 
-  // SVC rows include Stadt + Modul columns
   function svcRow(p) {
+    const gscTd = gscConnected ? `<td class="c">${gscBadge(gscData[p.absUrl], true)}</td>` : '';
     return `<tr>
-      <td><a href="${esc(p.urlPath)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
+      <td><a href="${esc(p.absUrl)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
       <td>${esc(CITY_LABEL[p.city] ?? p.city ?? '')}</td>
       <td>${esc(p.label)}</td>
-      <td class="c">${inSitemap(p)}</td>
-      <td class="c">${gscBadge(gscData[p.absUrl], gscConnected)}</td>
+      <td class="c">${inSitemap(p)}</td>${gscTd}
     </tr>`;
   }
 
-  const kpiGSC = gscConnected
-    ? `<div class="kpi"><div class="kpi-v good">${indexed}</div><div class="kpi-l">Indexiert</div></div>
-       <div class="kpi${notIndexed > 0 ? ' kpi-warn' : ''}"><div class="kpi-v${notIndexed > 0 ? ' warn' : ''}">${notIndexed}</div><div class="kpi-l">Nicht indexiert</div></div>`
-    : `<div class="kpi kpi-off"><div class="kpi-v">–</div><div class="kpi-l">Indexiert (GSC)</div></div>
-       <div class="kpi kpi-off"><div class="kpi-v">–</div><div class="kpi-l">Nicht indexiert (GSC)</div></div>`;
+  const kpiData = [
+    { label: 'Seiten live',             value: publicPages.length,                      mod: 'gold'  },
+    { label: 'Ratgeber live',           value: ratgeberRegister?.live ?? ratPages.length, mod: 'green' },
+    { label: 'Interne Verlinkungen',    value: linkCount ?? '–',                         mod: 'teal'  },
+    { label: 'SVC-Seiten',             value: svcPages.length,                          mod: 'teal'  },
+    { label: 'Dozentinnen',            value: dozPages.length,                          mod: 'teal'  },
+    { label: 'Lücken / To-Do',         value: gaps.length,                              mod: gaps.length > 0 ? 'red' : 'green' },
+  ];
 
-  const gscNote = gscConnected
-    ? ''
-    : gscConfigured
-      ? `<div class="gsc-banner">⚠ GSC: Service Account noch nicht autorisiert — Sobald <code>bb360-gsc@formal-momentum-431212-j0.iam.gserviceaccount.com</code> in der Search Console als Nutzer (Voll) hinzugefügt ist, wird die Indexierungs-Spalte automatisch befüllt.</div>`
-      : `<div class="gsc-banner">⚠ GSC nicht verbunden — <code>GSC_SERVICE_ACCOUNT_JSON</code> / <code>GSC_SITE_URL</code> fehlen oder ungültig. Indexierungs-Spalte wird nach Setup automatisch befüllt.</div>`;
+  const kpiCards = kpiData.map(k => `
+    <div class="kpi kpi--${k.mod}">
+      <div class="kpi-v">${typeof k.value === 'number' ? k.value.toLocaleString('de') : k.value}</div>
+      <div class="kpi-l">${esc(k.label)}</div>
+    </div>`).join('');
+
+  const gscNote = !gscConnected && gscConfigured
+    ? `<div class="banner">Service Account noch nicht autorisiert — füge <code>bb360-gsc@formal-momentum-431212-j0.iam.gserviceaccount.com</code> in der Search Console als Nutzer (Voll) hinzu, damit die Indexierungs-Spalte automatisch befüllt wird.</div>`
+    : '';
+
+  const MODUL_LABEL = {
+    microblading: 'Microblading', powderbrows: 'Powder Brows',
+    wimpernverlaengerung: 'Wimpernverlängerung', 'camouflage-removal': 'Camouflage Removal',
+    'velvet-lips': 'Velvet Lips', fachkosmetikerin: 'Fachkosmetikerin',
+  };
+
+  let ratgeberSection = '';
+  if (ratgeberRegister) {
+    const { entries, orphans, live, erstellt, geplant } = ratgeberRegister;
+    const total    = entries.length;
+    const donePct  = Math.round((live + erstellt) / (total || 1) * 100);
+    const livePct  = Math.round(live / (total || 1) * 100);
+    const rows = entries.map(e => {
+      const statusBadge = (e.status === 'live' || e.status === 'erstellt')
+        ? `<span class="badge ok">${e.status === 'live' ? 'Live' : 'Erstellt'}</span>`
+        : `<span class="badge muted">Geplant</span>`;
+      const gscTd = gscConnected
+        ? `<td class="c">${e.isLive ? gscBadge(gscData[`${BASE_URL}${e.url}`], true) : '<span class="badge muted">–</span>'}</td>`
+        : '';
+      const urlCell = (e.isLive || e.status === 'erstellt')
+        ? `<a href="${esc(BASE_URL + e.url)}" target="_blank" rel="noopener" class="url-link">${esc(e.url)}</a>`
+        : `<span class="muted-text">${esc(e.url)}</span>`;
+      return `<tr>
+        <td>${urlCell}</td>
+        <td>${esc(MODUL_LABEL[e.modul] ?? e.modul)}</td>
+        <td>${esc(e.stadt ?? '—')}</td>
+        <td class="c">${statusBadge}</td>${gscTd}
+      </tr>`;
+    }).join('');
+    const orphanHtml = orphans.length > 0
+      ? `<div class="orphan-list"><span class="orphan-label">Verwaiste Artikel (${orphans.length})</span>
+         ${orphans.map(s=>`<a href="${esc(BASE_URL)}/ratgeber/${esc(s)}/" target="_blank" class="url-link">/ratgeber/${esc(s)}/</a>`).join(' ')}</div>`
+      : '';
+    ratgeberSection = `
+      <div class="progress-block">
+        <div class="progress-labels">
+          <span class="pl-green">● Live: ${live}</span>
+          <span class="pl-green-dim">● Erstellt: ${erstellt}</span>
+          <span class="pl-muted">● Geplant: ${geplant}</span>
+          <span class="pl-pct">${donePct}% fertig</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${livePct}%"></div>
+          <div class="progress-fill-dim" style="width:${donePct}%"></div>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>URL</th><th>Modul</th><th>Stadt</th><th class="c">Status</th>${gscTh}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>${orphanHtml}`;
+  } else {
+    ratgeberSection = ratPages.length > 0
+      ? `<div class="tbl-wrap"><table>
+          <thead><tr><th>URL</th><th class="c">Sitemap</th>${gscTh}</tr></thead>
+          <tbody>${ratPages.map(pageRow).join('')}</tbody>
+        </table></div>`
+      : '<div class="empty">Noch keine Ratgeber-Seiten gebaut.</div>';
+  }
 
   return `<!DOCTYPE html>
 <html lang="de">
@@ -449,193 +541,173 @@ function generateHtml({ pages, sitemapUrls, gscData, gscConfigured, gaps, roadma
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Dashboard – dein-beauty-kurs.de</title>
+<title>Dashboard · dein-beauty-kurs.de</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:#111;color:#FAF8F5;font-size:13px;min-height:100vh;padding-bottom:60px}
-a{color:#C8962E;text-decoration:none}a:hover{text-decoration:underline}
-code{font-family:monospace;font-size:11px;color:#C8962E}
-.header{padding:24px 32px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
-.header h1{font-family:Georgia,Cambria,serif;font-size:22px;font-weight:600;color:#FAF8F5;letter-spacing:.01em}
-.header p{font-size:11px;color:#666;margin-top:4px}
-.kpis{display:flex;gap:12px;padding:18px 32px;border-bottom:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
-.kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:7px;padding:12px 20px;min-width:120px}
-.kpi-warn{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
-.kpi-off{border-color:rgba(255,255,255,.05);opacity:.5}
-.kpi-v{font-size:28px;font-weight:700;color:#C8962E;line-height:1}
-.kpi-v.good{color:#22c55e}.kpi-v.warn{color:#f59e0b}
-.kpi-l{font-size:10px;color:#777;margin-top:3px;text-transform:uppercase;letter-spacing:.08em}
-.gsc-banner{margin:16px 32px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:10px 14px;font-size:12px;color:#d97706}
-section{padding:28px 32px;border-bottom:1px solid rgba(255,255,255,.06)}
-section h2{font-family:Georgia,Cambria,serif;font-size:16px;font-weight:600;color:#C8962E;margin-bottom:14px;letter-spacing:.01em}
-section h2 span{font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:400;color:#555;margin-left:8px}
-.tbl-wrap{overflow-x:auto}
+:root{
+  --bg:#07071a;--bg-card:rgba(255,255,255,.035);
+  --border:rgba(255,255,255,.08);--border-hi:rgba(255,255,255,.14);
+  --gold:#C8962E;--gold-dim:rgba(200,150,46,.15);--gold-ring:rgba(200,150,46,.30);
+  --teal:#0891b2;--teal-dim:rgba(8,145,178,.12);--teal-ring:rgba(8,145,178,.28);
+  --green:#10b981;--green-dim:rgba(16,185,129,.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --cream:rgba(240,234,224,.88);--muted:rgba(255,255,255,.35);
+  --sans:Inter,system-ui,sans-serif;
+  --mono:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--cream);font-size:13px;min-height:100vh;padding-bottom:80px;line-height:1.5}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline;color:#d4a94a}
+code{font-family:var(--mono);font-size:11px;color:var(--teal);background:var(--teal-dim);padding:1px 5px;border-radius:3px}
+.wrap{max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,52px)}
+/* Header */
+.hdr{padding:32px 0 24px;border-bottom:1px solid var(--border);margin-bottom:0}
+.hdr-inner{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr h1{font-family:Georgia,Cambria,serif;font-size:24px;font-weight:600;color:var(--cream);letter-spacing:-.01em}
+.hdr h1 em{color:var(--gold);font-style:normal}
+.hdr-ts{font-family:var(--mono);font-size:11px;color:var(--muted)}
+/* KPI grid */
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;padding:28px 0}
+.kpi{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px 22px 16px;position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;opacity:.8}
+.kpi:hover{border-color:var(--border-hi);box-shadow:0 4px 28px rgba(0,0,0,.35)}
+.kpi--gold::after{background:var(--gold)}.kpi--gold:hover{border-color:var(--gold-ring);box-shadow:0 0 22px var(--gold-dim)}
+.kpi--teal::after{background:var(--teal)}.kpi--teal:hover{border-color:var(--teal-ring);box-shadow:0 0 22px var(--teal-dim)}
+.kpi--green::after{background:var(--green)}.kpi--green:hover{border-color:rgba(16,185,129,.35);box-shadow:0 0 22px var(--green-dim)}
+.kpi--red::after{background:var(--red)}.kpi--red:hover{border-color:rgba(239,68,68,.35);box-shadow:0 0 22px var(--red-dim)}
+.kpi-v{font-family:var(--mono);font-size:38px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi--gold .kpi-v{color:var(--gold)}.kpi--teal .kpi-v{color:var(--teal)}.kpi--green .kpi-v{color:var(--green)}.kpi--red .kpi-v{color:var(--red)}
+.kpi-l{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+/* Banner */
+.banner{margin:0 0 20px;padding:12px 18px;border-radius:8px;font-size:12px;line-height:1.6;background:rgba(200,150,46,.07);border:1px solid var(--gold-ring);color:#d4a54a}
+/* Sections */
+section{padding:32px 0;border-bottom:1px solid var(--border)}
+.sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.sec-head h2{font-family:Georgia,Cambria,serif;font-size:17px;font-weight:600;color:var(--cream);letter-spacing:-.005em}
+.sec-head h2 .num{color:var(--gold)}
+.sec-ct{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:2px 10px}
+/* Progress */
+.progress-block{margin-bottom:20px}
+.progress-labels{display:flex;gap:18px;font-size:12px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.pl-green{color:var(--green)}.pl-green-dim{color:rgba(16,185,129,.55)}.pl-muted{color:var(--muted)}.pl-pct{color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:auto}
+.progress-track{background:rgba(255,255,255,.06);border-radius:6px;height:8px;overflow:hidden;position:relative}
+.progress-fill-dim{position:absolute;top:0;left:0;height:100%;border-radius:6px;background:rgba(16,185,129,.25);transition:width .4s}
+.progress-fill{position:absolute;top:0;left:0;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold) 0%,#e6b84a 40%,var(--teal) 100%);transition:width .4s;z-index:1}
+/* Tables */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
 table{border-collapse:collapse;width:100%;font-size:12px}
-th,td{padding:7px 11px;border:1px solid rgba(255,255,255,.07);text-align:left;white-space:nowrap}
-th{background:rgba(255,255,255,.04);color:#888;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+thead th{background:rgba(10,10,28,.9);color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.09em;padding:10px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;white-space:nowrap;backdrop-filter:blur(8px)}
+tbody td{padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;color:var(--cream)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(200,150,46,.05)}
 td.c{text-align:center}
-tr:hover{background:rgba(255,255,255,.02)}
-.url-link{font-family:monospace;font-size:11px;color:#C8962E}
+.url-link{font-family:var(--mono);font-size:11px;color:var(--teal)}
+.url-link:hover{color:#22d3ee;text-decoration:underline}
+.muted-text{color:rgba(255,255,255,.2);font-family:var(--mono);font-size:11px}
+/* Badges */
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
-.badge-ok  {background:rgba(34,197,94,.15); color:#22c55e;border:1px solid rgba(34,197,94,.25)}
-.badge-warn{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
-.badge-err {background:rgba(239,68,68,.12); color:#ef4444;border:1px solid rgba(239,68,68,.25)}
-.badge-off {background:rgba(255,255,255,.05);color:#555;border:1px solid rgba(255,255,255,.09)}
-.badge-unk {background:rgba(255,255,255,.05);color:#666;border:1px solid rgba(255,255,255,.08)}
-.gap-row td{color:#ef4444}
-.gap-row td:last-child code{color:#ef4444}
-.empty{color:#444;font-style:italic;font-size:12px;padding:12px 0}
+.badge.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.badge.err{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.badge.muted{background:rgba(255,255,255,.04);color:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.08)}
+.gap-row td{color:rgba(239,68,68,.75)}
+.badge.gap-mark{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.orphan-list{margin-top:14px;padding:12px 16px;background:var(--red-dim);border:1px solid rgba(239,68,68,.2);border-radius:8px}
+.orphan-label{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.orphan-list .url-link{display:inline-block;margin:2px 6px 2px 0;color:var(--red)}
+.empty{color:rgba(255,255,255,.22);font-style:italic;font-size:12px;padding:14px 0}
+.empty.ok{color:var(--green)}
+@media(max-width:640px){.kpi-v{font-size:28px}.hdr h1{font-size:20px}.kpis{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="header">
-  <h1>Dashboard – dein-beauty-kurs.de</h1>
-  <p>Generiert: ${esc(ts)} · Quellen: dist/ (live), sitemap.xml, Supabase (Lücken)${gscConnected ? ', GSC URL Inspection API' : ''}</p>
-</div>
+<header class="hdr">
+  <div class="hdr-inner">
+    <h1>Dashboard <em>·</em> dein-beauty-kurs.de</h1>
+    <span class="hdr-ts">${esc(ts)}${gscConnected ? ' · GSC aktiv' : ''}</span>
+  </div>
+</header>
 
-<div class="kpis">
-  <div class="kpi"><div class="kpi-v">${publicPages.length}</div><div class="kpi-l">Seiten live</div></div>
-  ${kpiGSC}
-  <div class="kpi${gaps.length > 0 ? ' kpi-warn' : ''}"><div class="kpi-v${gaps.length > 0 ? ' warn' : ' good'}">${gaps.length}</div><div class="kpi-l">Lücken / To-Do</div></div>
-  <div class="kpi"><div class="kpi-v">${svcPages.length}</div><div class="kpi-l">SVC-Seiten</div></div>
-  <div class="kpi"><div class="kpi-v">${dozPages.length}</div><div class="kpi-l">Dozentinnen</div></div>
-  ${ratgeberRegister ? `<div class="kpi"><div class="kpi-v" style="color:#22c55e">${ratgeberRegister.live}</div><div class="kpi-l">Ratgeber live / ${ratgeberRegister.total}</div></div>` : ''}
-</div>
+<div class="kpis">${kpiCards}</div>
 
 ${gscNote}
 
-<!-- 1. Stadt × Modul -->
 <section>
-  <h2>1. Stadt × Modul <span>${svcPages.length} SVC-Seiten</span></h2>
-  <div class="tbl-wrap">
-  <table>
-    <thead><tr><th>URL</th><th>Stadt</th><th>Modul</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead>
+  <div class="sec-head">
+    <h2><span class="num">1.</span> Stadt × Modul</h2>
+    <span class="sec-ct">${svcPages.length} Seiten</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>URL</th><th>Stadt</th><th>Modul</th><th class="c">Sitemap</th>${gscTh}</tr></thead>
     <tbody>${svcPages.sort((a,b)=>a.urlPath.localeCompare(b.urlPath)).map(svcRow).join('')}</tbody>
-  </table>
-  </div>
+  </table></div>
 </section>
 
-<!-- 2. Dozentinnen-Profile -->
 <section>
-  <h2>2. Dozentinnen-Profile <span>${dozPages.length} Seiten</span></h2>
-  <div class="tbl-wrap">
-  <table>
-    <thead><tr><th>URL</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead>
+  <div class="sec-head">
+    <h2><span class="num">2.</span> Dozentinnen-Profile</h2>
+    <span class="sec-ct">${dozPages.length} Seiten</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>URL</th><th class="c">Sitemap</th>${gscTh}</tr></thead>
     <tbody>${dozPages.sort((a,b)=>a.urlPath.localeCompare(b.urlPath)).map(pageRow).join('')}</tbody>
-  </table>
-  </div>
+  </table></div>
 </section>
 
-<!-- 3. Ratgeber Content-Register -->
 <section>
-  <h2>3. Ratgeber Content-Register <span>${ratPages.length} live · ${ratgeberRegister ? ratgeberRegister.total : '–'} geplant</span></h2>
+  <div class="sec-head">
+    <h2><span class="num">3.</span> Ratgeber Content-Register</h2>
+    <span class="sec-ct">${ratPages.length} live · ${ratgeberRegister ? ratgeberRegister.total : '–'} geplant</span>
+  </div>
+  ${ratgeberSection}
+</section>
 
-  ${ratgeberRegister ? (() => {
-    const { entries, orphans, live, erstellt, geplant } = ratgeberRegister;
-    const MODUL_LABEL = {
-      microblading: 'Microblading', powderbrows: 'Powder Brows',
-      wimpernverlaengerung: 'Wimpernverlängerung', 'camouflage-removal': 'Camouflage Removal',
-      'velvet-lips': 'Velvet Lips', fachkosmetikerin: 'Fachkosmetikerin',
-    };
-    const progressPct = Math.round(live / (entries.length || 1) * 100);
-    const progressBar = `<div style="margin-bottom:16px">
-      <div style="display:flex;gap:16px;font-size:12px;margin-bottom:8px">
-        <span style="color:#22c55e">● Live: ${live}</span>
-        <span style="color:#C8962E">● Erstellt: ${erstellt}</span>
-        <span style="color:#555">● Geplant: ${geplant}</span>
-        <span style="color:#666;margin-left:auto">${progressPct}% abgeschlossen</span>
-      </div>
-      <div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;overflow:hidden">
-        <div style="background:#22c55e;height:100%;width:${progressPct}%;transition:width .3s"></div>
-      </div>
-    </div>`;
-
-    const rows = entries.map(e => {
-      const statusBadge = e.status === 'live'
-        ? '<span class="badge badge-ok">Live</span>'
-        : e.status === 'erstellt'
-          ? '<span class="badge badge-warn">Erstellt</span>'
-          : '<span class="badge badge-off">Geplant</span>';
-      const gscBadgeHtml = e.isLive
-        ? gscBadge(gscData[`${BASE_URL}${e.url}`], Object.keys(gscData).length > 0)
-        : '<span class="badge badge-off">–</span>';
-      const urlCell = e.isLive
-        ? `<a href="${esc(e.url)}" target="_blank" rel="noopener" class="url-link">${esc(e.url)}</a>`
-        : `<span style="color:#444">${esc(e.url)}</span>`;
+<section>
+  <div class="sec-head">
+    <h2><span class="num">4.</span> Sonstige Seiten</h2>
+    <span class="sec-ct">Stadtseiten · Landingpages · Rechtliches</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>URL</th><th>Typ</th><th class="c">Sitemap</th>${gscTh}</tr></thead>
+    <tbody>${[...stadtPages,...sonst].sort((a,b)=>a.urlPath.localeCompare(b.urlPath)).map(p=>{
+      const gscTd = gscConnected ? `<td class="c">${gscBadge(gscData[p.absUrl], true)}</td>` : '';
       return `<tr>
-        <td>${urlCell}</td>
-        <td>${esc(MODUL_LABEL[e.modul] ?? e.modul)}</td>
-        <td>${esc(e.stadt)}</td>
-        <td class="c">${statusBadge}</td>
-        <td class="c">${gscBadgeHtml}</td>
+        <td><a href="${esc(p.absUrl)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
+        <td>${esc(p.type === 'stadt' ? 'Stadtseite' : 'Landingpage')}</td>
+        <td class="c">${inSitemap(p)}</td>${gscTd}
       </tr>`;
-    }).join('');
-
-    const orphanHtml = orphans.length > 0
-      ? `<div style="margin-top:16px"><h3 style="font-size:11px;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Verwaiste Ratgeber (${orphans.length}) – live aber nicht im Plan</h3>
-         ${orphans.map(s => `<div style="font-family:monospace;font-size:11px;color:#ef4444;padding:3px 0">/ratgeber/${esc(s)}/</div>`).join('')}</div>`
-      : '';
-
-    return progressBar +
-      `<div class="tbl-wrap"><table>
-        <thead><tr><th>URL</th><th>Modul</th><th>Stadt</th><th class="c">Status</th><th class="c">Indexiert</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>` + orphanHtml;
-  })() : (() => {
-    return ratPages.length > 0
-      ? `<div class="tbl-wrap"><table><thead><tr><th>URL</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead><tbody>${ratPages.map(pageRow).join('')}</tbody></table></div>`
-      : '<div class="empty">Noch keine Ratgeber-Seiten gebaut.</div>';
-  })()}
+    }).join('')}</tbody>
+  </table></div>
 </section>
 
-<!-- 4. Sonstige Seiten -->
 <section>
-  <h2>4. Sonstige Seiten <span>Stadtseiten, Landingpages, Rechtliches</span></h2>
-  <div class="tbl-wrap">
-  <table>
-    <thead><tr><th>URL</th><th>Typ</th><th class="c">Sitemap</th><th class="c">Indexiert</th></tr></thead>
-    <tbody>
-      ${[...stadtPages, ...sonst].sort((a,b)=>a.urlPath.localeCompare(b.urlPath)).map(p => `<tr>
-        <td><a href="${esc(p.urlPath)}" target="_blank" rel="noopener" class="url-link">${esc(p.urlPath)}</a></td>
-        <td>${esc(p.type === 'stadt' ? 'Stadtseite' : 'Landingpage/Sonstige')}</td>
-        <td class="c">${inSitemap(p)}</td>
-        <td class="c">${gscBadge(gscData[p.absUrl], gscConnected)}</td>
-      </tr>`).join('')}
-    </tbody>
-  </table>
+  <div class="sec-head">
+    <h2><span class="num">5.</span> Lücken / To-Do</h2>
+    <span class="sec-ct">${gaps.length} fehlende Kombinationen</span>
   </div>
-</section>
-
-<!-- 5. Lücken / To-Do -->
-<section>
-  <h2>5. Lücken / To-Do <span>${gaps.length} fehlende Stadt×Service-Kombinationen</span></h2>
   ${gaps.length > 0
     ? `<div class="tbl-wrap"><table>
-        <thead><tr><th>Stadt</th><th>Service</th><th>Fehlende URL</th><th>Status</th></tr></thead>
-        <tbody>${gaps.map(g => `<tr class="gap-row">
-          <td>${esc(g.city)}</td>
-          <td>${esc(g.service)}</td>
-          <td><code>/${esc(g.citySlug)}/${esc(g.serviceSlug)}/</code></td>
-          <td><span class="badge badge-warn">Kein Partner</span></td>
+        <thead><tr><th>Stadt</th><th>Service</th><th>Fehlende URL</th><th class="c">Status</th></tr></thead>
+        <tbody>${gaps.map(g=>`<tr class="gap-row">
+          <td>${esc(g.city)}</td><td>${esc(g.service)}</td>
+          <td class="url-link">/${esc(g.citySlug)}/${esc(g.serviceSlug)}/</td>
+          <td class="c"><span class="badge gap-mark">Kein Partner</span></td>
         </tr>`).join('')}</tbody>
       </table></div>`
-    : '<div class="empty" style="color:#22c55e">✓ Alle Stadt×Service-Kombinationen sind abgedeckt.</div>'
-  }
-
-  ${roadmap
-    ? `<h3 style="margin-top:20px;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:.06em">Geplante Ratgeber (roadmap.json)</h3>
-       <div class="tbl-wrap" style="margin-top:10px"><table>
-         <thead><tr><th>Titel / Thema</th><th>Status</th></tr></thead>
-         <tbody>${(Array.isArray(roadmap) ? roadmap : roadmap.items ?? []).map(item => `<tr>
-           <td>${esc(item.title ?? item.slug ?? JSON.stringify(item))}</td>
-           <td><span class="badge ${item.status === 'gebaut' ? 'badge-ok' : 'badge-off'}">${esc(item.status ?? 'geplant')}</span></td>
-         </tr>`).join('')}</tbody>
-       </table></div>`
-    : `<div class="empty" style="margin-top:14px">Kein <code>src/data/roadmap.json</code> gefunden – Platzhalter für geplante Ratgeber.</div>`
-  }
+    : '<div class="empty ok">✓ Alle Stadt × Service-Kombinationen sind abgedeckt.</div>'}
+  ${roadmap ? `<div style="margin-top:24px">
+    <div class="sec-head" style="margin-bottom:12px"><h2 style="font-size:13px"><span class="num">↳</span> Geplante Ratgeber (roadmap.json)</h2></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Titel / Thema</th><th class="c">Status</th></tr></thead>
+      <tbody>${(Array.isArray(roadmap)?roadmap:roadmap.items??[]).map(item=>`<tr>
+        <td>${esc(item.title??item.slug??JSON.stringify(item))}</td>
+        <td class="c"><span class="badge ${item.status==='gebaut'?'ok':'muted'}">${esc(item.status??'geplant')}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div></div>` : ''}
 </section>
 
+</div>
 </body>
 </html>`;
 }

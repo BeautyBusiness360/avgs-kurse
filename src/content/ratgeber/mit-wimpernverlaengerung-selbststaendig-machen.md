@@ -5,8 +5,6 @@ modul: wimpernverlaengerung
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: wimpernverlaengerung-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Welche Ausrüstung brauche ich mindestens, um als Wimpernverlängerer selbstständig zu werden?"

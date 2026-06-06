@@ -5,8 +5,6 @@ modul: wimpernverlaengerung
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: wimpernverlaengerung-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Warum braucht eine ausgebildete Kosmetikerin noch eine Weiterbildung in Wimpernverlängerung?"

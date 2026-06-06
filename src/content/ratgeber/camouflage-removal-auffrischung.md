@@ -5,8 +5,6 @@ modul: camouflage-removal
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: camouflage-removal-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Wann ist eine Auffrischung bei Camouflage notwendig?"

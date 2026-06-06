@@ -31,10 +31,12 @@ const QUEUE_FILE  = path.join(ROOT, 'src', 'data', 'ratgeber-queue.json');
 const FACTS_FILE  = path.join(ROOT, 'src', 'data', 'modul-fakten.json');
 
 // ── CLI args ─────────────────────────────────────────────────────────────────
-const args      = process.argv.slice(2);
-const isTest    = args.includes('--test');
-const limitArg  = args.find(a => a.startsWith('--limit='));
-const runLimit  = isTest ? 3 : (limitArg ? parseInt(limitArg.split('=')[1], 10) : Infinity);
+const args       = process.argv.slice(2);
+const isTest     = args.includes('--test');
+const isOverwrite = args.includes('--overwrite');
+const isPreview  = args.includes('--preview');
+const limitArg   = args.find(a => a.startsWith('--limit='));
+const runLimit   = isTest ? 3 : isPreview ? 1 : (limitArg ? parseInt(limitArg.split('=')[1], 10) : Infinity);
 
 const DEDUPE_THRESHOLD = 0.30;  // 30% Jaccard → retry
 const COMMIT_BATCH     = 10;    // commit every N accepted articles
@@ -104,21 +106,21 @@ stadtSlug: ${entry.relatedCity}
   const internalLinkRule = entry.isPillar
     ? `8. **Interne Links:**
    - Zur Service-Seite (Beispiel Hamburg): [${entry.modulLabel} in Hamburg](/hamburg/${entry.modulServiceSlug}/)
-   - Zur Beispiel-Dozentin: [${entry.relatedDozentinName}](/dozentinnen/${entry.relatedDozentin}/)
-   - Weitere Städte (wenn sinnvoll): nenne, dass das Netzwerk bundesweit aufgestellt ist`
+   - Weitere Städte (wenn sinnvoll): verweise auf das bundesweite Netzwerk
+   - KEINE Links zu einzelnen Dozentinnen-Profilen im Fließtext`
     : `8. **Interne Links:**
    - Zur Service-Seite: [${entry.modulLabel} in ${entry.relatedCityLabel}](/${entry.relatedCity}/${entry.modulServiceSlug}/)
-   - Zur Dozentin: [${entry.relatedDozentinName}](/dozentinnen/${entry.relatedDozentin}/)`;
+   - KEINE Links zu einzelnen Dozentinnen-Profilen im Fließtext`;
 
   const ctaRule = entry.isPillar
-    ? `9. **CTA am Ende:** Link auf /dozentinnen/${entry.relatedDozentin}/ als Beispiel-Dozentin. Formuliere so, dass das Netzwerk bundesweit ist (Hamburg ist Beispiel-Standort). NICHT auf /fachdozentin-werden/`
-    : `9. **CTA am Ende:** Link auf /dozentinnen/${entry.relatedDozentin}/ (NICHT auf /fachdozentin-werden/)`;
+    ? `9. **CTA am Ende:** Link auf /hamburg/${entry.modulServiceSlug}/ als Beispiel-Standort. Formuliere neutral: „Alle Termine und Fachdozentinnen im Netzwerk findest du auf der Kursseite." NICHT auf ein einzelnes Dozentinnen-Profil, NICHT auf /fachdozentin-werden/`
+    : `9. **CTA am Ende:** Link auf /${entry.relatedCity}/${entry.modulServiceSlug}/ – Übersichtsseite mit allen Dozentinnen und Terminen in ${entry.relatedCityLabel}. NICHT auf ein einzelnes Dozentinnen-Profil, NICHT auf /fachdozentin-werden/`;
 
   const aufgabeCity = entry.isPillar
     ? `- **Reichweite:** Bundesweit – KEINE Stadt-Fixierung
-- **Beispiel-Dozentin:** ${entry.relatedDozentinName} (Hamburg) → /dozentinnen/${entry.relatedDozentin}/`
+- **Beispiel-Standort:** Hamburg → /hamburg/${entry.modulServiceSlug}/`
     : `- **Stadt:** ${entry.relatedCityLabel}
-- **Dozentin:** ${entry.relatedDozentinName} → /dozentinnen/${entry.relatedDozentin}/`;
+- **Service-Seite:** /${entry.relatedCity}/${entry.modulServiceSlug}/`;
 
   return `Du bist ein erfahrener Fachtexter für professionelle Beauty-Bildung. Schreibe einen hochwertigen Ratgeber-Artikel für dein-beauty-kurs.de.
 ${retryNote}
@@ -167,13 +169,14 @@ ${internalLinkRule}
 ${ctaRule}
 10. **Keine Floskeln:** keine "In der heutigen Zeit", "Es ist allgemein bekannt", "Nicht zuletzt" etc.
 11. **Sprache:** Direkt, fachlich, auf Augenhöhe. Du sprichst Profis an, nicht Einsteiger.
+12. **VERBOTEN – Einzelne Dozentin namentlich:** Nenne im Fließtext KEINE einzelne Dozentin beim Namen. Schreibe neutral: „unsere Fachdozentinnen", „eine erfahrene Fachdozentin in deiner Nähe", „zertifizierte Fachdozentinnen im Netzwerk". Konkrete Profile erscheinen automatisch über die Kursseite.
 ${entry.isPillar ? `
 ## PILLAR-SEITE – BESONDERE ANFORDERUNGEN (verpflichtend)
 
 ⚠️ NATIONAL – KEINE STADT-FIXIERUNG:
 - Titel und H1 KEIN Stadtname (nicht „Hamburg", nicht „Berlin" etc.)
 - Inhalt bezieht sich auf das bundesweite Netzwerk: zertifizierte Schulungsstandorte in ganz Deutschland, über 13 Fachdozentinnen
-- ${entry.relatedDozentinName} (Hamburg) darf als Beispiel-Dozentin genannt werden, aber die Seite wirbt für das Gesamtnetzwerk
+- Hamburg darf als Beispiel-Standort genannt werden, aber KEINE einzelne Dozentin namentlich im Fließtext
 - Interne Links dürfen auf Hamburg-Seiten als Beispiel zeigen, aber nicht wie eine Hamburg-Seite klingen
 - Im YAML Front Matter: kein \`stadt:\`, kein \`stadtSlug:\` – diese Felder weglassen
 
@@ -201,7 +204,7 @@ Verwende exakt diese Gliederung (passe H2-Titel sinnvoll auf das Keyword an):
 4. **H2: [Thematischer Hauptabschnitt 3]** (mind. 200 Wörter)
 5. **H2: Praxis / Häufige Fehler / Handlungsempfehlungen** (mind. 200 Wörter) – konkrete, anwendbare Tipps
 6. **H2: AVGS-Förderung: Das Wichtigste** (mind. 150 Wörter) – § 45 SGB III, AZAV, kein Rechtsanspruch, USP
-7. **H2: Nächster Schritt** (mind. 100 Wörter) – CTA zur Dozentin (NICHT /fachdozentin-werden/)
+7. **H2: Nächster Schritt** (mind. 100 Wörter) – CTA zur Service-Seite /${entry.relatedCity}/${entry.modulServiceSlug}/ mit allen Terminen und Dozentinnen. NICHT zu einem einzelnen Dozentinnen-Profil, NICHT /fachdozentin-werden/
 
 Fülle jeden Abschnitt mit vollständigem Fließtext. Keine Platzhalter. Keine Stichpunktlisten als Textersatz.
 `}
@@ -267,7 +270,7 @@ async function main() {
     if (!entry.modul || !entry.slug) return false;
     if (entry.requiresLookup && !entry.relatedDozentin) return false;
     const dest = path.join(CONTENT_DIR, `${entry.slug}.md`);
-    if (fs.existsSync(dest)) {
+    if (fs.existsSync(dest) && !isOverwrite && !isPreview) {
       if (isTest) console.log(`  ⏭️  Bereits vorhanden: ${entry.slug}`);
       return false;
     }
@@ -363,6 +366,16 @@ async function main() {
       dedupeReport.skipped.push({ slug: entry.slug, reason, wordCount, maxSim });
       results.push({ slug: entry.slug, status: reason, wordCount, maxSim });
       continue;
+    }
+
+    // Preview mode: print and exit, do not write
+    if (isPreview) {
+      console.log('\n' + '═'.repeat(60));
+      console.log('  PREVIEW – nicht gespeichert');
+      console.log('═'.repeat(60) + '\n');
+      console.log(finalMd);
+      console.log('\n' + '═'.repeat(60) + '\n');
+      return;
     }
 
     // Write file

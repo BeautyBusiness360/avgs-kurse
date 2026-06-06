@@ -5,8 +5,6 @@ modul: microblading
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: microblading-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Kann ich nach einem Anfängerkurs direkt mit Kundinnen arbeiten?"

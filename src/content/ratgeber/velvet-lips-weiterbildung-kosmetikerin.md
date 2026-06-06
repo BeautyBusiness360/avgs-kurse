@@ -5,8 +5,6 @@ modul: velvet-lips
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: velvet-lips-lipstick-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Für wen ist die Velvet Lips & LipStick-Weiterbildung geeignet?"

@@ -5,8 +5,6 @@ modul: wimpernverlaengerung
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: wimpernverlaengerung-masterclass
-relatedDozentinSlug: 
-relatedDozentinName: 
 publishDate: 2026-06-06
 faq:
   - question: "Warum ist die Auffrischungsbehandlung wirtschaftlich so wichtig?"

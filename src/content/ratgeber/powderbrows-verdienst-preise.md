@@ -5,8 +5,6 @@ modul: powderbrows
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: powderbrows-ombrebrows-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Welche Preise sind für Powder Brows & Ombré Brows in Deutschland realistisch?"

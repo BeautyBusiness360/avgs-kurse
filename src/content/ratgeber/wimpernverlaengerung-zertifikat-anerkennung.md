@@ -13,7 +13,7 @@ faq:
     answer: "Ein AZAV-Zertifikat wird von der Bundesagentur für Arbeit anerkannt und setzt prakti­sche Ausbildung unter direkter Aufsicht einer Fachdozentin voraus. Online-Kurs-Zertifikate haben keine behördliche Anerkennung und sind oft nur Marketing-Instrumente. AZAV-Zertifikate geben Kundinnen und dir als Unternehmerin rechtliche Sicherheit."
   - question: "Kann ich mich mit einem Hersteller-Zertifikat als Wimpernverlängererin ausweisen?"
     answer: "Hersteller-Zertifikate zeigen, dass du ein bestimmtes Produktsystem kennst – nicht, dass du die Handwerkstechnik beherrschst. Sie sind ein Zusatz, aber kein vollständiger Nachweis deiner Fachkompetenz. Kundinnen erwarten ein umfassendes Zertifikat, das deine Gesamtkompetenz belegt."
-    - question: "Warum ist Praxisausbildung wichtiger als theoretisches Wissen bei Wimpernverlängerungen?"
+  - question: "Warum ist Praxisausbildung wichtiger als theoretisches Wissen bei Wimpernverlängerungen?"
     answer: "Wimpernverlängerung ist eine Präzisionsfertigkeit. Theorie allein reicht nicht – du musst Isolation üben, Fächer-Technik perfektionieren und dich an Arbeitstempo gewöhnen. Praktisches Training unter Aufsicht einer erfahrenen Dozentin ist der einzige Weg zu wirklicher Sicherheit und Qualität."
   - question: "Was bringt mir ein Zertifikat bei meinen Kundinnen?"
     answer: "Ein anerkanntes Zertifikat ist dein Vertrauensbeweis. Kundinnen sehen darin, dass du professionell ausgebildet bist und Qualitätsstandards einhältst. Es schafft psychologische Sicherheit und rechtfertigt deine Preisgestaltung – besonders wichtig, wenn du dich von anderen Angeboten abheben möchtest."

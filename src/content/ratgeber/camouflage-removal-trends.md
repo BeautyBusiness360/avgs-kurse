@@ -5,8 +5,6 @@ modul: camouflage-removal
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: camouflage-removal-masterclass
-relatedDozentinSlug: 
-relatedDozentinName: 
 publishDate: 2026-06-06
 faq:
   - question: "Welche Camouflage-Trends sind 2024/2025 am gefragtesten?"

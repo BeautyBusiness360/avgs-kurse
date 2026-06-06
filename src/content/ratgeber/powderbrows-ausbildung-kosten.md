@@ -5,8 +5,6 @@ modul: powderbrows
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: powderbrows-ombrebrows-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Warum kostet ein Powder Brows-Kurs zwischen 1.500 und 5.000 Euro?"

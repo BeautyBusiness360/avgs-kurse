@@ -5,8 +5,6 @@ modul: microblading
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: microblading-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Welcher Fehler ist bei Microblading am weitesten verbreitet?"

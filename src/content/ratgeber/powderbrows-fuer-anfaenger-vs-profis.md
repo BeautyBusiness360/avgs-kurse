@@ -5,8 +5,6 @@ modul: powderbrows
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: powderbrows-ombrebrows-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Was ist der Unterschied zwischen einem Anfängerkurs und einem Perfektionstraining in Powder Brows?"

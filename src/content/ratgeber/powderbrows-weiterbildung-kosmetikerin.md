@@ -5,8 +5,6 @@ modul: powderbrows
 stadt: Hamburg
 stadtSlug: hamburg
 serviceSlug: powderbrows-ombrebrows-masterclass
-relatedDozentinSlug: null
-relatedDozentinName: null
 publishDate: 2026-06-06
 faq:
   - question: "Für wen ist eine Powder Brows-Weiterbildung geeignet?"
