@@ -87,12 +87,38 @@ function buildPrompt(entry, facts, attempt = 0) {
   const avgsFacts = facts.avgs;
 
   const retryNote = attempt > 0
-    ? `\n⚠️  NEUVERSUCH ${attempt}: Bitte formuliere den Artikel komplett anders als zuvor. ` +
-      `Andere Einleitung, andere Reihenfolge der Argumente, andere Beispiele, andere Satzstrukturen. ` +
-      `Der inhaltliche Kern bleibt derselbe, aber der Text muss sprachlich eigenständig sein.\n`
+    ? `\n⚠️  NEUVERSUCH ${attempt}: Vorheriger Text war zu kurz oder zu ähnlich. ` +
+      `Schreibe den Artikel KOMPLETT NEU – andere Einleitung, andere Gliederung, andere Beispiele, andere Satzstrukturen. ` +
+      `MINDESTENS 1.700 WÖRTER IM BODY. Schreibe ausführliche, vollständige Absätze – keine Stichpunkte als Textersatz.\n`
     : '';
 
   const today = new Date().toISOString().split('T')[0];
+
+  // Pillar articles are city-neutral / national
+  const frontmatterCityFields = entry.isPillar
+    ? ``
+    : `stadt: ${entry.relatedCityLabel}
+stadtSlug: ${entry.relatedCity}
+`;
+
+  const internalLinkRule = entry.isPillar
+    ? `8. **Interne Links:**
+   - Zur Service-Seite (Beispiel Hamburg): [${entry.modulLabel} in Hamburg](/hamburg/${entry.modulServiceSlug}/)
+   - Zur Beispiel-Dozentin: [${entry.relatedDozentinName}](/dozentinnen/${entry.relatedDozentin}/)
+   - Weitere Städte (wenn sinnvoll): nenne, dass das Netzwerk bundesweit aufgestellt ist`
+    : `8. **Interne Links:**
+   - Zur Service-Seite: [${entry.modulLabel} in ${entry.relatedCityLabel}](/${entry.relatedCity}/${entry.modulServiceSlug}/)
+   - Zur Dozentin: [${entry.relatedDozentinName}](/dozentinnen/${entry.relatedDozentin}/)`;
+
+  const ctaRule = entry.isPillar
+    ? `9. **CTA am Ende:** Link auf /dozentinnen/${entry.relatedDozentin}/ als Beispiel-Dozentin. Formuliere so, dass das Netzwerk bundesweit ist (Hamburg ist Beispiel-Standort). NICHT auf /fachdozentin-werden/`
+    : `9. **CTA am Ende:** Link auf /dozentinnen/${entry.relatedDozentin}/ (NICHT auf /fachdozentin-werden/)`;
+
+  const aufgabeCity = entry.isPillar
+    ? `- **Reichweite:** Bundesweit – KEINE Stadt-Fixierung
+- **Beispiel-Dozentin:** ${entry.relatedDozentinName} (Hamburg) → /dozentinnen/${entry.relatedDozentin}/`
+    : `- **Stadt:** ${entry.relatedCityLabel}
+- **Dozentin:** ${entry.relatedDozentinName} → /dozentinnen/${entry.relatedDozentin}/`;
 
   return `Du bist ein erfahrener Fachtexter für professionelle Beauty-Bildung. Schreibe einen hochwertigen Ratgeber-Artikel für dein-beauty-kurs.de.
 ${retryNote}
@@ -104,9 +130,7 @@ Schreibe eine vollständige Markdown-Datei, die MIT \`---\` beginnt (YAML Front 
 title: "Exakter SEO-Titel mit Keyword"
 description: "Max. 155 Zeichen. Enthält Keyword. Motiviert zum Klicken."
 modul: ${entry.modul}
-stadt: ${entry.relatedCityLabel}
-stadtSlug: ${entry.relatedCity}
-serviceSlug: ${entry.modulServiceSlug}
+${frontmatterCityFields}serviceSlug: ${entry.modulServiceSlug}
 relatedDozentinSlug: ${entry.relatedDozentin}
 relatedDozentinName: "${entry.relatedDozentinName}"
 publishDate: ${today}
@@ -139,13 +163,48 @@ faq:
    - Offen für Arbeitssuchende, Angestellte (Einzelfall), Selbstständige (Einzelfall)
    - USP: einziger Anbieter für Perfektionstrainings über AVGS in Deutschland
 7. **Perfektionstraining = 40 UE:** 3 Praxistage à ca. 8 Std + 10 UE online (Marketing & Vertrieb); rein praktisch, keine Theorie
-8. **Interne Links:**
-   - Zur Service-Seite: [${entry.modulLabel} in ${entry.relatedCityLabel}](/${entry.relatedCity}/${entry.modulServiceSlug}/)
-   - Zur Dozentin: [${entry.relatedDozentinName}](/dozentinnen/${entry.relatedDozentin}/)
-9. **CTA am Ende:** Link auf /dozentinnen/${entry.relatedDozentin}/ (NICHT auf /fachdozentin-werden/)
+${internalLinkRule}
+${ctaRule}
 10. **Keine Floskeln:** keine "In der heutigen Zeit", "Es ist allgemein bekannt", "Nicht zuletzt" etc.
 11. **Sprache:** Direkt, fachlich, auf Augenhöhe. Du sprichst Profis an, nicht Einsteiger.
+${entry.isPillar ? `
+## PILLAR-SEITE – BESONDERE ANFORDERUNGEN (verpflichtend)
 
+⚠️ NATIONAL – KEINE STADT-FIXIERUNG:
+- Titel und H1 KEIN Stadtname (nicht „Hamburg", nicht „Berlin" etc.)
+- Inhalt bezieht sich auf das bundesweite Netzwerk: zertifizierte Schulungsstandorte in ganz Deutschland, über 13 Fachdozentinnen
+- ${entry.relatedDozentinName} (Hamburg) darf als Beispiel-Dozentin genannt werden, aber die Seite wirbt für das Gesamtnetzwerk
+- Interne Links dürfen auf Hamburg-Seiten als Beispiel zeigen, aber nicht wie eine Hamburg-Seite klingen
+- Im YAML Front Matter: kein \`stadt:\`, kein \`stadtSlug:\` – diese Felder weglassen
+
+Diese Seite ist die zentrale Pillar-Seite für das Modul ${modFacts.bezeichnung}. Sie muss die umfangreichste und vollständigste Seite zu diesem Thema sein. Halte dich exakt an diese Pflicht-Abschnitte und baue jeden vollständig aus – kein Abschnitt darf kürzer als 150 Wörter sein:
+
+1. **Überblick** – Was ist das Perfektionstraining, was unterscheidet es von einem Anfängerkurs, was ist das konkrete Versprechen?
+2. **Für wen** – Wer ist die ideale Zielgruppe (Voraussetzungen, Erfahrungslevel, berufliche Situation)? Wer ist explizit ausgeschlossen?
+3. **Trainingsablauf im Detail** – Die 40 UE Schritt für Schritt: Praxistage (Matrizenübung, Arbeit am Kundenmodell), 10 UE Online (Marketing & Vertrieb), Zeiteinteilung, Abschlusszertifikat.
+4. **Fachliche Perfektions-Schwerpunkte** – Die 5–6 konkreten Techniken/Probleme, die im Training bearbeitet werden (aus dem Modul-Faktenblatt).
+5. **AVGS-Förderung kompakt** – Was ist der AVGS, wer bekommt ihn, wie beantragt man ihn, warum kein Rechtsanspruch, warum AVGS statt Bildungsgutschein, USP.
+6. **Modul-Kontext** – Wie verhält sich ${modFacts.bezeichnung} zu verwandten Techniken im Beauty-Bereich? Für welche Kundenwünsche ist es besonders geeignet?
+
+**Länge:** MINDESTENS 1.700 Wörter im Body. Das ist keine Empfehlung – es ist eine harte Untergrenze. Schreibe vollständige, ausformulierte Absätze, keine Bullet-Point-Listen als Ersatz für Text.
+**FAQ:** MINDESTENS 5 Einträge im Front Matter (nicht 4), je Antwort 3–4 Sätze.
+` : `
+## CLUSTER-ARTIKEL – PFLICHT-STRUKTUR (verpflichtend)
+
+⚠️ MINDESTENS 1.700 WÖRTER IM BODY – harte Untergrenze, keine Empfehlung.
+
+Verwende exakt diese Gliederung (passe H2-Titel sinnvoll auf das Keyword an):
+
+1. **Einleitung** (kein H2, mind. 150 Wörter) – Situation/Problem erfahrener Profis, warum dieses Thema für sie relevant ist
+2. **H2: [Thematischer Hauptabschnitt 1]** (mind. 250 Wörter) – mit 2 H3-Unterpunkten, vollständige Absätze
+3. **H2: [Thematischer Hauptabschnitt 2]** (mind. 250 Wörter) – mit 1–2 H3-Unterpunkten
+4. **H2: [Thematischer Hauptabschnitt 3]** (mind. 200 Wörter)
+5. **H2: Praxis / Häufige Fehler / Handlungsempfehlungen** (mind. 200 Wörter) – konkrete, anwendbare Tipps
+6. **H2: AVGS-Förderung: Das Wichtigste** (mind. 150 Wörter) – § 45 SGB III, AZAV, kein Rechtsanspruch, USP
+7. **H2: Nächster Schritt** (mind. 100 Wörter) – CTA zur Dozentin (NICHT /fachdozentin-werden/)
+
+Fülle jeden Abschnitt mit vollständigem Fließtext. Keine Platzhalter. Keine Stichpunktlisten als Textersatz.
+`}
 ## AVGS-FAKTENBLATT
 
 - Bezeichnung: ${avgsFacts.bezeichnung}
@@ -174,8 +233,7 @@ ${Object.entries(modFacts)
 - **Keyword:** ${entry.keyword}
 - **Schwerpunkt / Angle:** ${entry.angle}
 - **Modul:** ${modFacts.bezeichnung}
-- **Stadt:** ${entry.relatedCityLabel}
-- **Dozentin:** ${entry.relatedDozentinName} → /dozentinnen/${entry.relatedDozentin}/
+${aufgabeCity}
 
 Schreibe jetzt den vollständigen Artikel. Beginne direkt mit \`---\` (kein Text davor).`;
 }
@@ -225,6 +283,10 @@ async function main() {
   const dedupeReport = { generated: [], skipped: [], retried: [] };
   const results = [];
   let accepted = 0;
+  let totalInputTokensSonnet  = 0;
+  let totalOutputTokensSonnet = 0;
+  let totalInputTokensHaiku   = 0;
+  let totalOutputTokensHaiku  = 0;
 
   console.log(`\n${'─'.repeat(60)}`);
   if (isTest) {
@@ -236,7 +298,8 @@ async function main() {
 
   for (let i = 0; i < todo.length; i++) {
     const entry = todo[i];
-    console.log(`[${i + 1}/${todo.length}]  ${entry.slug}`);
+    const modelName = entry.isPillar ? 'sonnet-4-6' : 'haiku-4-5';
+    console.log(`[${i + 1}/${todo.length}]  ${entry.slug}  [${modelName}]`);
 
     let finalMd    = null;
     let wordCount  = 0;
@@ -252,11 +315,18 @@ async function main() {
       let rawText;
       try {
         const response = await client.messages.create({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 4096,
+          model: entry.isPillar ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001',
+          max_tokens: entry.isPillar ? 7000 : 6000,
           messages: [{ role: 'user', content: buildPrompt(entry, facts, attempt) }],
         });
         rawText = response.content[0].text.trim();
+        if (entry.isPillar) {
+          totalInputTokensSonnet  += response.usage?.input_tokens  ?? 0;
+          totalOutputTokensSonnet += response.usage?.output_tokens ?? 0;
+        } else {
+          totalInputTokensHaiku  += response.usage?.input_tokens  ?? 0;
+          totalOutputTokensHaiku += response.usage?.output_tokens ?? 0;
+        }
       } catch (err) {
         console.error(`   ❌  API-Fehler: ${err.message}`);
         finalStatus = 'api-error';
@@ -269,9 +339,9 @@ async function main() {
       const body = extractBody(md);
       wordCount = countWords(body);
 
-      // Word count gate
-      if (wordCount < 1400 && attempt < 2) {
-        console.log(`   ⚠️   Zu kurz: ${wordCount} Wörter – nochmals generieren`);
+      // Word count gate – max 1 retry (attempt 0 → retry; attempt 1+ → accept regardless)
+      if (wordCount < 1500 && attempt < 1) {
+        console.log(`   ⚠️   Zu kurz: ${wordCount} Wörter – einmal neu generieren`);
         continue;
       }
 
@@ -344,7 +414,23 @@ async function main() {
   const okCount      = results.filter(r => r.status === 'ok').length;
   const skippedCount = results.filter(r => r.status !== 'ok').length;
 
+  const wordsAll = results.filter(r => r.status === 'ok').map(r => r.wordCount);
+  const wordMin  = wordsAll.length ? Math.min(...wordsAll) : 0;
+  const wordMax  = wordsAll.length ? Math.max(...wordsAll) : 0;
+  const maxSimAll = Math.max(0, ...results.map(r => r.maxSim ?? 0));
+
+  // Sonnet 4-6: $3/MTok in, $15/MTok out | Haiku 4-5: $0.80/MTok in, $4/MTok out
+  const costUSD =
+    (totalInputTokensSonnet / 1_000_000 * 3)    + (totalOutputTokensSonnet / 1_000_000 * 15) +
+    (totalInputTokensHaiku  / 1_000_000 * 0.80) + (totalOutputTokensHaiku  / 1_000_000 * 4);
+  const costEUR = costUSD * 0.92;
+
   console.log(`\n  Erstellt: ${okCount}  |  Übersprungen: ${skippedCount}  |  Gesamt: ${results.length}`);
+  if (wordsAll.length) console.log(`  Wortzahl-Spanne: ${wordMin}–${wordMax} Wörter`);
+  console.log(`  Höchste Ähnlichkeit: ${(maxSimAll * 100).toFixed(1)}%`);
+  console.log(`  Tokens Sonnet: ${totalInputTokensSonnet.toLocaleString('de')} in / ${totalOutputTokensSonnet.toLocaleString('de')} out`);
+  console.log(`  Tokens Haiku:  ${totalInputTokensHaiku.toLocaleString('de')} in / ${totalOutputTokensHaiku.toLocaleString('de')} out`);
+  console.log(`  Kosten (geschätzt): $${costUSD.toFixed(2)} ≈ ${costEUR.toFixed(2)} €`);
   console.log(`  Deduplizierungsbericht: logs/dedupe-report.json`);
   console.log(`${'─'.repeat(60)}\n`);
 

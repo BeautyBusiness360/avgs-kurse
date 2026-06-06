@@ -48,9 +48,12 @@ export async function getStaticPaths() {
 const { entry, allArticles, gridDozentinnen } = Astro.props;
 const { Content, headings } = await render(entry);
 const {
-  title, description, modul, stadt, stadtSlug, serviceSlug,
+  title, description, modul, serviceSlug,
   relatedDozentinSlug, relatedDozentinName, publishDate, faq,
 } = entry.data;
+const stadt     = entry.data.stadt;
+const stadtSlug = entry.data.stadtSlug;
+const isPillar  = !stadtSlug;
 
 const canonical = `https://dein-beauty-kurs.de/ratgeber/${entry.id}/`;
 
@@ -127,8 +130,7 @@ const querlinks = allArticles
         <header class="rg-header">
           <div class="rg-meta">
             <span class="rg-tag">{modulLabel}</span>
-            <span class="rg-sep">·</span>
-            <span class="rg-city">{stadt}</span>
+            {stadt && <><span class="rg-sep">·</span><span class="rg-city">{stadt}</span></>}
             <span class="rg-sep">·</span>
             <time datetime={publishDate.toISOString().split('T')[0]}>
               {publishDate.toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -188,7 +190,9 @@ const querlinks = allArticles
         <!-- CTA box -->
         {relatedDozentinSlug && (
           <section class="rg-cta">
-            <div class="rg-cta-eyebrow">Deine Dozentin in {stadt}</div>
+            <div class="rg-cta-eyebrow">
+              {isPillar ? 'Beispiel-Dozentin im Netzwerk' : `Deine Dozentin in ${stadt}`}
+            </div>
             <h2 class="rg-cta-title">{relatedDozentinName ?? 'Jetzt Termin anfragen'}</h2>
             <p class="rg-cta-text">
               Profil, aktuelle Termine und Anmeldeformular direkt auf der Profilseite.
@@ -197,9 +201,11 @@ const querlinks = allArticles
               <a href={`/dozentinnen/${relatedDozentinSlug}/`} class="rg-btn rg-btn--gold">
                 Profil & Termine ansehen
               </a>
-              <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
-                Alle Kurse in {stadt}
-              </a>
+              {stadtSlug && (
+                <a href={`/${stadtSlug}/${serviceSlug}/`} class="rg-btn rg-btn--ghost">
+                  Alle Kurse in {stadt}
+                </a>
+              )}
             </div>
           </section>
         )}
@@ -208,7 +214,9 @@ const querlinks = allArticles
         {gridDozentinnen.length > 0 && (
           <section class="rg-grid-section">
             <p class="rg-section-eyebrow">Netzwerk</p>
-            <h2 class="rg-grid-title">Dozentinnen für dieses Training in {stadt}</h2>
+            <h2 class="rg-grid-title">
+              {stadt ? `Dozentinnen für dieses Training in ${stadt}` : 'Dozentinnen für dieses Training'}
+            </h2>
             <DozentinnenGrid dozentinnen={gridDozentinnen} moduleFilter={serviceSlug} />
           </section>
         )}
@@ -221,7 +229,7 @@ const querlinks = allArticles
               {querlinks.map(a => (
                 <li>
                   <a href={`/ratgeber/${a.id}/`} class="rg-ql-link">
-                    <span class="rg-ql-city">{a.data.stadt}</span>
+                    <span class="rg-ql-city">{a.data.stadt ?? 'DE'}</span>
                     <span class="rg-ql-text">{a.data.title}</span>
                     <svg class="rg-ql-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                       <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
