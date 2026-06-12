@@ -11,7 +11,7 @@ export default defineConfig({
     inlineStylesheets: 'always'
   },
   redirects: {
-    '/berlin':             { status: 301, destination: '/berlin/' },
+    '/berlin':             { status: 301, destination: '/' },
     '/luxbeauty':          { status: 301, destination: '/' },
     '/info-veranstaltung': { status: 301, destination: '/' },
     '/train-the-trainer':  { status: 301, destination: '/' },
