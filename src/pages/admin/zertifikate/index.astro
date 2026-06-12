@@ -36,6 +36,8 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
   .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:5px}
   @keyframes sp{to{transform:rotate(360deg)}}
   details summary{cursor:pointer;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin-bottom:.5rem}
+  .tab-btn{padding:.4rem 1rem;border-radius:.3rem;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:none;color:var(--muted)}
+  .tab-btn.active{background:var(--gold);color:#fff;border-color:var(--gold)}
 </style>
 
 <div class="aw">
@@ -56,6 +58,11 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
         <button id="btn-to-new-tpl" class="btn-outline-gold">+ Neue Vorlage</button>
         <button id="btn-logout" class="btn-sm">Ausloggen</button>
       </div>
+    </div>
+
+    <div style="display:flex;gap:.5rem;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:.8rem">
+      <button class="tab-btn active" data-tab="tpl">Vorlagen</button>
+      <button class="tab-btn" data-tab="certs">Teilnehmer</button>
     </div>
 
     <div id="view-gallery">
@@ -116,6 +123,10 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
       </div>
     </div>
 
+    <div id="view-certs" style="display:none">
+      <div id="certs-table"></div>
+    </div>
+
     <div id="view-new-tpl" style="display:none">
       <button class="btn-back" id="btn-back-tpl">← Zurück zur Galerie</button>
       <h2 class="view-title">Neue Vorlage hochladen</h2>
@@ -136,10 +147,11 @@ const sb=createClient(import.meta.env.PUBLIC_SUPABASE_URL,import.meta.env.PUBLIC
 const W=595.28,H=841.89,SC=2;
 let sel=null;
 function showView(v){
-  ['gallery','create','new-tpl'].forEach(id=>{
+  ['gallery','create','new-tpl','certs'].forEach(id=>{
     document.getElementById('view-'+id).style.display=v===id?'block':'none';
   });
   if(v==='gallery') loadGallery();
+  if(v==='certs') loadCerts();
 }
 async function checkAuth(){
   const {data:{session}}=await sb.auth.getSession();
@@ -166,9 +178,10 @@ function showAdmin(){
   showView('gallery');
 }
 async function loadGallery(){
-  const [{data:tpls},{data:certs}]=await Promise.all([
+  const [{data:tpls},{data:certs},{count:totalCount}]=await Promise.all([
     sb.from('certificate_templates').select('*').eq('is_active',true),
-    sb.from('certificates').select('template_id').eq('status','gueltig')
+    sb.from('certificates').select('template_id').eq('status','gueltig'),
+    sb.from('certificates').select('*',{count:'exact',head:true}).eq('status','gueltig')
   ]);
   const countMap={};
   certs?.forEach(c=>{countMap[c.template_id]=(countMap[c.template_id]||0)+1;});
@@ -177,7 +190,7 @@ async function loadGallery(){
   if(!tpls?.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=tpls.map(t=>{
-    const n=countMap[t.id]||0;
+    const n=totalCount||0;
     return `<div style="border:1px solid #e5e0d8;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.07);display:flex;flex-direction:column">
       <img src="${t.file_url}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block" alt="${t.name}">
       <div style="padding:12px 14px 14px">
@@ -391,6 +404,48 @@ document.getElementById('calib-img').addEventListener('load',updatePreview);
   const el=document.getElementById(id);
   if(el) el.addEventListener('input',updatePreview);
 });
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    showView(btn.dataset.tab==='tpl'?'gallery':'certs');
+  });
+});
+function formatDateStr(str){
+  if(!str) return '-';
+  return new Date(str+'T00:00:00').toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+}
+async function loadCerts(){
+  const {data:certs}=await sb.from('certificates').select('*').order('created_at',{ascending:false});
+  const el=document.getElementById('certs-table');
+  if(!certs?.length){el.innerHTML='<p style="font-family:var(--sans);color:var(--muted)">Keine Einträge.</p>';return;}
+  el.innerHTML=`<p style="font-family:var(--sans);font-size:.83rem;color:var(--muted);margin-bottom:1rem">${certs.length} Zertifikate gesamt</p>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-family:var(--sans);min-width:580px">
+      <thead><tr style="border-bottom:2px solid #e5e0d8">
+        <th style="text-align:left;padding:.5rem .6rem;font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.06em">Name</th>
+        <th style="text-align:left;padding:.5rem .6rem;font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.06em">Datum</th>
+        <th style="text-align:left;padding:.5rem .6rem;font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.06em">ID</th>
+        <th style="text-align:left;padding:.5rem .6rem;font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.06em">Status</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${certs.map(c=>`
+        <tr style="border-bottom:1px solid #f0ede8">
+          <td style="padding:.65rem .6rem;font-size:.88rem;color:#111;font-weight:500">${c.vorname} ${c.nachname}</td>
+          <td style="padding:.65rem .6rem;font-size:.82rem;color:#555">${formatDateStr(c.datum)}</td>
+          <td style="padding:.65rem .6rem;font-family:monospace;font-size:.7rem;color:#aaa">${c.id.substring(0,13)}…</td>
+          <td style="padding:.65rem .6rem"><span style="padding:.2rem .55rem;border-radius:1rem;font-size:.72rem;font-weight:700;${c.status==='gueltig'?'background:#d1fae5;color:#065f46':'background:#fee2e2;color:#991b1b'}">${c.status==='gueltig'?'✓ Gültig':'✗ Widerrufen'}</span></td>
+          <td style="padding:.65rem .6rem">${c.status==='gueltig'?`<button style="background:none;border:1px solid #fca5a5;color:#ef4444;padding:.25rem .55rem;border-radius:.3rem;cursor:pointer;font-family:var(--sans);font-size:.75rem" data-revoke="${c.id}">Widerrufen</button>`:''}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+  el.querySelectorAll('[data-revoke]').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      if(!confirm('Zertifikat wirklich widerrufen?')) return;
+      await sb.from('certificates').update({status:'widerrufen'}).eq('id',btn.dataset.revoke);
+      loadCerts();
+    });
+  });
+}
 checkAuth();
 </script>
 </SEOLayout>
