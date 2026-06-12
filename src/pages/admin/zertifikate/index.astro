@@ -94,17 +94,17 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
       <details style="margin-bottom:1.1rem">
         <summary>▸ Text-Position kalibrieren (A4: 595×842 pt, Y = von unten)</summary>
         <div class="grid3" style="margin-top:.7rem">
-          <div class="fg"><label class="fl">Name X</label><input id="p-nx" class="fi" type="number" value="50"></div>
-          <div class="fg"><label class="fl">Name Y</label><input id="p-ny" class="fi" type="number" value="480"></div>
+          <div class="fg"><label class="fl">Name X</label><input id="p-nx" class="fi" type="number" value="36"></div>
+          <div class="fg"><label class="fl">Name Y</label><input id="p-ny" class="fi" type="number" value="568"></div>
           <div class="fg"><label class="fl">Name Größe</label><input id="p-ns" class="fi" type="number" value="37"></div>
-          <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="138"></div>
+          <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="117"></div>
           <div class="fg"><label class="fl">Datum Y</label><input id="p-dy" class="fi" type="number" value="148"></div>
           <div class="fg"></div>
-          <div class="fg"><label class="fl">QR X</label><input id="p-qx" class="fi" type="number" value="460"></div>
+          <div class="fg"><label class="fl">QR X</label><input id="p-qx" class="fi" type="number" value="492"></div>
           <div class="fg"><label class="fl">QR Y (von unten)</label><input id="p-qy" class="fi" type="number" value="11"></div>
           <div class="fg"><label class="fl">QR Größe (pt)</label><input id="p-qs" class="fi" type="number" value="82"></div>
-          <div class="fg"><label class="fl">ID X</label><input id="p-ix" class="fi" type="number" value="128"></div>
-          <div class="fg"><label class="fl">ID Y</label><input id="p-iy" class="fi" type="number" value="10"></div>
+          <div class="fg"><label class="fl">ID X</label><input id="p-ix" class="fi" type="number" value="93"></div>
+          <div class="fg"><label class="fl">ID Y</label><input id="p-iy" class="fi" type="number" value="3"></div>
           <div class="fg"></div>
         </div>
       </details>
@@ -278,16 +278,16 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const d=new Date(datum+'T00:00:00');
     const ds=d.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
     const loc=standort||'Hamburg';
-    const nx=parseInt(document.getElementById('p-nx').value)||50;
-    const ny=parseInt(document.getElementById('p-ny').value)||480;
+    const nx=parseInt(document.getElementById('p-nx').value)||36;
+    const ny=parseInt(document.getElementById('p-ny').value)||568;
     const ns=parseInt(document.getElementById('p-ns').value)||37;
-    const dx=parseInt(document.getElementById('p-dx').value)||138;
+    const dx=parseInt(document.getElementById('p-dx').value)||117;
     const dy=parseInt(document.getElementById('p-dy').value)||148;
     const qy=parseInt(document.getElementById('p-qy').value)||11;
-    const qx=parseInt(document.getElementById('p-qx')?.value)||460;
+    const qx=parseInt(document.getElementById('p-qx')?.value)||492;
     const qs=parseInt(document.getElementById('p-qs')?.value)||82;
-    const ix=parseInt(document.getElementById('p-ix')?.value)||128;
-    const iy=parseInt(document.getElementById('p-iy')?.value)||10;
+    const ix=parseInt(document.getElementById('p-ix')?.value)||93;
+    const iy=parseInt(document.getElementById('p-iy')?.value)||3;
     if(!document.getElementById('gf-cert')){const lnk=document.createElement('link');lnk.id='gf-cert';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400&family=Lato&family=Open+Sans&display=swap';document.head.appendChild(lnk);}
     await document.fonts.ready;
     const canvas=document.createElement('canvas');
