@@ -7,27 +7,26 @@ import SEOLayout from '../../layouts/SEOLayout.astro';
   canonical="https://dein-beauty-kurs.de/zertifikats-verifizierung/"
 >
 <style>
-  .verify-page{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem 5rem;min-height:60vh}
+  .verify-page{max-width:1000px;margin:0 auto;padding:3rem 1.5rem 5rem;min-height:60vh;background:#111111;color:#FAF8F5}
   .cert-layout{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;width:100%}
   @media(max-width:680px){.cert-layout{grid-template-columns:1fr}}
-  .cert-preview img{width:100%;border-radius:.5rem;box-shadow:0 8px 32px rgba(0,0,0,.12);display:block}
+  .cert-preview img{width:100%;border-radius:.5rem;box-shadow:0 8px 40px rgba(0,0,0,.5);display:block}
   .cert-info{display:flex;flex-direction:column;gap:1.2rem}
   .status-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.3rem;border-radius:2rem;font-family:var(--sans);font-size:.9rem;font-weight:600;letter-spacing:.03em}
-  .status-badge.valid   {background:#d1fae5;color:#065f46;border:1.5px solid #6ee7b7}
-  .status-badge.revoked {background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
-  .status-badge.notfound{background:#f3f4f6;color:#374151;border:1.5px solid #d1d5db}
-  .cert-card{background:var(--cream,#FAF8F5);border:1px solid var(--border,#e5e0d8);border-radius:1rem;padding:2rem}
-  .cert-card::before{content:'';display:block;width:2.5rem;height:3px;background:var(--gold,#C8962E);border-radius:2px;margin-bottom:1.5rem}
-  .cert-title{font-family:var(--serif);font-size:1.4rem;color:var(--black,#111);margin:0 0 1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border,#e5e0d8)}
+  .status-badge.valid   {background:rgba(6,95,70,.3);color:#6ee7b7;border:1.5px solid #6ee7b7}
+  .status-badge.revoked {background:rgba(153,27,27,.3);color:#fca5a5;border:1.5px solid #fca5a5}
+  .status-badge.notfound{background:rgba(255,255,255,.06);color:#FAF8F5;border:1.5px solid rgba(255,255,255,.2)}
+  .cert-card{background:#1a1a1a;border:1px solid rgba(200,150,46,.3);border-top:3px solid #C8962E;border-radius:1rem;padding:2rem}
+  .cert-title{font-family:var(--serif);font-size:1.4rem;color:#FAF8F5;margin:0 0 1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
   .cert-meta{display:flex;flex-direction:column;gap:1.1rem}
   .meta-item{display:flex;flex-direction:column;gap:.15rem}
-  .meta-item .label{font-family:var(--sans);font-size:.7rem;color:var(--muted,#888);text-transform:uppercase;letter-spacing:.07em}
-  .meta-item strong{font-family:var(--sans);font-size:1rem;color:var(--black,#111);font-weight:600}
-  .meta-item code{font-family:monospace;font-size:.75rem;color:var(--muted,#888);word-break:break-all}
-  .spinner{width:34px;height:34px;border:3px solid var(--border,#e5e0d8);border-top-color:var(--gold,#C8962E);border-radius:50%;animation:spin .8s linear infinite}
+  .meta-item .label{font-family:var(--sans);font-size:.7rem;color:#C8962E;text-transform:uppercase;letter-spacing:.07em}
+  .meta-item strong{font-family:var(--sans);font-size:1rem;color:#FAF8F5;font-weight:600}
+  .meta-item code{font-family:monospace;font-size:.75rem;color:rgba(255,255,255,.5);word-break:break-all}
+  .spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.1);border-top-color:#C8962E;border-radius:50%;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .state-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:1.5rem}
-  .state-text{font-family:var(--sans);font-size:.9rem;color:var(--muted,#888);text-align:center;max-width:420px;line-height:1.6}
+  .state-text{font-family:var(--sans);font-size:.9rem;color:rgba(255,255,255,.6);text-align:center;max-width:420px;line-height:1.6}
 </style>
 
 <main class="verify-page">
