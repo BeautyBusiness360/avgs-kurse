@@ -95,7 +95,7 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
         <div class="grid3" style="margin-top:.7rem">
           <div class="fg"><label class="fl">Name X</label><input id="p-nx" class="fi" type="number" value="50"></div>
           <div class="fg"><label class="fl">Name Y</label><input id="p-ny" class="fi" type="number" value="480"></div>
-          <div class="fg"><label class="fl">Name Größe</label><input id="p-ns" class="fi" type="number" value="26"></div>
+          <div class="fg"><label class="fl">Name Größe</label><input id="p-ns" class="fi" type="number" value="37"></div>
           <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="50"></div>
           <div class="fg"><label class="fl">Datum Y</label><input id="p-dy" class="fi" type="number" value="148"></div>
           <div class="fg"><label class="fl">QR Y (von unten)</label><input id="p-qy" class="fi" type="number" value="32"></div>
@@ -257,17 +257,21 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const dx=parseInt(document.getElementById('p-dx').value)||50;
     const dy=parseInt(document.getElementById('p-dy').value)||148;
     const qy=parseInt(document.getElementById('p-qy').value)||32;
+    if(!document.getElementById('gf-cert')){const lnk=document.createElement('link');lnk.id='gf-cert';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Lato&family=Open+Sans&display=swap';document.head.appendChild(lnk);}
     await document.fonts.ready;
     const canvas=document.createElement('canvas');
     canvas.width=Math.round(W*SC);canvas.height=Math.round(H*SC);
     const ctx=canvas.getContext('2d');
     const tplImg=await loadImage(sel.url);
     ctx.drawImage(tplImg,0,0,canvas.width,canvas.height);
-    ctx.font=`bold ${ns*SC}px 'Cormorant Garamond',serif`;
+    ctx.font=`bold ${ns*SC}px 'Raleway',sans-serif`;
     ctx.fillStyle='#111111';
     ctx.fillText(`${vn} ${nn}`,nx*SC,(H-ny)*SC);
-    ctx.font=`${11*SC}px 'Inter',sans-serif`;
+    ctx.font=`${11*SC}px 'Lato',sans-serif`;
     ctx.fillText(`${loc}, den ${ds}`,dx*SC,(H-dy)*SC);
+    ctx.font=`${9*SC}px 'Open Sans',sans-serif`;
+    ctx.fillStyle='#333333';
+    ctx.fillText(id,128*SC,(H-10)*SC);
     const qrC=document.createElement('canvas');
     await QRCode.toCanvas(qrC,url,{width:90*SC,margin:1});
     ctx.drawImage(qrC,460*SC,(H-qy-90)*SC,90*SC,90*SC);
@@ -290,11 +294,18 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     page.drawImage(tpi,{x:0,y:0,width:W,height:H});
     const qrI=await pdf.embedPng(new Uint8Array(qrBytes));
     page.drawImage(qrI,{x:460,y:qy,width:90,height:90});
-    const fB=await pdf.embedFont(StandardFonts.HelveticaBold);
-    const fN=await pdf.embedFont(StandardFonts.Helvetica);
+    const [rbB,ltB,osB]=await Promise.all([
+      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/raleway/static/Raleway-Regular.ttf').then(r=>r.arrayBuffer()),
+      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Regular.ttf').then(r=>r.arrayBuffer()),
+      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/static/OpenSans-Regular.ttf').then(r=>r.arrayBuffer()),
+    ]);
+    const fRaleway=await pdf.embedFont(new Uint8Array(rbB));
+    const fLato=await pdf.embedFont(new Uint8Array(ltB));
+    const fOpenSans=await pdf.embedFont(new Uint8Array(osB));
     const bk=rgb(0.067,0.067,0.067);
-    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fB,size:ns,color:bk});
-    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fN,size:11,color:bk});
+    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fRaleway,size:ns,color:bk});
+    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fLato,size:11,color:bk});
+    page.drawText(id,{x:128,y:10,font:fOpenSans,size:9,color:rgb(0.2,0.2,0.2)});
     const bytes=await pdf.save();
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
