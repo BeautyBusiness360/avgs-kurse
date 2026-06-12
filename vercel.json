@@ -43,9 +43,6 @@
 
     { "source": "/hamburg-luxbeauty-academy",               "destination": "/hamburg/",                                  "permanent": true },
     { "source": "/train-the-trainer",                       "destination": "/fachdozentin-werden/",                      "permanent": true },
-    { "source": "/kontakt",                                 "destination": "/",                                          "permanent": true },
-
-    { "source": "/berlin",  "destination": "/", "permanent": true },
-    { "source": "/berlin/", "destination": "/", "permanent": true }
+    { "source": "/kontakt",                                 "destination": "/",                                          "permanent": true }
   ]
 }
