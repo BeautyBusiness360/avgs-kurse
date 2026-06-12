@@ -86,7 +86,8 @@ const gridDozentinnen = (allDoz ?? [])
   .net-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
   .net-img-wrap{aspect-ratio:1;overflow:hidden;background:#f0ede8}
   .net-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.net-card-cta{display:block;padding:4px 18px 18px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#C8962E}
+  .net-card-name{display:block;padding:12px 20px 4px;font-size:14px;font-weight:600;color:var(--black,#111);font-family:var(--sans);line-height:1.3}
+  .net-card-cta{display:block;padding:0 20px 18px;font-size:12px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--gold,#C8962E)}
   .carousel-btn{position:absolute;top:38%;width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--border,#e5e0d8);box-shadow:0 2px 8px rgba(0,0,0,.10);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:2;transition:box-shadow .2s;color:#111}
   .carousel-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.15)}
   .carousel-prev{left:-20px}
@@ -180,8 +181,8 @@ const gridDozentinnen = (allDoz ?? [])
     <span class="section-eye">NETZWERK</span>
     <h2 class="section-title">Unsere zertifizierten <em>Fachdozentinnen</em></h2>
     <div class="net-carousel-wrap">
-      <button class="carousel-btn carousel-prev" id="vf-prev" aria-label="Vorherige Karte">&#8592;</button>
-      <div class="net-track" id="vf-track">
+      <button class="carousel-btn carousel-prev" id="vf-net-prev" aria-label="Vorherige Karte">&#8592;</button>
+      <div class="net-track" id="vf-net-track">
         {gridDozentinnen.map((d: any) => (
           <div class="net-slide">
             <a href={`/dozentinnen/${d.slug}/`} class="net-card">
@@ -193,14 +194,15 @@ const gridDozentinnen = (allDoz ?? [])
                   loading="lazy"
                 />
               </div>
+              <span class="net-card-name">{d.first_name} {d.last_name}</span>
               <span class="net-card-cta">Profil ansehen →</span>
             </a>
           </div>
         ))}
       </div>
-      <button class="carousel-btn carousel-next" id="vf-next" aria-label="Nächste Karte">&#8594;</button>
+      <button class="carousel-btn carousel-next" id="vf-net-next" aria-label="Nächste Karte">&#8594;</button>
     </div>
-    <div class="carousel-dots" id="vf-dots" aria-hidden="true"></div>
+    <div class="carousel-dots" id="vf-net-dots" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -299,11 +301,11 @@ const gridDozentinnen = (allDoz ?? [])
 
 <script>
   (function () {
-    const track    = document.getElementById('vf-track') as HTMLElement | null;
-    const dotsWrap = document.getElementById('vf-dots')  as HTMLElement | null;
+    const track    = document.getElementById('vf-net-track') as HTMLElement | null;
+    const dotsWrap = document.getElementById('vf-net-dots')  as HTMLElement | null;
     if (!track) return;
-    const prev   = document.getElementById('vf-prev');
-    const next   = document.getElementById('vf-next');
+    const prev   = document.getElementById('vf-net-prev');
+    const next   = document.getElementById('vf-net-next');
     const slides = Array.from(track.querySelectorAll<HTMLElement>('.net-slide'));
     const gap    = 24;
     const step   = () => (slides[0]?.offsetWidth ?? 0) + gap;
