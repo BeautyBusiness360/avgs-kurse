@@ -34,25 +34,38 @@ const gridDozentinnen = (allDoz ?? [])
   .w { max-width:1120px; margin:0 auto; padding:0 40px; }
   @media(max-width:640px){ .w { padding:0 22px; } }
 
-  /* Hero */
-  .vf-hero{background:#111111;padding:120px 0 80px;color:#FAF8F5}
+  /* Hero + Suchformular */
+  .vf-hero{background:#111111;padding:100px 0;color:#FAF8F5}
   .vf-hero .section-eye{color:#C8962E;font-family:var(--sans);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:16px}
-  .vf-h1{font-family:var(--serif);font-size:clamp(40px,5vw,72px);color:#FAF8F5;margin:0 0 1rem;line-height:1.1}
+  .vf-h1{font-family:var(--serif);font-size:clamp(36px,4.5vw,64px);color:#FAF8F5;margin:0 0 1rem;line-height:1.1}
   .vf-h1 em{color:#C8962E;font-style:italic}
-  .vf-sub{color:rgba(255,255,255,.7);font-family:var(--sans);font-size:1.1rem;max-width:560px;line-height:1.7;margin:16px 0 0}
+  .vf-sub{color:rgba(255,255,255,.6);font-family:var(--sans);font-size:1rem;max-width:480px;line-height:1.7;margin:0 0 2rem}
+  .vf-hero-inner{display:grid;grid-template-columns:55fr 45fr;gap:4rem;align-items:center}
+  @media(max-width:860px){.vf-hero-inner{grid-template-columns:1fr;gap:3rem}}
+  .vf-bullets{list-style:none;margin:0 0 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+  .vf-bullets li{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:.95rem;color:rgba(255,255,255,.8);line-height:1.5}
+  .vf-bullets li::before{content:'✓';color:#C8962E;font-weight:700;font-size:1rem;flex-shrink:0}
 
-  /* Search */
-  .vf-search-section{background:var(--cream);padding:80px 0}
-  .vf-form-card{background:#fff;border-radius:20px;padding:48px;box-shadow:0 4px 32px rgba(0,0,0,.08);max-width:680px;margin:0 auto}
-  .vf-form-title{font-family:var(--serif);font-size:1.8rem;color:#111;margin:0 0 32px}
-  .vf-fields-row{display:flex;gap:16px}
-  .vf-input{border:1.5px solid rgba(0,0,0,.12);border-radius:10px;padding:14px 18px;font-size:15px;font-family:var(--sans);width:100%;box-sizing:border-box;color:var(--black)}
-  .vf-input:focus{outline:none;border-color:#C8962E;box-shadow:0 0 0 3px rgba(200,150,46,.15)}
-  .vf-input--full{width:100%}
-  .vf-or-divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:#999;font-size:13px;font-family:var(--sans)}
-  .vf-or-divider::before,.vf-or-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1)}
-  .vf-btn{background:#C8962E;color:#fff;border:none;padding:16px;border-radius:10px;font-size:13px;font-family:var(--sans);font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:24px;width:100%}
-  .vf-btn:hover{background:#b5831f}
+  /* Suchkarte */
+  .vf-search-card{background:rgba(255,255,255,.04);backdrop-filter:blur(20px);border:1px solid rgba(200,150,46,.3);border-radius:24px;padding:40px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+
+  /* Tabs */
+  .vf-tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:28px}
+  .vf-tab{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;padding:12px 20px 14px;font-family:var(--sans);font-size:.9rem;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;transition:color .2s,border-color .2s}
+  .vf-tab.active{color:#FAF8F5;font-weight:600;border-bottom-color:#C8962E}
+  .vf-tab-panel{display:none}
+  .vf-tab-panel.active{display:block}
+
+  /* Inputs */
+  .vf-name-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.vf-name-row{grid-template-columns:1fr}}
+  .vf-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 18px;font-family:var(--sans);font-size:15px;color:#FAF8F5;box-sizing:border-box;outline:none;transition:border-color .2s,box-shadow .2s}
+  .vf-input::placeholder{color:rgba(255,255,255,.35)}
+  .vf-input:focus{border-color:#C8962E;box-shadow:0 0 0 3px rgba(200,150,46,.15)}
+
+  /* Button */
+  .vf-btn{width:100%;background:linear-gradient(135deg,#C8962E,#E8B84B);color:#111111;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;border-radius:12px;padding:16px;margin-top:20px;cursor:pointer;box-shadow:0 4px 20px rgba(200,150,46,.3);transition:transform .2s,box-shadow .2s}
+  .vf-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,150,46,.45)}
 
   /* Result */
   .vf-result-section{background:#111111;padding:80px 0}
@@ -112,33 +125,44 @@ const gridDozentinnen = (allDoz ?? [])
 
   /* Mobile */
   @media(max-width:680px){
-    .vf-fields-row{flex-direction:column}
     .vf-cert-layout{grid-template-columns:1fr}
-    .vf-form-card{padding:32px 24px}
+    .vf-hero-inner{gap:2rem}
+    .vf-search-card{padding:28px 24px}
   }
 </style>
 
-<!-- 1. Hero -->
+<!-- 1. Hero + Suchformular -->
 <section class="vf-hero">
   <div class="w">
-    <span class="section-eye">ZERTIFIKAT-PRÜFUNG</span>
-    <h1 class="vf-h1">Zertifikat <em>verifizieren</em></h1>
-    <p class="vf-sub">Geben Sie Name oder Identifikationsnummer ein, um die Echtheit eines BeautyBusiness360-Zertifikats zu prüfen.</p>
-  </div>
-</section>
-
-<!-- 2. Suchformular -->
-<section class="vf-search-section">
-  <div class="w">
-    <div class="vf-form-card">
-      <h2 class="vf-form-title">Zertifikat prüfen</h2>
-      <div class="vf-fields-row">
-        <input type="text" id="inp-vorname" placeholder="Vorname" class="vf-input" />
-        <input type="text" id="inp-nachname" placeholder="Nachname" class="vf-input" />
+    <div class="vf-hero-inner">
+      <div class="vf-hero-left">
+        <span class="section-eye">ZERTIFIKAT-PRÜFUNG</span>
+        <h1 class="vf-h1">Zertifikat <em>verifizieren</em></h1>
+        <p class="vf-sub">Prüfen Sie in Sekunden die Echtheit eines offiziell ausgestellten BeautyBusiness360-Zertifikats.</p>
+        <ul class="vf-bullets">
+          <li>Echtheit in Sekunden prüfen</li>
+          <li>QR-Code scannen oder Name eingeben</li>
+          <li>Offiziell ausgestellt von BeautyBusiness360</li>
+        </ul>
       </div>
-      <div class="vf-or-divider"><span>oder</span></div>
-      <input type="text" id="inp-id" placeholder="Identifikationsnummer (UUID)" class="vf-input vf-input--full" />
-      <button id="vf-btn" class="vf-btn">Prüfen</button>
+      <div class="vf-hero-right">
+        <div class="vf-search-card">
+          <div class="vf-tabs">
+            <button class="vf-tab active" data-panel="name">Nach Name</button>
+            <button class="vf-tab" data-panel="id">Nach ID / QR-Code</button>
+          </div>
+          <div id="vf-panel-name" class="vf-tab-panel active">
+            <div class="vf-name-row">
+              <input type="text" id="inp-vorname" placeholder="Vorname" class="vf-input" />
+              <input type="text" id="inp-nachname" placeholder="Nachname" class="vf-input" />
+            </div>
+          </div>
+          <div id="vf-panel-id" class="vf-tab-panel">
+            <input type="text" id="inp-id" placeholder="BB360-FD-..." class="vf-input" />
+          </div>
+          <button id="vf-btn" class="vf-btn">Prüfen</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -289,7 +313,25 @@ const gridDozentinnen = (allDoz ?? [])
     }
   }
 
-  document.getElementById('vf-btn')!.addEventListener('click', search);
+  document.querySelectorAll<HTMLButtonElement>('.vf-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.vf-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.vf-tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('vf-panel-' + tab.dataset.panel)!.classList.add('active');
+    });
+  });
+
+  document.getElementById('vf-btn')!.addEventListener('click', () => {
+    const activePanel = document.querySelector<HTMLButtonElement>('.vf-tab.active')?.dataset.panel;
+    if (activePanel === 'id') {
+      (document.getElementById('inp-vorname') as HTMLInputElement).value = '';
+      (document.getElementById('inp-nachname') as HTMLInputElement).value = '';
+    } else {
+      (document.getElementById('inp-id') as HTMLInputElement).value = '';
+    }
+    search();
+  });
 
   document.getElementById('inp-id')!.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Enter') search();
