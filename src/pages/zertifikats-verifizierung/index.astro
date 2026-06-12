@@ -22,34 +22,33 @@ const gridDozentinnen = allDoz ?? [];
 
 <style>
   /* Hero */
-  .vf-hero{background:#111111;padding:80px 0;color:#FAF8F5}
-  .vf-hero .section-eye{color:#C8962E;font-family:var(--sans);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;display:block;margin-bottom:1rem}
-  .vf-h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);color:#FAF8F5;margin:0 0 1rem;line-height:1.15}
-  .vf-h1 em{color:#C8962E;font-style:normal}
-  .vf-sub{color:rgba(255,255,255,.65);font-family:var(--sans);font-size:1rem;max-width:540px;line-height:1.7;margin:0}
+  .vf-hero{background:#111111;padding:120px 0 80px;color:#FAF8F5}
+  .vf-hero .section-eye{color:#C8962E;font-family:var(--sans);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:16px}
+  .vf-h1{font-family:var(--serif);font-size:clamp(40px,5vw,72px);color:#FAF8F5;margin:0 0 1rem;line-height:1.1}
+  .vf-h1 em{color:#C8962E;font-style:italic}
+  .vf-sub{color:rgba(255,255,255,.7);font-family:var(--sans);font-size:1.1rem;max-width:560px;line-height:1.7;margin:16px 0 0}
 
   /* Search */
-  .vf-search-section{background:var(--cream);padding:64px 0}
-  .vf-form-card{background:#fff;border-radius:16px;padding:40px;box-shadow:0 2px 16px rgba(0,0,0,.08);max-width:640px;margin:0 auto}
+  .vf-search-section{background:var(--cream);padding:80px 0}
+  .vf-form-card{background:#fff;border-radius:20px;padding:48px;box-shadow:0 4px 32px rgba(0,0,0,.08);max-width:680px;margin:0 auto}
+  .vf-form-title{font-family:var(--serif);font-size:1.8rem;color:#111;margin:0 0 32px}
   .vf-fields-row{display:flex;gap:16px}
-  .vf-input{border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:12px 16px;font-size:15px;font-family:var(--sans);width:100%;box-sizing:border-box;color:var(--black)}
-  .vf-input:focus{outline:none;border-color:#C8962E}
-  .vf-input--full{width:100%;margin-top:0}
-  .vf-or-divider{text-align:center;position:relative;margin:20px 0;color:#888;font-size:13px;font-family:var(--sans)}
-  .vf-or-divider::before,.vf-or-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 24px);height:1px;background:rgba(0,0,0,.1)}
-  .vf-or-divider::before{left:0}
-  .vf-or-divider::after{right:0}
-  .vf-btn{background:#C8962E;color:#fff;border:none;padding:14px 40px;border-radius:8px;font-size:14px;font-family:var(--sans);font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:8px;width:100%}
+  .vf-input{border:1.5px solid rgba(0,0,0,.12);border-radius:10px;padding:14px 18px;font-size:15px;font-family:var(--sans);width:100%;box-sizing:border-box;color:var(--black)}
+  .vf-input:focus{outline:none;border-color:#C8962E;box-shadow:0 0 0 3px rgba(200,150,46,.15)}
+  .vf-input--full{width:100%}
+  .vf-or-divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:#999;font-size:13px;font-family:var(--sans)}
+  .vf-or-divider::before,.vf-or-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1)}
+  .vf-btn{background:#C8962E;color:#fff;border:none;padding:16px;border-radius:10px;font-size:13px;font-family:var(--sans);font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:24px;width:100%}
   .vf-btn:hover{background:#b5831f}
 
   /* Result */
-  .vf-result-section{background:#111111;padding:64px 0}
+  .vf-result-section{background:#111111;padding:80px 0}
   .vf-badge{display:inline-flex;align-items:center;padding:10px 24px;border-radius:2rem;font-size:14px;font-family:var(--sans);font-weight:600;margin-bottom:32px}
   .vf-badge--valid{background:rgba(6,95,70,.3);color:#6ee7b7;border:1.5px solid #6ee7b7}
   .vf-badge--revoked{background:rgba(153,27,27,.3);color:#fca5a5;border:1.5px solid #fca5a5}
   .vf-badge--notfound{background:rgba(255,255,255,.06);color:#FAF8F5;border:1.5px solid rgba(255,255,255,.2)}
-  .vf-cert-layout{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
-  .vf-cert-img img{width:100%;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.5);display:block}
+  .vf-cert-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+  .vf-cert-img img{width:100%;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);display:block}
   .vf-cert-card{background:#1a1a1a;border:1px solid rgba(200,150,46,.3);border-top:3px solid #C8962E;border-radius:16px;padding:32px}
   .vf-cert-card__bar{width:40px;height:3px;background:#C8962E;margin-bottom:20px;display:none}
   .vf-cert-title{color:#FAF8F5;font-family:var(--serif);font-size:1.3rem;margin:0 0 1.4rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
@@ -65,17 +64,21 @@ const gridDozentinnen = allDoz ?? [];
 
   /* Dozentinnen */
   .vf-doz-section{background:var(--cream);padding:80px 0}
+  .vf-doz-section .section-eye,.vf-doz-section .section-title{text-align:left}
 
   /* CTA */
-  .vf-cta-section{background:#111111;padding:80px 0;text-align:left}
-  .vf-cta-h2{color:#FAF8F5;font-family:var(--serif);font-size:clamp(32px,4vw,52px);margin:0 0 .5rem;line-height:1.15}
+  .vf-cta-section{background:#111111;padding:100px 0;text-align:left}
+  .vf-cta-h2{color:#FAF8F5;font-family:var(--serif);font-size:clamp(36px,4vw,60px);margin:0 0 .5rem;line-height:1.1}
   .vf-cta-h2 em{color:#C8962E;font-style:normal}
   .vf-cta-sub{color:rgba(255,255,255,.6);font-family:var(--sans);font-size:1rem;margin:16px 0 32px;line-height:1.7}
+  .vf-cta-section .cta-gold{background:#C8962E;color:#fff;padding:16px 40px;border-radius:8px;display:inline-block;text-decoration:none;font-size:13px;font-family:var(--sans);font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+  .vf-cta-section .cta-gold:hover{background:#b5831f}
 
   /* Mobile */
   @media(max-width:680px){
     .vf-fields-row{flex-direction:column}
     .vf-cert-layout{grid-template-columns:1fr}
+    .vf-form-card{padding:32px 24px}
   }
 </style>
 
@@ -92,6 +95,7 @@ const gridDozentinnen = allDoz ?? [];
 <section class="vf-search-section">
   <div class="w">
     <div class="vf-form-card">
+      <h2 class="vf-form-title">Zertifikat prüfen</h2>
       <div class="vf-fields-row">
         <input type="text" id="inp-vorname" placeholder="Vorname" class="vf-input" />
         <input type="text" id="inp-nachname" placeholder="Nachname" class="vf-input" />
