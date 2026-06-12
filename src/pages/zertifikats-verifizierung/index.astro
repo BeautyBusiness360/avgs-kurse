@@ -1,134 +1,244 @@
 ---
 import SEOLayout from '../../layouts/SEOLayout.astro';
+import DozentinnenGrid from '../../components/DozentinnenGrid.astro';
+import { supabase } from '../../lib/supabase';
+
+const { data: allDoz } = await supabase
+  .from('dozentinnen')
+  .select(`
+    slug, first_name, last_name,
+    cities(slug, name),
+    dozentin_services(services(slug, name, avgs_eligible))
+  `)
+  .eq('active', true);
+
+const gridDozentinnen = allDoz ?? [];
 ---
 <SEOLayout
   title="Zertifikat verifizieren – BeautyBusiness360"
-  description="Überprüfen Sie die Echtheit eines BeautyBusiness360-Zertifikats."
+  description="Prüfen Sie die Echtheit eines BeautyBusiness360-Zertifikats anhand von Name oder Identifikationsnummer."
   canonical="https://dein-beauty-kurs.de/zertifikats-verifizierung/"
 >
+
 <style>
-  .verify-page{max-width:1000px;margin:0 auto;padding:3rem 1.5rem 5rem;min-height:60vh;background:#111111;color:#FAF8F5}
-  .cert-layout{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;width:100%}
-  @media(max-width:680px){.cert-layout{grid-template-columns:1fr}}
-  .cert-preview img{width:100%;border-radius:.5rem;box-shadow:0 8px 40px rgba(0,0,0,.5);display:block}
-  .cert-info{display:flex;flex-direction:column;gap:1.2rem}
-  .status-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.3rem;border-radius:2rem;font-family:var(--sans);font-size:.9rem;font-weight:600;letter-spacing:.03em}
-  .status-badge.valid   {background:rgba(6,95,70,.3);color:#6ee7b7;border:1.5px solid #6ee7b7}
-  .status-badge.revoked {background:rgba(153,27,27,.3);color:#fca5a5;border:1.5px solid #fca5a5}
-  .status-badge.notfound{background:rgba(255,255,255,.06);color:#FAF8F5;border:1.5px solid rgba(255,255,255,.2)}
-  .cert-card{background:#1a1a1a;border:1px solid rgba(200,150,46,.3);border-top:3px solid #C8962E;border-radius:1rem;padding:2rem}
-  .cert-title{font-family:var(--serif);font-size:1.4rem;color:#FAF8F5;margin:0 0 1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
-  .cert-meta{display:flex;flex-direction:column;gap:1.1rem}
-  .meta-item{display:flex;flex-direction:column;gap:.15rem}
-  .meta-item .label{font-family:var(--sans);font-size:.7rem;color:#C8962E;text-transform:uppercase;letter-spacing:.07em}
-  .meta-item strong{font-family:var(--sans);font-size:1rem;color:#FAF8F5;font-weight:600}
-  .meta-item code{font-family:monospace;font-size:.75rem;color:rgba(255,255,255,.5);word-break:break-all}
-  .spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.1);border-top-color:#C8962E;border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .state-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:1.5rem}
-  .state-text{font-family:var(--sans);font-size:.9rem;color:rgba(255,255,255,.6);text-align:center;max-width:420px;line-height:1.6}
+  /* Hero */
+  .vf-hero{background:#111111;padding:80px 0;color:#FAF8F5}
+  .vf-hero .section-eye{color:#C8962E;font-family:var(--sans);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;display:block;margin-bottom:1rem}
+  .vf-h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);color:#FAF8F5;margin:0 0 1rem;line-height:1.15}
+  .vf-h1 em{color:#C8962E;font-style:normal}
+  .vf-sub{color:rgba(255,255,255,.65);font-family:var(--sans);font-size:1rem;max-width:540px;line-height:1.7;margin:0}
+
+  /* Search */
+  .vf-search-section{background:var(--cream);padding:64px 0}
+  .vf-form-card{background:#fff;border-radius:16px;padding:40px;box-shadow:0 2px 16px rgba(0,0,0,.08);max-width:640px;margin:0 auto}
+  .vf-fields-row{display:flex;gap:16px}
+  .vf-input{border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:12px 16px;font-size:15px;font-family:var(--sans);width:100%;box-sizing:border-box;color:var(--black)}
+  .vf-input:focus{outline:none;border-color:#C8962E}
+  .vf-input--full{width:100%;margin-top:0}
+  .vf-or-divider{text-align:center;position:relative;margin:20px 0;color:#888;font-size:13px;font-family:var(--sans)}
+  .vf-or-divider::before,.vf-or-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 24px);height:1px;background:rgba(0,0,0,.1)}
+  .vf-or-divider::before{left:0}
+  .vf-or-divider::after{right:0}
+  .vf-btn{background:#C8962E;color:#fff;border:none;padding:14px 40px;border-radius:8px;font-size:14px;font-family:var(--sans);font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:8px;width:100%}
+  .vf-btn:hover{background:#b5831f}
+
+  /* Result */
+  .vf-result-section{background:#111111;padding:64px 0}
+  .vf-badge{display:inline-flex;align-items:center;padding:10px 24px;border-radius:2rem;font-size:14px;font-family:var(--sans);font-weight:600;margin-bottom:32px}
+  .vf-badge--valid{background:rgba(6,95,70,.3);color:#6ee7b7;border:1.5px solid #6ee7b7}
+  .vf-badge--revoked{background:rgba(153,27,27,.3);color:#fca5a5;border:1.5px solid #fca5a5}
+  .vf-badge--notfound{background:rgba(255,255,255,.06);color:#FAF8F5;border:1.5px solid rgba(255,255,255,.2)}
+  .vf-cert-layout{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  .vf-cert-img img{width:100%;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.5);display:block}
+  .vf-cert-card{background:#1a1a1a;border:1px solid rgba(200,150,46,.3);border-top:3px solid #C8962E;border-radius:16px;padding:32px}
+  .vf-cert-card__bar{width:40px;height:3px;background:#C8962E;margin-bottom:20px;display:none}
+  .vf-cert-title{color:#FAF8F5;font-family:var(--serif);font-size:1.3rem;margin:0 0 1.4rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+  .vf-meta{display:flex;flex-direction:column;gap:1rem}
+  .vf-meta-item{display:flex;flex-direction:column;gap:.15rem}
+  .vf-label{color:#C8962E;font-family:var(--sans);font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+  .vf-meta-item strong{color:#FAF8F5;font-family:var(--sans);font-size:1rem;font-weight:600}
+  .vf-meta-item code{color:rgba(255,255,255,.5);font-family:monospace;font-size:12px;word-break:break-all}
+  .vf-state-center{display:flex;flex-direction:column;align-items:center;gap:20px;padding:40px 0;color:#FAF8F5;font-family:var(--sans)}
+  .vf-state-text{color:rgba(255,255,255,.6);text-align:center;max-width:480px;font-family:var(--sans);font-size:.9rem;line-height:1.7;margin:0}
+  .vf-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.1);border-top-color:#C8962E;border-radius:50%;animation:vf-spin .8s linear infinite}
+  @keyframes vf-spin{to{transform:rotate(360deg)}}
+
+  /* Dozentinnen */
+  .vf-doz-section{background:var(--cream);padding:80px 0}
+
+  /* CTA */
+  .vf-cta-section{background:#111111;padding:80px 0;text-align:left}
+  .vf-cta-h2{color:#FAF8F5;font-family:var(--serif);font-size:clamp(32px,4vw,52px);margin:0 0 .5rem;line-height:1.15}
+  .vf-cta-h2 em{color:#C8962E;font-style:normal}
+  .vf-cta-sub{color:rgba(255,255,255,.6);font-family:var(--sans);font-size:1rem;margin:16px 0 32px;line-height:1.7}
+
+  /* Mobile */
+  @media(max-width:680px){
+    .vf-fields-row{flex-direction:column}
+    .vf-cert-layout{grid-template-columns:1fr}
+  }
 </style>
 
-<main class="verify-page">
-
-  <div id="state-loading" class="state-center">
-    <div class="spinner"></div>
-    <p class="state-text">Zertifikat wird geprüft…</p>
+<!-- 1. Hero -->
+<section class="vf-hero">
+  <div class="w">
+    <span class="section-eye">ZERTIFIKAT-PRÜFUNG</span>
+    <h1 class="vf-h1">Zertifikat <em>verifizieren</em></h1>
+    <p class="vf-sub">Geben Sie Name oder Identifikationsnummer ein, um die Echtheit eines BeautyBusiness360-Zertifikats zu prüfen.</p>
   </div>
+</section>
 
-  <div id="state-valid" style="display:none">
-    <div class="cert-layout">
-      <div id="cert-preview-wrap" class="cert-preview">
-        <img id="cert-img" src="" alt="Zertifikat">
+<!-- 2. Suchformular -->
+<section class="vf-search-section">
+  <div class="w">
+    <div class="vf-form-card">
+      <div class="vf-fields-row">
+        <input type="text" id="inp-vorname" placeholder="Vorname" class="vf-input" />
+        <input type="text" id="inp-nachname" placeholder="Nachname" class="vf-input" />
       </div>
-      <div class="cert-info">
-        <span class="status-badge valid">✓ Erfolgreich validiert</span>
-        <div class="cert-card">
-          <h1 id="cert-title" class="cert-title"></h1>
-          <div class="cert-meta">
-            <div class="meta-item">
-              <span class="label">Ausgestellt für</span>
-              <strong id="cert-name"></strong>
-            </div>
-            <div class="meta-item">
-              <span class="label">Ausgestellt am</span>
-              <strong id="cert-datum"></strong>
-            </div>
-            <div class="meta-item">
-              <span class="label">Ausgestellt von</span>
-              <strong>BeautyBusiness360</strong>
-            </div>
-            <div class="meta-item">
-              <span class="label">Link zur Webseite</span>
-              <strong><a href="https://dein-beauty-kurs.de" style="color:var(--gold)">dein-beauty-kurs.de</a></strong>
-            </div>
-            <div class="meta-item">
-              <span class="label">Identifikationsnummer</span>
-              <code id="cert-id"></code>
-            </div>
+      <div class="vf-or-divider"><span>oder</span></div>
+      <input type="text" id="inp-id" placeholder="Identifikationsnummer (UUID)" class="vf-input vf-input--full" />
+      <button id="vf-btn" class="vf-btn">Prüfen</button>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Ergebnis -->
+<section id="vf-result" class="vf-result-section" style="display:none">
+  <div class="w">
+    <div id="vf-loading" class="vf-state-center">
+      <div class="vf-spinner"></div>
+      <p>Zertifikat wird geprüft…</p>
+    </div>
+    <div id="vf-valid" style="display:none">
+      <span class="vf-badge vf-badge--valid">✓ Erfolgreich validiert</span>
+      <div class="vf-cert-layout">
+        <div id="vf-img-wrap" class="vf-cert-img">
+          <img id="vf-img" src="" alt="Zertifikat" />
+        </div>
+        <div class="vf-cert-card">
+          <div class="vf-cert-card__bar"></div>
+          <h2 id="vf-kurs" class="vf-cert-title"></h2>
+          <div class="vf-meta">
+            <div class="vf-meta-item"><span class="vf-label">Ausgestellt für</span><strong id="vf-name"></strong></div>
+            <div class="vf-meta-item"><span class="vf-label">Ausgestellt am</span><strong id="vf-datum"></strong></div>
+            <div class="vf-meta-item"><span class="vf-label">Ausgestellt von</span><strong>BeautyBusiness360</strong></div>
+            <div class="vf-meta-item"><span class="vf-label">Identifikationsnummer</span><code id="vf-cert-id"></code></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div id="state-revoked" style="display:none;flex-direction:column;align-items:center;gap:1.5rem">
-    <span class="status-badge revoked">✗ Zertifikat widerrufen</span>
-    <div class="cert-card" style="max-width:520px;width:100%">
-      <div class="cert-meta">
-        <div class="meta-item"><span class="label">Name</span><strong id="rev-name"></strong></div>
-        <div class="meta-item"><span class="label">Kurs</span><strong id="rev-kurs"></strong></div>
-      </div>
-      <p class="state-text" style="margin-top:1.2rem;text-align:left">Dieses Zertifikat wurde widerrufen und ist nicht mehr gültig.</p>
+    <div id="vf-revoked" style="display:none" class="vf-state-center">
+      <span class="vf-badge vf-badge--revoked">✗ Zertifikat widerrufen</span>
+      <p class="vf-state-text">Dieses Zertifikat wurde widerrufen und ist nicht mehr gültig.</p>
+    </div>
+    <div id="vf-notfound" style="display:none" class="vf-state-center">
+      <span class="vf-badge vf-badge--notfound">Zertifikat nicht gefunden</span>
+      <p class="vf-state-text">Diese Angaben konnten keinem gültigen Zertifikat zugeordnet werden. Bitte prüfen Sie den QR-Code oder wenden Sie sich an info@dein-beauty-kurs.de.</p>
     </div>
   </div>
+</section>
 
-  <div id="state-notfound" style="display:none;flex-direction:column;align-items:center;gap:1.5rem;min-height:50vh;justify-content:center">
-    <span class="status-badge notfound">Zertifikat nicht gefunden</span>
-    <p class="state-text">Diese Identifikationsnummer ist unbekannt. Bitte prüfen Sie den QR-Code oder wenden Sie sich an info@dein-beauty-kurs.de.</p>
+<!-- 4. Dozentinnen -->
+<section class="vf-doz-section">
+  <div class="w">
+    <span class="section-eye">NETZWERK</span>
+    <h2 class="section-title">Unsere zertifizierten <em>Fachdozentinnen</em></h2>
+    <DozentinnenGrid dozentinnen={gridDozentinnen} />
   </div>
+</section>
 
-</main>
+<!-- 5. CTA -->
+<section class="vf-cta-section">
+  <div class="w">
+    <h2 class="vf-cta-h2">Selbst <em>Fachdozentin</em> werden?</h2>
+    <p class="vf-cta-sub">Biete staatlich geförderte Perfektionstrainings an – ohne eigene AZAV-Zulassung.</p>
+    <a href="/fachdozentin-werden/" class="cta-gold">Jetzt informieren</a>
+  </div>
+</section>
 
 <script>
   import { createClient } from '@supabase/supabase-js';
-  const sb = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
-  function show(id) {
-    ['loading','valid','revoked','notfound'].forEach(s => {
-      const el = document.getElementById('state-'+s);
-      if (el) el.style.display = s===id ? (s==='valid'?'block':'flex') : 'none';
+  const sb = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  function formatDate(str: string): string {
+    if (!str) return '';
+    return new Date(str + 'T00:00:00').toLocaleDateString('de-DE', {
+      day: 'numeric', month: 'long', year: 'numeric'
     });
   }
-  function formatDate(str) {
-    if (!str) return '';
-    return new Date(str+'T00:00:00').toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+
+  function showState(state: 'loading' | 'valid' | 'revoked' | 'notfound') {
+    const result = document.getElementById('vf-result')!;
+    result.style.display = 'block';
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    ['loading', 'valid', 'revoked', 'notfound'].forEach(s => {
+      const el = document.getElementById('vf-' + s)!;
+      el.style.display = s === state ? (s === 'valid' ? 'block' : 'flex') : 'none';
+    });
   }
-  async function verify() {
-    const credential = new URLSearchParams(window.location.search).get('credential');
-    if (!credential) { show('notfound'); return; }
+
+  async function search() {
+    const vn = (document.getElementById('inp-vorname') as HTMLInputElement).value.trim();
+    const nn = (document.getElementById('inp-nachname') as HTMLInputElement).value.trim();
+    const credId = (document.getElementById('inp-id') as HTMLInputElement).value.trim();
+
+    if (!credId && !vn && !nn) return;
+
+    showState('loading');
+
     try {
-      const { data, error } = await sb.from('certificates').select('*').eq('id',credential).maybeSingle();
-      if (error||!data) { show('notfound'); return; }
-      if (data.status==='widerrufen') {
-        document.getElementById('rev-name').textContent = data.vorname+' '+data.nachname;
-        document.getElementById('rev-kurs').textContent = data.kurs;
-        show('revoked'); return;
-      }
-      document.getElementById('cert-title').textContent = data.kurs;
-      document.getElementById('cert-name').textContent  = data.vorname+' '+data.nachname;
-      document.getElementById('cert-datum').textContent = formatDate(data.datum);
-      document.getElementById('cert-id').textContent    = data.id;
-      const wrap = document.getElementById('cert-preview-wrap');
-      if (data.png_url) {
-        document.getElementById('cert-img').src = data.png_url;
-        wrap.style.display = 'block';
+      let data: any = null;
+
+      if (credId) {
+        const res = await sb.from('certificates').select('*').eq('id', credId).maybeSingle();
+        data = res.data;
       } else {
-        wrap.style.display = 'none';
+        const q = sb.from('certificates').select('*');
+        if (vn) q.ilike('vorname', vn);
+        if (nn) q.ilike('nachname', nn);
+        const res = await q.maybeSingle();
+        data = res.data;
       }
-      show('valid');
-    } catch(e) { show('notfound'); }
+
+      if (!data) { showState('notfound'); return; }
+
+      if (data.status === 'widerrufen') { showState('revoked'); return; }
+
+      (document.getElementById('vf-kurs') as HTMLElement).textContent = data.kurs;
+      (document.getElementById('vf-name') as HTMLElement).textContent = data.vorname + ' ' + data.nachname;
+      (document.getElementById('vf-datum') as HTMLElement).textContent = formatDate(data.datum);
+      (document.getElementById('vf-cert-id') as HTMLElement).textContent = data.id;
+
+      const imgWrap = document.getElementById('vf-img-wrap')!;
+      if (data.png_url) {
+        (document.getElementById('vf-img') as HTMLImageElement).src = data.png_url;
+        imgWrap.style.display = 'block';
+      } else {
+        imgWrap.style.display = 'none';
+      }
+
+      showState('valid');
+    } catch (e) {
+      showState('notfound');
+    }
   }
-  verify();
+
+  document.getElementById('vf-btn')!.addEventListener('click', search);
+
+  document.getElementById('inp-id')!.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter') search();
+  });
+
+  // Auto-search on page load if ?credential=UUID is present
+  const credential = new URLSearchParams(window.location.search).get('credential');
+  if (credential) {
+    (document.getElementById('inp-id') as HTMLInputElement).value = credential;
+    search();
+  }
 </script>
 
 </SEOLayout>
