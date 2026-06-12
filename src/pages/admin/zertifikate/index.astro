@@ -123,6 +123,7 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
 <script>
 import { createClient } from '@supabase/supabase-js';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import QRCode from 'qrcode';
 const sb=createClient(import.meta.env.PUBLIC_SUPABASE_URL,import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
 const W=595.28,H=841.89,SC=2;
@@ -307,6 +308,7 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const qrDU=await QRCode.toDataURL(url,{width:120,margin:1});
     const qrBytes=await fetch(qrDU).then(r=>r.arrayBuffer());
     const pdf=await PDFDocument.create();
+    pdf.registerFontkit(fontkit);
     const page=pdf.addPage([W,H]);
     const ext=sel.url.split('?')[0].split('.').pop().toLowerCase();
     const tpi=(ext==='jpg'||ext==='jpeg')?await pdf.embedJpg(new Uint8Array(tplBytes)):await pdf.embedPng(new Uint8Array(tplBytes));
