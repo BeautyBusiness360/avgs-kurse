@@ -97,9 +97,15 @@ import SEOLayout from '../../../layouts/SEOLayout.astro';
           <div class="fg"><label class="fl">Name X</label><input id="p-nx" class="fi" type="number" value="50"></div>
           <div class="fg"><label class="fl">Name Y</label><input id="p-ny" class="fi" type="number" value="480"></div>
           <div class="fg"><label class="fl">Name Größe</label><input id="p-ns" class="fi" type="number" value="37"></div>
-          <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="50"></div>
+          <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="138"></div>
           <div class="fg"><label class="fl">Datum Y</label><input id="p-dy" class="fi" type="number" value="148"></div>
-          <div class="fg"><label class="fl">QR Y (von unten)</label><input id="p-qy" class="fi" type="number" value="32"></div>
+          <div class="fg"></div>
+          <div class="fg"><label class="fl">QR X</label><input id="p-qx" class="fi" type="number" value="460"></div>
+          <div class="fg"><label class="fl">QR Y (von unten)</label><input id="p-qy" class="fi" type="number" value="11"></div>
+          <div class="fg"><label class="fl">QR Größe (pt)</label><input id="p-qs" class="fi" type="number" value="82"></div>
+          <div class="fg"><label class="fl">ID X</label><input id="p-ix" class="fi" type="number" value="128"></div>
+          <div class="fg"><label class="fl">ID Y</label><input id="p-iy" class="fi" type="number" value="10"></div>
+          <div class="fg"></div>
         </div>
       </details>
       <div id="c-err" class="err" style="display:none"></div>
@@ -274,10 +280,14 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const loc=standort||'Hamburg';
     const nx=parseInt(document.getElementById('p-nx').value)||50;
     const ny=parseInt(document.getElementById('p-ny').value)||480;
-    const ns=parseInt(document.getElementById('p-ns').value)||26;
-    const dx=parseInt(document.getElementById('p-dx').value)||50;
+    const ns=parseInt(document.getElementById('p-ns').value)||37;
+    const dx=parseInt(document.getElementById('p-dx').value)||138;
     const dy=parseInt(document.getElementById('p-dy').value)||148;
-    const qy=parseInt(document.getElementById('p-qy').value)||32;
+    const qy=parseInt(document.getElementById('p-qy').value)||11;
+    const qx=parseInt(document.getElementById('p-qx')?.value)||460;
+    const qs=parseInt(document.getElementById('p-qs')?.value)||82;
+    const ix=parseInt(document.getElementById('p-ix')?.value)||128;
+    const iy=parseInt(document.getElementById('p-iy')?.value)||10;
     if(!document.getElementById('gf-cert')){const lnk=document.createElement('link');lnk.id='gf-cert';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400&family=Lato&family=Open+Sans&display=swap';document.head.appendChild(lnk);}
     await document.fonts.ready;
     const canvas=document.createElement('canvas');
@@ -289,13 +299,13 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     ctx.fillStyle='#111111';
     ctx.fillText(`${vn} ${nn}`,nx*SC,(H-ny)*SC);
     ctx.font=`${11*SC}px 'Lato',sans-serif`;
-    ctx.fillText(`${loc}, den ${ds}`,dx*SC,(H-dy)*SC);
+    ctx.fillText(ds,dx*SC,(H-dy)*SC);
     ctx.font=`${9*SC}px 'Open Sans',sans-serif`;
     ctx.fillStyle='#333333';
-    ctx.fillText(id,128*SC,(H-10)*SC);
+    ctx.fillText(id,ix*SC,(H-iy)*SC);
     const qrC=document.createElement('canvas');
-    await QRCode.toCanvas(qrC,url,{width:90*SC,margin:1});
-    ctx.drawImage(qrC,460*SC,(H-qy-90)*SC,90*SC,90*SC);
+    await QRCode.toCanvas(qrC,url,{width:qs*SC,margin:1});
+    ctx.drawImage(qrC,qx*SC,(H-qy-qs)*SC,qs*SC,qs*SC);
     const pngBlob=await new Promise(res=>canvas.toBlob(res,'image/png'));
     const {error:imgErr}=await sb.storage.from('certificate-images').upload(`${id}.png`,pngBlob,{contentType:'image/png'});
     if(imgErr) throw new Error('PNG: '+imgErr.message);
@@ -315,13 +325,13 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const tpi=(ext==='jpg'||ext==='jpeg')?await pdf.embedJpg(new Uint8Array(tplBytes)):await pdf.embedPng(new Uint8Array(tplBytes));
     page.drawImage(tpi,{x:0,y:0,width:W,height:H});
     const qrI=await pdf.embedPng(new Uint8Array(qrBytes));
-    page.drawImage(qrI,{x:460,y:qy,width:90,height:90});
+    page.drawImage(qrI,{x:qx,y:qy,width:qs,height:qs});
     const fB=await pdf.embedFont(StandardFonts.HelveticaBold);
     const fN=await pdf.embedFont(StandardFonts.Helvetica);
     const bk=rgb(0.067,0.067,0.067);
     page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fB,size:ns,color:bk});
-    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fN,size:11,color:bk});
-    page.drawText(id,{x:128,y:10,font:fN,size:9,color:rgb(0.2,0.2,0.2)});
+    page.drawText(ds,{x:dx,y:dy,font:fN,size:11,color:bk});
+    page.drawText(id,{x:ix,y:iy,font:fN,size:9,color:rgb(0.2,0.2,0.2)});
     const bytes=await pdf.save();
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
@@ -361,15 +371,23 @@ function updatePreview(){
   if(d){
     ctx.font=`${11}px 'Lato',sans-serif`;
     ctx.fillStyle='rgba(17,17,17,.75)';
-    ctx.fillText(`Hamburg, den ${d}`,dx,toY(dy));
+    ctx.fillText(d,dx,toY(dy));
   }
+  const qx2=parseInt(document.getElementById('p-qx')?.value)||460;
+  const qs2=parseInt(document.getElementById('p-qs')?.value)||82;
+  const ix2=parseInt(document.getElementById('p-ix')?.value)||128;
+  const iy2=parseInt(document.getElementById('p-iy')?.value)||10;
   ctx.strokeStyle='rgba(0,160,80,.7)';
   ctx.lineWidth=1.5;
   ctx.setLineDash([3,2]);
-  ctx.strokeRect(460,toY(qy+90),90,90);
+  ctx.strokeRect(qx2,toY(qy+qs2),qs2,qs2);
+  ctx.setLineDash([]);
+  ctx.font=`7px monospace`;
+  ctx.fillStyle='rgba(80,80,80,.6)';
+  ctx.fillText('ID',ix2,toY(iy2));
 }
 document.getElementById('calib-img').addEventListener('load',updatePreview);
-['c-vn','c-nn','c-datum','p-nx','p-ny','p-ns','p-dx','p-dy','p-qy'].forEach(id=>{
+['c-vn','c-nn','c-datum','p-nx','p-ny','p-ns','p-dx','p-dy','p-qy','p-qx','p-qs','p-ix','p-iy'].forEach(id=>{
   const el=document.getElementById(id);
   if(el) el.addEventListener('input',updatePreview);
 });
