@@ -25,6 +25,8 @@
     "@fontsource/inter": "^5.2.8",
     "@supabase/supabase-js": "^2.106.1",
     "astro": "^6.3.6",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
     "resend": "^6.12.3"
   },
   "devDependencies": {

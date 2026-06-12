@@ -1,0 +1,218 @@
+---
+import SEOLayout from '../../layouts/SEOLayout.astro';
+---
+
+<SEOLayout
+  title="Zertifikat verifizieren – BeautyBusiness360"
+  description="Überprüfen Sie die Echtheit eines BeautyBusiness360-Zertifikats."
+  canonical="https://dein-beauty-kurs.de/zertifikats-verifizierung/"
+>
+
+<style>
+  .verify-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .state-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.3rem;
+    border-radius: 2rem;
+    font-family: var(--sans, Inter, sans-serif);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .status-badge.valid    { background:#d1fae5; color:#065f46; border:1.5px solid #6ee7b7; }
+  .status-badge.revoked  { background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; }
+  .status-badge.notfound { background:#f3f4f6; color:#374151; border:1.5px solid #d1d5db; }
+  .cert-card {
+    width: 100%;
+    background: var(--cream, #FAF8F5);
+    border: 1px solid var(--border, #e5e0d8);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+  .cert-card::before {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 3px;
+    background: var(--gold, #C8962E);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .cert-title {
+    font-family: var(--serif, 'Cormorant Garamond', serif);
+    font-size: 1.5rem;
+    color: var(--black, #111);
+    margin: 0 0 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border, #e5e0d8);
+  }
+  .cert-meta { display: flex; flex-direction: column; gap: 1.1rem; }
+  .meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+  .meta-item .label {
+    font-family: var(--sans, Inter, sans-serif);
+    font-size: 0.7rem;
+    color: var(--muted, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .meta-item strong {
+    font-family: var(--sans, Inter, sans-serif);
+    font-size: 1rem;
+    color: var(--black, #111);
+    font-weight: 600;
+  }
+  .meta-item code {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--muted, #888);
+    word-break: break-all;
+  }
+  .spinner {
+    width: 34px; height: 34px;
+    border: 3px solid var(--border, #e5e0d8);
+    border-top-color: var(--gold, #C8962E);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .state-text {
+    font-family: var(--sans, Inter, sans-serif);
+    font-size: 0.9rem;
+    color: var(--muted, #888);
+    text-align: center;
+    max-width: 420px;
+    line-height: 1.6;
+  }
+</style>
+
+<main class="verify-page">
+
+  <div id="state-loading" class="state-wrap">
+    <div class="spinner"></div>
+    <p class="state-text">Zertifikat wird geprüft…</p>
+  </div>
+
+  <div id="state-valid" class="state-wrap" hidden>
+    <span class="status-badge valid">✓ Erfolgreich validiert</span>
+    <div class="cert-card">
+      <h1 id="cert-title" class="cert-title"></h1>
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span class="label">Ausgestellt für</span>
+          <strong id="cert-name"></strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Ausgestellt am</span>
+          <strong id="cert-datum"></strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Ausgestellt von</span>
+          <strong>BeautyBusiness360</strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Identifikationsnummer</span>
+          <code id="cert-id"></code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="state-revoked" class="state-wrap" hidden>
+    <span class="status-badge revoked">✗ Zertifikat widerrufen</span>
+    <div class="cert-card">
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span class="label">Name</span>
+          <strong id="rev-name"></strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Kurs</span>
+          <strong id="rev-kurs"></strong>
+        </div>
+      </div>
+      <p class="state-text" style="margin-top:1.2rem">
+        Dieses Zertifikat wurde widerrufen und ist nicht mehr gültig.
+      </p>
+    </div>
+  </div>
+
+  <div id="state-notfound" class="state-wrap" hidden>
+    <span class="status-badge notfound">Zertifikat nicht gefunden</span>
+    <p class="state-text">
+      Diese Identifikationsnummer ist unbekannt. Bitte prüfen Sie den
+      QR-Code oder wenden Sie sich an info@dein-beauty-kurs.de.
+    </p>
+  </div>
+
+</main>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  function show(stateId) {
+    ['loading','valid','revoked','notfound'].forEach(s => {
+      const el = document.getElementById('state-' + s);
+      if (el) el.hidden = (s !== stateId);
+    });
+  }
+
+  function formatDate(str) {
+    if (!str) return '';
+    const d = new Date(str + 'T00:00:00');
+    return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  async function verify() {
+    const credential = new URLSearchParams(window.location.search).get('credential');
+    if (!credential) { show('notfound'); return; }
+    try {
+      const { data, error } = await supabase
+        .from('certificates')
+        .select('*')
+        .eq('id', credential)
+        .maybeSingle();
+      if (error || !data) { show('notfound'); return; }
+      if (data.status === 'widerrufen') {
+        document.getElementById('rev-name').textContent = data.vorname + ' ' + data.nachname;
+        document.getElementById('rev-kurs').textContent = data.kurs;
+        show('revoked');
+        return;
+      }
+      document.getElementById('cert-title').textContent = data.kurs;
+      document.getElementById('cert-name').textContent  = data.vorname + ' ' + data.nachname;
+      document.getElementById('cert-datum').textContent = formatDate(data.datum);
+      document.getElementById('cert-id').textContent    = data.id;
+      show('valid');
+    } catch(e) {
+      show('notfound');
+    }
+  }
+
+  verify();
+</script>
+
+</SEOLayout>
