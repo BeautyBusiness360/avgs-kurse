@@ -301,7 +301,7 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     ctx.font=`${11*SC}px 'Lato',sans-serif`;
     ctx.fillText(ds,dx*SC,(H-dy)*SC);
     ctx.font=`${9*SC}px 'Open Sans',sans-serif`;
-    ctx.fillStyle='#333333';
+    ctx.fillStyle='#ffffff';
     ctx.fillText(id,ix*SC,(H-iy)*SC);
     const qrC=document.createElement('canvas');
     await QRCode.toCanvas(qrC,url,{width:qs*SC,margin:1});
@@ -329,9 +329,9 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const fB=await pdf.embedFont(StandardFonts.HelveticaBold);
     const fN=await pdf.embedFont(StandardFonts.Helvetica);
     const bk=rgb(0.067,0.067,0.067);
-    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fB,size:ns,color:bk});
+    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fN,size:ns,color:bk});
     page.drawText(ds,{x:dx,y:dy,font:fN,size:11,color:bk});
-    page.drawText(id,{x:ix,y:iy,font:fN,size:9,color:rgb(0.2,0.2,0.2)});
+    page.drawText(id,{x:ix,y:iy,font:fN,size:9,color:rgb(1,1,1)});
     const bytes=await pdf.save();
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
