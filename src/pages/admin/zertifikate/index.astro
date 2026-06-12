@@ -1,0 +1,275 @@
+---
+import SEOLayout from '../../../layouts/SEOLayout.astro';
+---
+<SEOLayout title="Admin – Zertifikate" description="" canonical="https://dein-beauty-kurs.de/admin/zertifikate/">
+<style>
+  .aw{max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
+  .login-card{background:var(--cream);border:1px solid var(--border);border-radius:1rem;padding:2.5rem;max-width:400px;margin:5rem auto}
+  .fg{margin-bottom:1.1rem}
+  .fl{display:block;font-family:var(--sans);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.25rem}
+  .fi{width:100%;padding:.55rem .75rem;border:1px solid var(--border);border-radius:.4rem;background:#fff;font-family:var(--sans);font-size:.9rem;color:var(--black);box-sizing:border-box}
+  .fi:focus{outline:none;border-color:var(--gold)}
+  .btn{padding:.65rem 1.3rem;border-radius:.4rem;font-family:var(--sans);font-weight:600;cursor:pointer;font-size:.9rem;border:none}
+  .btn-gold{background:var(--gold);color:#fff}
+  .btn-gold:disabled{opacity:.6;cursor:not-allowed}
+  .btn-sm{padding:.4rem .9rem;font-size:.8rem;background:none;border:1px solid var(--border);color:var(--muted);border-radius:.3rem;cursor:pointer;font-family:var(--sans)}
+  .btn-back{background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:.85rem;color:var(--muted);padding:0;margin-bottom:1.5rem;display:inline-block}
+  .btn-back:hover{color:var(--gold)}
+  .btn-outline-gold{background:none;border:1.5px solid var(--gold);color:var(--gold);padding:.55rem 1.1rem;border-radius:.4rem;font-family:var(--sans);font-size:.88rem;font-weight:600;cursor:pointer}
+  .err{color:#991b1b;font-size:.82rem;margin-top:.4rem}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+  .ok{background:#d1fae5;border:1px solid #6ee7b7;border-radius:.6rem;padding:.9rem 1.1rem;margin-top:1rem}
+  .ok-url{font-family:monospace;font-size:.78rem;word-break:break-all;color:#065f46}
+  .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.5rem;margin-top:1.5rem}
+  .tpl-card{border:1px solid var(--border);border-radius:.8rem;overflow:hidden;background:var(--cream);transition:border-color .2s,box-shadow .2s}
+  .tpl-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(200,150,46,.12)}
+  .tpl-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .tpl-body{padding:1rem}
+  .tpl-name{font-family:var(--sans);font-size:.85rem;font-weight:600;color:var(--black);margin-bottom:.8rem;line-height:1.3}
+  .view-title{font-family:var(--serif);font-size:1.5rem;color:var(--black);margin:0 0 1.5rem}
+  .admin-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:1rem;flex-wrap:wrap}
+  .admin-hd-r{display:flex;gap:.7rem;align-items:center}
+  .empty-state{text-align:center;padding:4rem 2rem;color:var(--muted);font-family:var(--sans);font-size:.95rem}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:5px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  details summary{cursor:pointer;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin-bottom:.5rem}
+</style>
+
+<div class="aw">
+  <div id="s-login">
+    <div class="login-card">
+      <h1 style="font-family:var(--serif);font-size:1.5rem;margin:0 0 1.4rem;color:var(--black)">Admin Login</h1>
+      <div class="fg"><label class="fl">E-Mail</label><input id="l-email" type="email" class="fi"></div>
+      <div class="fg"><label class="fl">Passwort</label><input id="l-pw" type="password" class="fi"></div>
+      <div id="l-err" class="err" style="display:none"></div>
+      <button id="btn-login" class="btn btn-gold" style="width:100%;margin-top:.5rem">Einloggen</button>
+    </div>
+  </div>
+
+  <div id="s-admin" style="display:none">
+    <div class="admin-hd">
+      <h1 style="font-family:var(--serif);font-size:1.8rem;color:var(--black);margin:0">Zertifikate</h1>
+      <div class="admin-hd-r">
+        <button id="btn-to-new-tpl" class="btn-outline-gold">+ Neue Vorlage</button>
+        <button id="btn-logout" class="btn-sm">Ausloggen</button>
+      </div>
+    </div>
+
+    <div id="view-gallery">
+      <div id="tpl-grid" class="tpl-grid"></div>
+      <div id="gallery-empty" class="empty-state" style="display:none">
+        <p>Noch keine Vorlagen vorhanden.<br>Lade deine erste Vorlage hoch.</p>
+        <button class="btn-outline-gold" style="margin-top:1rem" id="btn-empty-new">+ Erste Vorlage hochladen</button>
+      </div>
+    </div>
+
+    <div id="view-create" style="display:none">
+      <button class="btn-back" id="btn-back-create">← Zurück zur Galerie</button>
+      <h2 id="create-title" class="view-title"></h2>
+      <div class="grid2">
+        <div class="fg"><label class="fl">Vorname *</label><input id="c-vn" class="fi" type="text"></div>
+        <div class="fg"><label class="fl">Nachname *</label><input id="c-nn" class="fi" type="text"></div>
+      </div>
+      <div class="fg"><label class="fl">Datum *</label><input id="c-datum" class="fi" type="date"></div>
+      <div class="fg"><label class="fl">Standort (optional)</label><input id="c-ort" class="fi" type="text" placeholder="Hamburg"></div>
+      <details style="margin-bottom:1.1rem">
+        <summary>▸ Text-Position kalibrieren (A4: 595×842 pt, Y = von unten)</summary>
+        <div class="grid3" style="margin-top:.7rem">
+          <div class="fg"><label class="fl">Name X</label><input id="p-nx" class="fi" type="number" value="50"></div>
+          <div class="fg"><label class="fl">Name Y</label><input id="p-ny" class="fi" type="number" value="480"></div>
+          <div class="fg"><label class="fl">Name Größe</label><input id="p-ns" class="fi" type="number" value="26"></div>
+          <div class="fg"><label class="fl">Datum X</label><input id="p-dx" class="fi" type="number" value="50"></div>
+          <div class="fg"><label class="fl">Datum Y</label><input id="p-dy" class="fi" type="number" value="148"></div>
+          <div class="fg"><label class="fl">QR Y (von unten)</label><input id="p-qy" class="fi" type="number" value="32"></div>
+        </div>
+      </details>
+      <div id="c-err" class="err" style="display:none"></div>
+      <button id="btn-create" class="btn btn-gold">Zertifikat erstellen &amp; PDF herunterladen</button>
+      <div id="c-ok" class="ok" style="display:none">
+        <p style="margin:0 0 .3rem;font-family:var(--sans);font-size:.83rem;font-weight:600;color:#065f46">✓ Zertifikat erstellt</p>
+        <p class="ok-url" id="c-ok-url"></p>
+      </div>
+    </div>
+
+    <div id="view-new-tpl" style="display:none">
+      <button class="btn-back" id="btn-back-tpl">← Zurück zur Galerie</button>
+      <h2 class="view-title">Neue Vorlage hochladen</h2>
+      <div class="fg"><label class="fl">Kursname *</label><input id="t-kurs" class="fi" type="text" placeholder="z.B. Fachdozentin in der Erwachsenenbildung"></div>
+      <div class="fg"><label class="fl">Anzeigename der Vorlage *</label><input id="t-name" class="fi" type="text" placeholder="z.B. Zertifikat Standard 2026"></div>
+      <div class="fg"><label class="fl">PNG / JPG (Hintergrund ohne Name)</label><input id="t-file" class="fi" type="file" accept=".png,.jpg,.jpeg"></div>
+      <div id="t-err" class="err" style="display:none"></div>
+      <button id="btn-tpl" class="btn btn-gold">Vorlage speichern</button>
+    </div>
+  </div>
+</div>
+<script>
+import { createClient } from '@supabase/supabase-js';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import QRCode from 'qrcode';
+const sb=createClient(import.meta.env.PUBLIC_SUPABASE_URL,import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+const W=595.28,H=841.89,SC=2;
+let sel=null;
+function showView(v){
+  ['gallery','create','new-tpl'].forEach(id=>{
+    document.getElementById('view-'+id).style.display=v===id?'block':'none';
+  });
+  if(v==='gallery') loadGallery();
+}
+async function checkAuth(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session) showAdmin();
+}
+document.getElementById('btn-login').addEventListener('click',async()=>{
+  const email=document.getElementById('l-email').value.trim();
+  const pw=document.getElementById('l-pw').value;
+  const err=document.getElementById('l-err');
+  err.style.display='none';
+  if(!email||!pw){err.textContent='Felder ausfüllen';err.style.display='block';return;}
+  const {error}=await sb.auth.signInWithPassword({email,password:pw});
+  if(error){err.textContent='Fehler: '+error.message;err.style.display='block';}
+  else showAdmin();
+});
+document.getElementById('btn-logout').addEventListener('click',async()=>{
+  await sb.auth.signOut();
+  document.getElementById('s-admin').style.display='none';
+  document.getElementById('s-login').style.display='block';
+});
+function showAdmin(){
+  document.getElementById('s-login').style.display='none';
+  document.getElementById('s-admin').style.display='block';
+  showView('gallery');
+}
+async function loadGallery(){
+  const {data:tpls}=await sb.from('certificate_templates').select('*').eq('is_active',true);
+  const grid=document.getElementById('tpl-grid');
+  const empty=document.getElementById('gallery-empty');
+  if(!tpls?.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=tpls.map(t=>`
+    <div class="tpl-card">
+      <img src="${t.file_url}" class="tpl-img" alt="${t.name}">
+      <div class="tpl-body">
+        <div class="tpl-name">${t.kurs||t.name}</div>
+        <button class="btn btn-gold" style="width:100%;font-size:.82rem;padding:.5rem"
+          data-id="${t.id}" data-url="${t.file_url}" data-kurs="${t.kurs||''}" data-tname="${t.name}">
+          Zertifikat erstellen
+        </button>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('[data-id]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      sel={id:btn.dataset.id,url:btn.dataset.url,kurs:btn.dataset.kurs,name:btn.dataset.tname};
+      document.getElementById('create-title').textContent=sel.kurs||sel.name;
+      ['c-vn','c-nn','c-datum','c-ort'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('c-err').style.display='none';
+      document.getElementById('c-ok').style.display='none';
+      showView('create');
+    });
+  });
+}
+document.getElementById('btn-to-new-tpl').addEventListener('click',()=>showView('new-tpl'));
+document.getElementById('btn-back-create').addEventListener('click',()=>showView('gallery'));
+document.getElementById('btn-back-tpl').addEventListener('click',()=>showView('gallery'));
+document.getElementById('btn-empty-new').addEventListener('click',()=>showView('new-tpl'));
+document.getElementById('btn-tpl').addEventListener('click',async()=>{
+  const kurs=document.getElementById('t-kurs').value.trim();
+  const name=document.getElementById('t-name').value.trim();
+  const file=document.getElementById('t-file').files[0];
+  const err=document.getElementById('t-err');
+  err.style.display='none';
+  if(!kurs||!name||!file){err.textContent='Alle Felder ausfüllen';err.style.display='block';return;}
+  const ext=file.name.split('.').pop().toLowerCase();
+  const mime=ext==='png'?'image/png':'image/jpeg';
+  const fn=crypto.randomUUID()+'.'+ext;
+  const {error:upErr}=await sb.storage.from('certificate-templates').upload(fn,file,{contentType:mime});
+  if(upErr){err.textContent='Upload: '+upErr.message;err.style.display='block';return;}
+  const {data:{publicUrl}}=sb.storage.from('certificate-templates').getPublicUrl(fn);
+  const {error:dbErr}=await sb.from('certificate_templates').insert({name,kurs,file_url:publicUrl,is_active:true});
+  if(dbErr){err.textContent='DB: '+dbErr.message;err.style.display='block';return;}
+  ['t-kurs','t-name','t-file'].forEach(id=>document.getElementById(id).value='');
+  showView('gallery');
+});
+function loadImage(src){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>res(img);img.onerror=rej;img.src=src;
+  });
+}
+document.getElementById('btn-create').addEventListener('click',async()=>{
+  const errEl=document.getElementById('c-err'),okEl=document.getElementById('c-ok');
+  errEl.style.display='none';okEl.style.display='none';
+  const vn=document.getElementById('c-vn').value.trim();
+  const nn=document.getElementById('c-nn').value.trim();
+  const datum=document.getElementById('c-datum').value;
+  const standort=document.getElementById('c-ort').value.trim()||null;
+  if(!vn||!nn||!datum){errEl.textContent='Vorname, Nachname und Datum ausfüllen';errEl.style.display='block';return;}
+  const btn=document.getElementById('btn-create');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>Wird erstellt…';
+  try{
+    const id=crypto.randomUUID();
+    const url=`https://dein-beauty-kurs.de/zertifikats-verifizierung/?credential=${id}`;
+    const d=new Date(datum+'T00:00:00');
+    const ds=d.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+    const loc=standort||'Hamburg';
+    const nx=parseInt(document.getElementById('p-nx').value)||50;
+    const ny=parseInt(document.getElementById('p-ny').value)||480;
+    const ns=parseInt(document.getElementById('p-ns').value)||26;
+    const dx=parseInt(document.getElementById('p-dx').value)||50;
+    const dy=parseInt(document.getElementById('p-dy').value)||148;
+    const qy=parseInt(document.getElementById('p-qy').value)||32;
+    await document.fonts.ready;
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.round(W*SC);canvas.height=Math.round(H*SC);
+    const ctx=canvas.getContext('2d');
+    const tplImg=await loadImage(sel.url);
+    ctx.drawImage(tplImg,0,0,canvas.width,canvas.height);
+    ctx.font=`bold ${ns*SC}px 'Cormorant Garamond',serif`;
+    ctx.fillStyle='#111111';
+    ctx.fillText(`${vn} ${nn}`,nx*SC,(H-ny)*SC);
+    ctx.font=`${11*SC}px 'Inter',sans-serif`;
+    ctx.fillText(`${loc}, den ${ds}`,dx*SC,(H-dy)*SC);
+    const qrC=document.createElement('canvas');
+    await QRCode.toCanvas(qrC,url,{width:90*SC,margin:1});
+    ctx.drawImage(qrC,460*SC,(H-qy-90)*SC,90*SC,90*SC);
+    const pngBlob=await new Promise(res=>canvas.toBlob(res,'image/png'));
+    const {error:imgErr}=await sb.storage.from('certificate-images').upload(`${id}.png`,pngBlob,{contentType:'image/png'});
+    if(imgErr) throw new Error('PNG: '+imgErr.message);
+    const {data:{publicUrl:pngUrl}}=sb.storage.from('certificate-images').getPublicUrl(`${id}.png`);
+    const {error:dbErr}=await sb.from('certificates').insert({
+      id,vorname:vn,nachname:nn,kurs:sel.kurs||sel.name,
+      datum,standort,template_id:sel.id,status:'gueltig',png_url:pngUrl
+    });
+    if(dbErr) throw new Error('DB: '+dbErr.message);
+    const tplBytes=await fetch(sel.url).then(r=>r.arrayBuffer());
+    const qrDU=await QRCode.toDataURL(url,{width:120,margin:1});
+    const qrBytes=await fetch(qrDU).then(r=>r.arrayBuffer());
+    const pdf=await PDFDocument.create();
+    const page=pdf.addPage([W,H]);
+    const ext=sel.url.split('?')[0].split('.').pop().toLowerCase();
+    const tpi=(ext==='jpg'||ext==='jpeg')?await pdf.embedJpg(new Uint8Array(tplBytes)):await pdf.embedPng(new Uint8Array(tplBytes));
+    page.drawImage(tpi,{x:0,y:0,width:W,height:H});
+    const qrI=await pdf.embedPng(new Uint8Array(qrBytes));
+    page.drawImage(qrI,{x:460,y:qy,width:90,height:90});
+    const fB=await pdf.embedFont(StandardFonts.HelveticaBold);
+    const fN=await pdf.embedFont(StandardFonts.Helvetica);
+    const bk=rgb(0.067,0.067,0.067);
+    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fB,size:ns,color:bk});
+    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fN,size:11,color:bk});
+    const bytes=await pdf.save();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+    a.download=`Zertifikat_${vn}_${nn}.pdf`;
+    a.click();
+    document.getElementById('c-ok-url').textContent=url;
+    okEl.style.display='block';
+  }catch(e){
+    errEl.textContent='Fehler: '+e.message;errEl.style.display='block';
+  }finally{
+    btn.disabled=false;btn.textContent='Zertifikat erstellen & PDF herunterladen';
+  }
+});
+checkAuth();
+</script>
+</SEOLayout>
