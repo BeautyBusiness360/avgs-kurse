@@ -278,14 +278,14 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     const dx=parseInt(document.getElementById('p-dx').value)||50;
     const dy=parseInt(document.getElementById('p-dy').value)||148;
     const qy=parseInt(document.getElementById('p-qy').value)||32;
-    if(!document.getElementById('gf-cert')){const lnk=document.createElement('link');lnk.id='gf-cert';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Lato&family=Open+Sans&display=swap';document.head.appendChild(lnk);}
+    if(!document.getElementById('gf-cert')){const lnk=document.createElement('link');lnk.id='gf-cert';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family=Raleway:wght@400&family=Lato&family=Open+Sans&display=swap';document.head.appendChild(lnk);}
     await document.fonts.ready;
     const canvas=document.createElement('canvas');
     canvas.width=Math.round(W*SC);canvas.height=Math.round(H*SC);
     const ctx=canvas.getContext('2d');
     const tplImg=await loadImage(sel.url);
     ctx.drawImage(tplImg,0,0,canvas.width,canvas.height);
-    ctx.font=`bold ${ns*SC}px 'Raleway',sans-serif`;
+    ctx.font=`${ns*SC}px 'Raleway',sans-serif`;
     ctx.fillStyle='#111111';
     ctx.fillText(`${vn} ${nn}`,nx*SC,(H-ny)*SC);
     ctx.font=`${11*SC}px 'Lato',sans-serif`;
@@ -353,7 +353,7 @@ function updatePreview(){
   const qy=parseInt(document.getElementById('p-qy')?.value)||32;
   const toY=y=>842-y;
   if(vn||nn){
-    ctx.font=`bold ${ns}px 'Raleway',sans-serif`;
+    ctx.font=`${ns}px 'Raleway',sans-serif`;
     ctx.fillStyle='rgba(17,17,17,.88)';
     ctx.fillText(`${vn} ${nn}`,nx,toY(ny));
   }
