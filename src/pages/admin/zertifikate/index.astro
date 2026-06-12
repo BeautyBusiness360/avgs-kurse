@@ -315,18 +315,12 @@ document.getElementById('btn-create').addEventListener('click',async()=>{
     page.drawImage(tpi,{x:0,y:0,width:W,height:H});
     const qrI=await pdf.embedPng(new Uint8Array(qrBytes));
     page.drawImage(qrI,{x:460,y:qy,width:90,height:90});
-    const [rbB,ltB,osB]=await Promise.all([
-      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/raleway/static/Raleway-Regular.ttf').then(r=>r.arrayBuffer()),
-      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/lato/Lato-Regular.ttf').then(r=>r.arrayBuffer()),
-      fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/static/OpenSans-Regular.ttf').then(r=>r.arrayBuffer()),
-    ]);
-    const fRaleway=await pdf.embedFont(new Uint8Array(rbB));
-    const fLato=await pdf.embedFont(new Uint8Array(ltB));
-    const fOpenSans=await pdf.embedFont(new Uint8Array(osB));
+    const fB=await pdf.embedFont(StandardFonts.HelveticaBold);
+    const fN=await pdf.embedFont(StandardFonts.Helvetica);
     const bk=rgb(0.067,0.067,0.067);
-    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fRaleway,size:ns,color:bk});
-    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fLato,size:11,color:bk});
-    page.drawText(id,{x:128,y:10,font:fOpenSans,size:9,color:rgb(0.2,0.2,0.2)});
+    page.drawText(`${vn} ${nn}`,{x:nx,y:ny,font:fB,size:ns,color:bk});
+    page.drawText(`${loc}, den ${ds}`,{x:dx,y:dy,font:fN,size:11,color:bk});
+    page.drawText(id,{x:128,y:10,font:fN,size:9,color:rgb(0.2,0.2,0.2)});
     const bytes=await pdf.save();
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
